@@ -40,12 +40,15 @@
     "use-debounce": "^9.0.3"
   },
   "devDependencies": {
+    "@next-auth/mongodb-adapter": "^1.1.1",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/line-clamp": "^0.4.2",
     "@tailwindcss/typography": "^0.5.9",
     "@types/ms": "^0.7.31",
     "autoprefixer": "^10.4.13",
     "concurrently": "^7.6.0",
+    "mongodb": "^4.13.0",
+    "nodemailer": "^6.9.1",
     "postcss": "^8.4.21",
     "prettier": "^2.8.2",
     "prettier-plugin-tailwindcss": "^0.2.1",
