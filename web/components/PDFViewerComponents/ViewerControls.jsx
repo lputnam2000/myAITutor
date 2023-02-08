@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import {PDFViewerContext} from "@/components/PDFViewerComponents/context";
 
 const Container = styled.div`
-  background-color: yellow;
+  background-color: #3c3c42;
   top: 0;
   left: 0;
   position: fixed;
