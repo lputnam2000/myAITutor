@@ -3,12 +3,13 @@ import {Document, Page} from "react-pdf";
 import styled from "styled-components";
 import ViewerControls from "@/components/PDFViewerComponents/ViewerControls";
 import {PDFViewerContext} from "@/components/PDFViewerComponents/context";
+import Summary from "@/components/PDFViewerComponents/Summary";
+import PDFViewer from "@/components/PDFViewerComponents/PDFViewer";
 
 const Container = styled.div`
-  background-color: red;
+  background-color: #515159;
   min-height: 100vh;
   display: flex;
-  align-items: center;
   flex-direction: column;
   padding-top: 40px;
 `
@@ -16,7 +17,16 @@ const Container = styled.div`
 const StyledPage = styled(Page)`
   margin-bottom: 5px;
 `
+const InnerContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`
 
+const PDFViewerContainer = styled.div`
+  background-color: red;
+  margin-left: 50px;
+`
 
 function PdfViewerWithSummary({pdfFile}) {
     const [startingPageNumber, setStartingPageNumber] = useState(0);
@@ -70,56 +80,40 @@ function PdfViewerWithSummary({pdfFile}) {
     return (
         <Container>
             <ViewerControls/>
-            <div>
-                <p>
-                    {/*<div>*/}
-                    {/*    Staring Page Number to Summarize :*/}
-                    {/*    <Input type="number" name="" id="" value={startingPageNumber}*/}
-                    {/*           onChange={handleStartingPageNumber}/>*/}
-                    {/*</div>*/}
-                    {/*<div>*/}
-                    {/*    Ending Page Number to Summarize: <Input type="number" name="" id="" value={endingPageNumber}*/}
-                    {/*                                            onChange={handleEndingPageNumber}/>*/}
-                    {/*</div>*/}
-                    Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
-                </p>
-                <button
-                    type="button"
-                    disabled={pageNumber <= 1}
-                    onClick={previousPage}
-                >
-                    Previous
-                </button>
-                <button
-                    type="button"
-                    disabled={pageNumber >= numPages}
-                    onClick={nextPage}
-                >
-                    Next
-                </button>
-            </div>
-
-            <Document
-                file={pdfFile}
-                onLoadSuccess={onDocumentLoadSuccess}
-            >
-                {
-                    Array.from({length: numPages}, (_, index) =>
-                        <div key={index} ref={(node) => {
-                            const map = getPagesMap();
-                            if (node) {
-                                map.set(index, node);
-                            } else {
-                                map.delete(index);
-                            }
-                        }}>
-                            <StyledPage width={601} pageNumber={index + 1}
-                                // ref={el => pagesRef.current(el)}
-                            />
-                        </div>
-                    )
-                }
-            </Document>
+            {/*<div>*/}
+            {/*    <p>*/}
+            {/*        /!*<div>*!/*/}
+            {/*        /!*    Staring Page Number to Summarize :*!/*/}
+            {/*        /!*    <Input type="number" name="" id="" value={startingPageNumber}*!/*/}
+            {/*        /!*           onChange={handleStartingPageNumber}/>*!/*/}
+            {/*        /!*</div>*!/*/}
+            {/*        /!*<div>*!/*/}
+            {/*        /!*    Ending Page Number to Summarize: <Input type="number" name="" id="" value={endingPageNumber}*!/*/}
+            {/*        /!*                                            onChange={handleEndingPageNumber}/>*!/*/}
+            {/*        /!*</div>*!/*/}
+            {/*        Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}*/}
+            {/*    </p>*/}
+            {/*    <button*/}
+            {/*        type="button"*/}
+            {/*        disabled={pageNumber <= 1}*/}
+            {/*        onClick={previousPage}*/}
+            {/*    >*/}
+            {/*        Previous*/}
+            {/*    </button>*/}
+            {/*    <button*/}
+            {/*        type="button"*/}
+            {/*        disabled={pageNumber >= numPages}*/}
+            {/*        onClick={nextPage}*/}
+            {/*    >*/}
+            {/*        Next*/}
+            {/*    </button>*/}
+            {/*</div>*/}
+            <InnerContainer>
+                <PDFViewerContainer>
+                    <PDFViewer pdfFile={pdfFile}/>
+                </PDFViewerContainer>
+                <Summary/>
+            </InnerContainer>
         </Container>
     );
 }
