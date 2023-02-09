@@ -7,11 +7,12 @@ import Summary from "@/components/PDFViewerComponents/Summary";
 import PDFViewer from "@/components/PDFViewerComponents/PDFViewer";
 
 const Container = styled.div`
-  background-color: #515159;
+  background-color: whitesmoke;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   padding-top: 40px;
+  
 `
 
 const StyledPage = styled(Page)`
@@ -20,12 +21,11 @@ const StyledPage = styled(Page)`
 const InnerContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  //justify-content: space-between;
 `
 
 const PDFViewerContainer = styled.div`
-  background-color: red;
-  margin-left: 50px;
+  flex: 1;
 `
 
 function PdfViewerWithSummary({pdfFile}) {

@@ -1,19 +1,45 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Document, Page} from "react-pdf";
 import styled from "styled-components";
 import {PDFViewerContext} from "@/components/PDFViewerComponents/context";
 
 const StyledPage = styled(Page)`
-  margin-bottom: 5px;
+  margin-bottom: 7px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+
 `
 
 const Container = styled.div`
+  width: 30vw;
+  //padding: 5px;
+  //background-color: gray;
+  margin-top: 10px;
+  margin-left: 60px;
+  border-color: black;
+  align-items: center;
 `
 
 function PdfViewer({pdfFile}) {
 
     const {setNumPages, setPageNumber, numPages, getPagesMap} = useContext(PDFViewerContext)
+    const containerRef = useRef()
+    useEffect(() => {
 
+    }, containerRef)
+
+    const [width, setWidth] = useState(800);
+
+    useEffect(() => {
+        const handleWindowResize = () => {
+            setWidth(window.innerWidth * .5);
+        };
+
+        window.addEventListener('resize', handleWindowResize);
+        handleWindowResize()
+        return () => {
+            window.removeEventListener('resize', handleWindowResize);
+        };
+    });
 
     function onDocumentLoadSuccess({numPages}) {
         setNumPages(numPages);
@@ -39,7 +65,7 @@ function PdfViewer({pdfFile}) {
                                 map.delete(index);
                             }
                         }}>
-                            <StyledPage width={600} pageNumber={index + 1}
+                            <StyledPage width={width} pageNumber={index + 1}
                                 // ref={el => pagesRef.current(el)}
                             />
                         </div>
