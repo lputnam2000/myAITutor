@@ -12,7 +12,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding-top: 40px;
-  
+
 `
 
 const StyledPage = styled(Page)`
@@ -79,7 +79,6 @@ function PdfViewerWithSummary({pdfFile}) {
 
     return (
         <Container>
-            <ViewerControls/>
             {/*<div>*/}
             {/*    <p>*/}
             {/*        /!*<div>*!/*/}
