@@ -20,7 +20,6 @@ function PDFViewerContextProvider({children}) {
         const map = getPagesMap();
         const node = map.get(pageNumber);
         if (node) {
-            console.log(node)
             node.scrollIntoView({
                 block: 'nearest',
                 inline: 'center',
