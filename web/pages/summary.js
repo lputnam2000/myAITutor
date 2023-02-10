@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {Button} from '@chakra-ui/react'
-import {pdfjs, Document, Page} from 'react-pdf';
-
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+import {pdfjs} from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
-import PDFViewerWithSummary from "@/components/PDFViewerComponents/PDFViewerWithSummary";
 import PDFViewerContextProvider from "@/components/PDFViewerComponents/context";
+import PDFViewerWithSummary from "@/components/PDFViewerComponents/PDFViewerWithSummary";
+
 
 const Container = styled.div`
   height: 100vh;
@@ -15,6 +13,12 @@ const Container = styled.div`
 `
 
 export default function Summary() {
+
+    useEffect(() => {
+        pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
+    }, [])
+
     const [pdfFile, setPdfFile] = useState('');
 
 
