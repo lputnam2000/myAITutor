@@ -23,7 +23,7 @@ function BadgePP({ name, profilePic }) {
   return (<>
     <Menu>
       <MenuButton>
-        <Flex bg='#ddedea' p='0.5rem' borderRadius='1.4rem'>
+        <Flex bg='#FBFBFF' p='0.5rem' borderRadius='1.4rem'>
           <Avatar src={profilePic} />
           <Box ml='3'>
             <Text fontWeight='bold'>
@@ -94,7 +94,7 @@ function Navbar() {
     <>
       <div className={styles.navbar}>
         <div className={styles.basebar}>    
-          <div className="tw-text-center sm:tw-text-left tw-px-2 tw-flex flex-col tw-flex-wrap tw-content-center tw-text-white tw-font-thin tw-text-3xl tw-flex-grow "><h1 className="tw-block tw-w-full">WePyk</h1></div>
+          <div className="tw-text-center sm:tw-text-left tw-px-2 tw-flex flex-col tw-flex-wrap tw-content-center tw-text-white tw-font-thin tw-text-3xl tw-flex-grow "><h1 className={`tw-block tw-w-full ${styles.logo}`}>ChimpBase</h1></div>
           <div className={styles.grower} />
           <div className={styles.navlinks} ref={links}>
             {buttonContent}

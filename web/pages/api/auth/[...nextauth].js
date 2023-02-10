@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email"
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter"
@@ -23,6 +23,18 @@ export const authOptions = {
       from: process.env.EMAIL_FROM,
     }),
   ],
+  callbacks: {
+    session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+  },
+  secret: process.env.AUTH_SECRET,
+  session: {
+    strategy: "jwt",
+  }
 };
 
-export default NextAuth(authOptions);
+export default (req, res) => NextAuth(req, res, authOptions)
