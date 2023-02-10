@@ -5,19 +5,22 @@ import {Open_Sans, Domine} from '@next/font/google'
 
 const openSans = Open_Sans({subsets: ['latin'], variable: '--font-open'},)
 import '/styles/globals.css'
-import { SessionProvider } from "next-auth/react"
+import {SessionProvider} from "next-auth/react"
 
 const theme = {
     colors: {
-        primary: '#111',
-        secondary: '#0070f3',
+        primary: '#FBFBFF',
+        secondary: '#000000',
+        green: '#39ff14',
+        blue: '#1FDDFF',
+        pink: '#FF1f8f'
     },
 }
 
 function MyApp({
-    Component,
-    pageProps: { session, ...pageProps },
-  }) {
+                   Component,
+                   pageProps: {session, ...pageProps},
+               }) {
 
 
     return (
