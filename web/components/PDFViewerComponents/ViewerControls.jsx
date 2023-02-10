@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import styled from 'styled-components'
-import {PDFViewerContext} from "@/components/PDFViewerComponents/context";
+import {PDFViewerContext} from "./context";
 import {IconButton} from '@chakra-ui/react'
 import {ArrowLeftIcon, ArrowRightIcon,} from "@chakra-ui/icons";
 

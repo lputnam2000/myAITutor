@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Document, Page} from "react-pdf";
 import styled from "styled-components";
-import ViewerControls from "@/components/PDFViewerComponents/ViewerControls";
-import {PDFViewerContext} from "@/components/PDFViewerComponents/context";
-import Summary from "@/components/PDFViewerComponents/Summary";
-import PDFViewer from "@/components/PDFViewerComponents/PDFViewer";
+import ViewerControls from "./ViewerControls";
+import {PDFViewerContext} from "./context";
+import Summary from "./Summary";
+import PDFViewer from "./PDFViewer";
 
 const Container = styled.div`
   background-color: whitesmoke;
