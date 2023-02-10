@@ -44,7 +44,7 @@ export default function SignIn({ csrfToken, providers }) {
         />
         <button
             onClick={emailSubmit}
-            className="tw-flex tw-items-center tw-justify-center tw-gap-x-2 tw-rounded-md tw-border tw-border-cbblue tw-bg-slate-700 tw-py-3 tw-px-4 tw-text-slate-300 transition hover:tw-text-cbpink"
+            className="tw-flex tw-items-center tw-justify-center tw-gap-x-2 tw-rounded-md tw-border tw-border-cbblue tw-bg-slate-700 tw-py-3 tw-px-4 tw-text-cbpink transition hover:tw-text-cbblack"
         >
             Sign in with Email
         </button>
@@ -61,7 +61,7 @@ export default function SignIn({ csrfToken, providers }) {
             ))*/}
 
             <div ref={pageContainer}
-                className="tw-grid tw-h-screen tw-w-screen tw-bg-cbblack tw-px-4 tw-text-sm tw-font-medium"
+                className="tw-grid tw-h-screen tw-w-screen tw-bg-cbblue tw-px-4 tw-text-sm tw-font-medium"
             >
                 <div className="tw-flex tw-flex-col tw-justify-center">
                     {svg}
@@ -69,7 +69,7 @@ export default function SignIn({ csrfToken, providers }) {
                         <form className="tw-p-4 md:tw-p-5 tw-lg:p-6">
                             <div className="tw-grid tw-gap-y-3">
                                 <button
-                                    className="tw-flex tw-items-center tw-justify-center tw-gap-x-2 tw-rounded-md tw-border tw-border-cbblue tw-bg-cbwhite tw-py-3 tw-px-4 tw-text-slate-300 transition hover:tw-text-cbpink"
+                                    className="tw-flex tw-items-center tw-justify-center tw-gap-x-2 tw-rounded-md tw-border tw-border-cbblue tw-bg-cbwhite tw-py-3 tw-px-4 tw-text-cbpink transition hover:tw-text-cbblack"
                                     onClick={googleSignIn}
                                 >
                                     <svg
@@ -92,7 +92,7 @@ export default function SignIn({ csrfToken, providers }) {
 
                             <div className="tw-my-3 tw-flex tw-items-center tw-px-3">
                                 <hr className="tw-w-full tw-border-slate-600" />
-                                <span className="tw-mx-3 tw-text-slate-500">or</span>
+                                <span className="tw-mx-3 tw-text-cbblack">or</span>
                                 <hr className="tw-w-full tw-border-slate-600" />
                             </div>
                             {emailForm}
