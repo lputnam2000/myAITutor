@@ -1,6 +1,9 @@
 import {ChakraProvider} from '@chakra-ui/react'
 import {ThemeProvider} from 'styled-components'
 import GlobalStyle from '../components/globalstyles'
+import {Open_Sans, Domine} from '@next/font/google'
+
+const openSans = Open_Sans({subsets: ['latin'], variable: '--font-open'},)
 
 const theme = {
     colors: {
@@ -9,6 +12,7 @@ const theme = {
     },
 }
 
+
 function MyApp({Component, pageProps}) {
 
 
@@ -16,7 +20,9 @@ function MyApp({Component, pageProps}) {
         <ChakraProvider>
             <ThemeProvider theme={theme}>
                 <GlobalStyle/>
-                <Component {...pageProps} />
+                <main className={`${openSans.className} ${openSans.variable} font-sans`}>
+                    <Component {...pageProps} />
+                </main>
             </ThemeProvider>
         </ChakraProvider>
     )

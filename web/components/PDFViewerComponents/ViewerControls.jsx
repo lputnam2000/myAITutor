@@ -31,6 +31,7 @@ const Input = styled.input`
   border-radius: 5px;
   font-weight: bold;
   text-align: center;
+
 `
 
 const Span = styled.span`
