@@ -11,6 +11,13 @@ module.exports = {
   ],
   theme: {
     extend: {},
+    colors: {
+      cbwhite: '#FBFBFF',
+      cbpink: "#FF1F8F",
+      cbblue: "#1FDDFF",
+      cbgreen: "#39FF14",
+      cbblack: "#000000",
+    },
   },
   plugins: [],
 }
