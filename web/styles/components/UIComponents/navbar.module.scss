@@ -1,6 +1,6 @@
 .navbar {
     margin-top: 0%;
-    background: #000000;
+    background: #1FDDFF;
     display: flex;
     flex-direction: row;
     margin: 0;
@@ -30,8 +30,27 @@
     }
 }
 
+.monkeyIcon {
+    display: inline;
+    width: 1rem;
+    height: 1rem;
+    margin: auto auto auto auto ;
+    overflow: scroll;
+    scale: 4;
+    translate: 0px -0px;
+}
+@media (max-width: 800px) {
+    .monkeyIcon {
+        width: 0px;
+        height: 0px;
+        visibility: hidden;
+    }
+}
+
 .logo {
     color: #FBFBFF;
+    font-weight: 500;
+    white-space: nowrap;
 }
 @media (max-width: 800px) {
     .logo {

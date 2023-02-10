@@ -94,8 +94,9 @@ function Navbar() {
     <>
       <div className={styles.navbar}>
         <div className={styles.basebar}>    
-          <div className="tw-text-center sm:tw-text-left tw-px-2 tw-flex flex-col tw-flex-wrap tw-content-center tw-text-white tw-font-thin tw-text-3xl tw-flex-grow "><h1 className={`tw-block tw-w-full ${styles.logo}`}>ChimpBase</h1></div>
-          <div className={styles.grower} />
+          <div className="tw-flex tw-flex-row tw-text-center sm:tw-text-left tw-px-2 tw-flex-wrap tw-content-center tw-text-white tw-font-thin tw-text-3xl tw-flex-grow "><h1 className={`tw-block tw-w-full ${styles.logo}`}>ChimpBase</h1></div>
+          <object className={styles.monkeyIcon} data={"/svg/bananas.svg"} />
+          <div className={styles.grower}/>
           <div className={styles.navlinks} ref={links}>
             {buttonContent}
           </div>
