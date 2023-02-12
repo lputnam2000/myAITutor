@@ -4,6 +4,34 @@ import { Card, CardHeader, CardBody, CardFooter, Text } from '@chakra-ui/react'
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons'
 import styles from '/styles/home.module.scss'
 
+import Upload from "../components/UIComponents/Upload";
+
+const sendS3 = (file) => {
+
+    const requestObject = {
+        method:'POST' ,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({
+            "fileName": "name1",
+            "fileType": "application/pdf"
+        })
+    }
+
+    fetch('/api/getUploadURL',requestObject)
+        .then(res => res.json())
+        .then(data => {
+            fetch(data["signedUrl"] , {
+                headers: {'content-type': 'application/pdf'},
+                method:'PUT',
+                body:file,
+            }).then((res) => {
+                return res.text()
+            }).then((txt) => {console.log(txt)})
+    })
+
+}
 
 export default function home() {
     return (
@@ -81,11 +109,11 @@ export default function home() {
                                 </div>
                             </div>
                         </div>
-                        <div className={`tw-bg-cbblue tw-row-start-2 tw-row-span-2`}>
-                            hi
-                        </div>
+                        
                         <div className={`tw-col-start-2 tw-col-span-2 tw-row-start-2 tw-row-span-2 tw-h-full tw-w-full tw-grid tw-grid-cols-3 tw-grid-rows-3 tw-grid-flow-row tw-place-content-evenly tw-gap-3`}>
-
+                            <div className={`tw-col-start-2 tw-col-span-1 tw-row-span-2 tw-h-full`}>
+                                <Upload handleFile={sendS3}></Upload>
+                            </div>
                         </div>
                     </div>
                 </div>
