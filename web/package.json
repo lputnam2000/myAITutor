@@ -15,6 +15,7 @@
     "@emotion/styled": "^11.10.5",
     "@next-auth/mongodb-adapter": "^1.1.1",
     "@next/font": "13.1.6",
+    "aws-sdk": "^2.1313.0",
     "eslint": "8.33.0",
     "eslint-config-next": "13.1.6",
     "framer-motion": "^9.0.0",
