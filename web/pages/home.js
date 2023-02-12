@@ -7,6 +7,10 @@ import styles from '/styles/home.module.scss'
 import Upload from "../components/UIComponents/Upload";
 
 const sendS3 = (file) => {
+    if (!file) {
+        console.log("no file was found")
+        return
+    }
 
     const requestObject = {
         method:'POST' ,
@@ -14,8 +18,8 @@ const sendS3 = (file) => {
             'Content-Type': 'application/json',
         },
         body:JSON.stringify({
-            "fileName": "name1",
-            "fileType": "application/pdf"
+            "fileName":  file.name,
+            "fileType": file.type,
         })
     }
 
@@ -23,7 +27,7 @@ const sendS3 = (file) => {
         .then(res => res.json())
         .then(data => {
             fetch(data["signedUrl"] , {
-                headers: {'content-type': 'application/pdf'},
+                headers: {'content-type': file.type},
                 method:'PUT',
                 body:file,
             }).then((res) => {
