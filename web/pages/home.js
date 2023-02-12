@@ -41,8 +41,8 @@ export default function home() {
     return (
         <>
             <Navbar />
-            <div className="tw-min-w-full tw-font-mono tw-bg-cbblack">
-                <div className={`tw-w-2/3 tw-min-h-screen tw-mx-auto tw-bg-cbwhite`}>
+            <div className="tw-min-w-full tw-font-mono tw-bg-cbpink tw-py-5">
+                <div className={`tw-w-2/3 tw-min-h-screen tw-mx-auto`}>
                     <div className={`tw-w-full tw-h-screen tw-grid tw-grid-cols-3 tw-grid-rows-3`}>
                         <div className={`tw-row-start-1 tw-col-start-1 tw-col-span-3`}>
                             <div className="tw-flex tw-flex-row tw-h-fit">
@@ -115,7 +115,7 @@ export default function home() {
                         </div>
                         
                         <div className={`tw-col-start-2 tw-col-span-2 tw-row-start-2 tw-row-span-2 tw-h-full tw-w-full tw-grid tw-grid-cols-3 tw-grid-rows-3 tw-grid-flow-row tw-place-content-evenly tw-gap-3`}>
-                            <div className={`tw-col-start-2 tw-col-span-1 tw-row-span-2 tw-h-full`}>
+                            <div className={`tw-col-start-0 tw-row-start-0 tw-col-span-3 tw-row-span-3 tw-h-full tw-mx-1`}>
                                 <Upload handleFile={sendS3}></Upload>
                             </div>
                         </div>
