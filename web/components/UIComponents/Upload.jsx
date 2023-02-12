@@ -46,8 +46,8 @@ const Container = styled.div`
     background-color: ${theme.blue};
     transition: transform ease .5s, box-shadow ease .5s;
     &:hover {
-        transform: translate(-0.125rem, -0.125rem);
-        box-shadow: .125rem .125rem 0px rgba(0,0,0,1);
+        transform: translate(-0.3rem, -0.3rem);
+        box-shadow: .2rem .2rem 0px rgba(0,0,0,1);
     }
     &:hover ${Directions} {
         color: ${theme.blue};
@@ -86,6 +86,7 @@ export default function Upload({ handleFile }) {
     const handleFileChange = event => {
         const fileUploaded = event.target.files[0];
         handleFile(fileUploaded);
+        onClose();
     };
 
     return (<>

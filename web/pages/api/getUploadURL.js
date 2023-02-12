@@ -48,26 +48,30 @@ async function generateRecord(session, fileName) {
                 if (err) {
                     console.log(err);
                 } else {
-                    console.log("Record added:");
+                    console.log("Record added");
                 }
             });
+            uploads.updateOne(
+                record,
+                { $set: { "uploads": [{ uuid, title }] } },
+                { upsert: true }
+            );
         } else {
             console.log("Record already exists:", result);
+            var currentData = uploads.count({ 'userid': owner }, { limit: 1 })
+            if (currentData && currentData.uploads) {
+                while (currentData.uploads.includes(uuid)) {
+                    uuid = uuidv4();
+                }
+            }
+
+            uploads.update(record, {
+                $push: { "uploads": { uuid, title } }
+            })
         }
     });
 
-    var currentData = await uploads.count({ 'userid': owner }, { limit: 1 })
-    if (currentData && currentData.uploads) {
-        while (currentData.uploads.includes(uuid)) {
-            uuid = uuidv4();
-        }
-    }
 
-    uploads.update({
-        userid: owner
-    }, {
-        $push: { "uploads": { uuid, title } }
-    })
 
     var fullyQualifiedName = owner + "-" + uuid;
     return fullyQualifiedName
