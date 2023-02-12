@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import {pdfjs} from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
-import PDFViewerContextProvider from "@/components/PDFViewerComponents/context";
-import PDFViewerWithSummary from "@/components/PDFViewerComponents/PDFViewerWithSummary";
+import PDFViewerContextProvider from "../components/PDFViewerComponents/context";
+import PDFViewerWithSummary from "../components/PDFViewerComponents/PDFViewerWithSummary";
 
 
 const Container = styled.div`

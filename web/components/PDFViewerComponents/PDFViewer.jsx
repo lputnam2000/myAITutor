@@ -1,7 +1,8 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Document, Page} from "react-pdf";
 import styled from "styled-components";
-import {PDFViewerContext} from "@/components/PDFViewerComponents/context";
+import {PDFViewerContext} from "./context";
+import ViewerControls from "./ViewerControls";
 
 const StyledPage = styled(Page)`
   margin-bottom: 7px;
@@ -50,6 +51,8 @@ function PdfViewer({pdfFile}) {
 
     return (
         <Container>
+
+            <ViewerControls pageWidth={width}/>
             <Document
                 file={pdfFile}
                 onLoadSuccess={onDocumentLoadSuccess}
