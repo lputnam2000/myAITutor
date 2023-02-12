@@ -24,8 +24,8 @@ def parsePDF():
     for i in range(startingPageNumber-1, endingPageNumber):
         page = reader.pages[]
         extractedText.append(page.extract_text()) 
-    
-    
+
+
     resp = {
         extractedText: extractedText
     }
