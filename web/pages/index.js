@@ -71,7 +71,7 @@ export default function Home() {
             setEmailErrorMessage('')
         }
         axios
-            .post("/api/waitingList/", {
+            .post("/api/waitingList", {
                 email,
             })
             .then((res) => {
@@ -103,9 +103,10 @@ export default function Home() {
                         <FormControl>
                             <FormLabel>Email address</FormLabel>
                             <Input isInvalid={emailErrorMessage !== ''} value={email}
-                                   onChange={(e) => setEmail(e.target.value)} focusBorderColor={'black'}
+                                   onChange={(e) => setEmail(e.target.value)} borderColor={'black'
+                            } focusBorderColor={'black'}
                                    type='email'/>
-                            <FormHelperText>W&apos;ll never share your email.</FormHelperText>
+                            <FormHelperText>We&apos;ll never share your email.</FormHelperText>
                         </FormControl>
                         <Submit onClick={submitEntry}>
                             Join the Chimp Squad

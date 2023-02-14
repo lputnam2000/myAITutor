@@ -1,5 +1,3 @@
-import {prisma} from "../../../db";
-
 const requestHandler = (req, res) => {
     if (req.method == "POST") {
         console.log(req.body.email)
