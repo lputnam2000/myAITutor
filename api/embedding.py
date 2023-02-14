@@ -19,21 +19,14 @@ EMBEDDING_MODEL = "text-embedding-ada-002"
 def get_text(pdf, starting_page, ending_page):
     reader = PdfReader(pdf)
     number_of_pages = len(reader.pages)
-    # extractedText = ""
-    text = {}
+    extractedText = ""
     for i in range(starting_page-1, ending_page):
         page = reader.pages[i]
-        # extractedText += page.extract_text() 
-        text[i] = page.extract_text()
-    return text
+        extractedText += page.extract_text() 
+    return extractedText
 
 def get_documents(pdf, starting_page, ending_page):
     text = get_text(pdf, starting_page, ending_page)
-    with open('ex.txt', 'w') as f:
-        import json
-        f.write(json.dumps(text))
-        print(text)
-    exit()
     text_splitter = CharacterTextSplitter.from_tiktoken_encoder(chunk_size=500, chunk_overlap=0, separator='.')
     docs = text_splitter.split_text(text)
     return docs
@@ -47,7 +40,7 @@ def get_embedding(text: str, model: str=EMBEDDING_MODEL):
 
 
 # Get the Documents
-docs = get_documents('ex.pdf', 1, 3)
+docs = get_documents('ex2.pdf', 6, 42)
 print('Parsed Documents')
 # Create A PineCone Index
 index_name = 'openai-ex12'

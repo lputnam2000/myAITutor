@@ -1,28 +1,28 @@
-import clientPromise from "../../lib/mongodb";
+import {prisma} from "../../../db";
 
-const requestHandler = async (req, res) => {
-    if (req.method === "POST") {
-        try {
-            const client = await clientPromise
-            const db = client.db('data');
-            const collection = db.collection('waiting_list');
-            const email = req.body.email;
-
-            collection.insertOne({email}, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(400).json({'error': 'MongoDB is Down'})
-
-                }
-                console.log('Email inserted successfully:', email);
-            });
-            return res.status(200).json({'message': 'Email Inserted Successfully'})
-        } catch (e) {
-            console.error(e);
-            return res.status(400).json({'error': e}).end()
-        }
+const requestHandler = (req, res) => {
+    if (req.method == "POST") {
+        console.log(req.body.email)
+        // let user = prisma.user
+        //     .create({
+        //         data: {
+        //             name: req.body.name,
+        //             email: req.body.email,
+        //         },
+        //     })
+        //     .then(async () => {
+        //         await prisma.$disconnect();
+        //         res.status(200).json({ok: "ok"});
+        //         return;
+        //     })
+        //     .catch(async (e) => {
+        //         console.error(e);
+        //         await prisma.$disconnect();
+        //         res.status(400).json({error: e});
+        //         return;
+        //     });
     } else {
-        return res.status(404).json({message: "URL Not Found"});
+        res.status(200).json({name: "John Doe"});
     }
 };
 
