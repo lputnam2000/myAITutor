@@ -6,13 +6,13 @@ import {PDFViewerContext} from "./context";
 import Summary from "./Summary";
 import PDFViewer from "./PDFViewer";
 
+
 const Container = styled.div`
   background-color: whitesmoke;
-  min-height: 100vh;
+  //min-height: 100vh;
   display: flex;
   flex-direction: column;
   padding-top: 40px;
-
 `
 
 const StyledPage = styled(Page)`
