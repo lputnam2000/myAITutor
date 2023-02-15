@@ -13,6 +13,7 @@ const Container = styled.div`
   border: 2px black solid;
   height: 750px;
   width: 80%;
+  padding: 2px;
   padding-bottom: 32px;
   border-radius: 3px;
 
