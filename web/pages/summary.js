@@ -71,7 +71,6 @@ export default function Summary() {
                     :
                     <input type="file" accept=".pdf" onChange={handleFileInput} name="" id=""/>
             }
-
         </Container>
     )
 }

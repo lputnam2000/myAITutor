@@ -1,12 +1,12 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useContext, useEffect, useRef} from 'react';
 import styled from "styled-components";
 import {Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
+import { PDFViewerContext } from "./context";
 
 const Container = styled.div`
   //flex: 1;
   width: 40vw;
   overflow-y: auto;
-  margin-top: 10px;
   margin-right: 20px;
   border: 2px black solid;
   border-radius: 3px;
@@ -16,6 +16,7 @@ const Container = styled.div`
     box-shadow: 5px 5px 0px #000000;
     transition: box-shadow 0.1s ease-in-out;
   }
+  overflow: hidden;
 `
 
 const SubHeading = styled.div`
@@ -26,9 +27,24 @@ const SubHeading = styled.div`
 const SummaryText = styled.div`
 `
 const SummaryContainer = styled.div`
+  overflow: scroll;
+  max-height: 100vh;
 `
 
 function Summary({summaryJson}) {
+    const {scrollPosition} = useContext(PDFViewerContext);
+    const summaryContainerRef = useRef();
+
+    function handleSummaryScroll(e) {
+        console.log("hello ")
+    }
+
+    useEffect(
+        () => {
+            //Nop for now
+        }
+        , [scrollPosition]
+    );
 
     const SummaryPanel = useMemo(() => {
         let panelOutput = []
@@ -60,7 +76,7 @@ function Summary({summaryJson}) {
 
                 <TabPanels>
                     <TabPanel>
-                        <SummaryContainer>
+                        <SummaryContainer ref={summaryContainerRef} onScroll={handleSummaryScroll}>
                             {SummaryPanel}
                         </SummaryContainer>
                     </TabPanel>
