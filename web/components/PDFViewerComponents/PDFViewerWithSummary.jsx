@@ -5,7 +5,7 @@ import ViewerControls from "./ViewerControls";
 import {PDFViewerContext} from "./context";
 import Summary from "./Summary";
 import PDFViewer from "./PDFViewer";
-import summaryJson from '/public/summary.json'
+import readingIndicatorPlugin from "./ReadingIndicatorPlugin"
 
 
 const Container = styled.div`
@@ -35,6 +35,11 @@ function PdfViewerWithSummary({pdfFile}) {
 
     const {numPages, setNumPages, pageNumber, setPageNumber, pagesRef, getPagesMap} = useContext(PDFViewerContext);
     // const pagesRef = useRef([]);
+
+    const scrollCallback = (e) => {console.log("scrolled")}
+    const readingIndicatorPluginInstance = readingIndicatorPlugin();
+    const { ReadingIndicator } = readingIndicatorPluginInstance;
+
 
     const handleStartingPageNumber = (e) => {
         if (e.target.value >= 0 && e.target.value <= numPages) {
@@ -77,18 +82,48 @@ function PdfViewerWithSummary({pdfFile}) {
         }
     }
 
+    
+
 
     return (
         <Container>
+            {/*<div>*/}
+            {/*    <p>*/}
+            {/*        /!*<div>*!/*/}
+            {/*        /!*    Staring Page Number to Summarize :*!/*/}
+            {/*        /!*    <Input type="number" name="" id="" value={startingPageNumber}*!/*/}
+            {/*        /!*           onChange={handleStartingPageNumber}/>*!/*/}
+            {/*        /!*</div>*!/*/}
+            {/*        /!*<div>*!/*/}
+            {/*        /!*    Ending Page Number to Summarize: <Input type="number" name="" id="" value={endingPageNumber}*!/*/}
+            {/*        /!*                                            onChange={handleEndingPageNumber}/>*!/*/}
+            {/*        /!*</div>*!/*/}
+            {/*        Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}*/}
+            {/*    </p>*/}
+            {/*    <button*/}
+            {/*        type="button"*/}
+            {/*        disabled={pageNumber <= 1}*/}
+            {/*        onClick={previousPage}*/}
+            {/*    >*/}
+            {/*        Previous*/}
+            {/*    </button>*/}
+            {/*    <button*/}
+            {/*        type="button"*/}
+            {/*        disabled={pageNumber >= numPages}*/}
+            {/*        onClick={nextPage}*/}
+            {/*    >*/}
+            {/*        Next*/}
+            {/*    </button>*/}
+            {/*</div>*/}
             <InnerContainer>
+                <ReadingIndicator/>
                 <PDFViewerContainer>
                     <PDFViewer pdfFile={pdfFile}/>
                 </PDFViewerContainer>
-                <Summary summaryJson={summaryJson}/>
+                <Summary/>
             </InnerContainer>
         </Container>
     );
 }
-
 
 export default PdfViewerWithSummary;
