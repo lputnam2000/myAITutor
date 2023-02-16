@@ -1,12 +1,13 @@
 import {createContext, createRef, useEffect, useRef, useState} from "react";
+import React from 'react';
+
 
 export const PDFViewerContext = createContext();
-
-import React from 'react';
 
 function PDFViewerContextProvider({children}) {
     const [numPages, setNumPages] = useState(1);
     const [pageNumber, setPageNumber] = useState(1);
+    const [scrollPosition, setScrollPosition] = useState(0);
 
     const pagesRef = useRef(null);
     const getPagesMap = () => {
@@ -36,6 +37,8 @@ function PDFViewerContextProvider({children}) {
 
     return (
         <PDFViewerContext.Provider value={{
+            scrollPosition,
+            setScrollPosition,
             numPages,
             setNumPages,
             pageNumber,

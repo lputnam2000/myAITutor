@@ -1,8 +1,8 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Document, Page} from "react-pdf";
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Document, Page } from "react-pdf";
 import styled from "styled-components";
 import ViewerControls from "./ViewerControls";
-import {PDFViewerContext} from "./context";
+import PDFViewerContextProvider, { PDFViewerContext } from "./context";
 import Summary from "./Summary";
 import PDFViewer from "./PDFViewer";
 import readingIndicatorPlugin from "./ReadingIndicatorPlugin"
@@ -30,14 +30,14 @@ const PDFViewerContainer = styled.div`
   flex: 1;
 `
 
-function PdfViewerWithSummary({pdfFile}) {
+function PdfViewerWithSummary({ pdfFile }) {
     const [startingPageNumber, setStartingPageNumber] = useState(0);
     const [endingPageNumber, setEndingPageNumber] = useState(0)
 
-    const {numPages, setNumPages, pageNumber, setPageNumber, pagesRef, getPagesMap} = useContext(PDFViewerContext);
+    const { numPages, setNumPages, pageNumber, setPageNumber, pagesRef, getPagesMap } = useContext(PDFViewerContext);
     // const pagesRef = useRef([]);
 
-    const scrollCallback = (e) => {console.log("scrolled")}
+    const scrollCallback = (e) => { console.log("scrolled") }
     const readingIndicatorPluginInstance = readingIndicatorPlugin();
     const { ReadingIndicator } = readingIndicatorPluginInstance;
 
@@ -58,7 +58,7 @@ function PdfViewerWithSummary({pdfFile}) {
         setPageNumber(prevPageNumber => prevPageNumber + offset);
     }
 
-    function onDocumentLoadSuccess({numPages}) {
+    function onDocumentLoadSuccess({ numPages }) {
         setNumPages(numPages);
         setPageNumber(1);
         // pagesRef.current = pagesRef.current.slice(0, numPages)
@@ -83,17 +83,19 @@ function PdfViewerWithSummary({pdfFile}) {
         }
     }
 
-    
+
 
 
     return (
         <Container>
             <InnerContainer>
-                <ReadingIndicator/>
-                <PDFViewerContainer>
-                    <PDFViewer pdfFile={pdfFile}/>
-                </PDFViewerContainer>
-                <Summary summaryJson={summaryJson}/>
+                <PDFViewerContextProvider>
+                    <ReadingIndicator />
+                    <PDFViewerContainer>
+                        <PDFViewer pdfFile={pdfFile} />
+                    </PDFViewerContainer>
+                    <Summary summaryJson={summaryJson} />
+                </PDFViewerContextProvider>
             </InnerContainer>
         </Container>
     );

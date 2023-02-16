@@ -1,7 +1,10 @@
-import * as React from 'react';
+import React, {useContext} from 'react';
+
 import { Store } from '@react-pdf-viewer/core';
 
 import StoreProps from './StoreProps';
+import { PDFViewerContext } from "./context";
+
 
 interface ReadingIndicatorProps {
     store: Store<StoreProps>;
@@ -9,12 +12,15 @@ interface ReadingIndicatorProps {
 
 const ReadingIndicator: React.FC<ReadingIndicatorProps> = ({ store }) => {
     const [percentages, setPercentages] = React.useState(0);
+    const {setScrollPosition} = useContext(PDFViewerContext);
+    
 
     const handleScroll = (e: Event) => {
         const target = e.target;
         if (target instanceof HTMLDivElement) {
             const p = Math.floor((100 * target.scrollTop) / (target.scrollHeight - target.clientHeight));
             setPercentages(Math.min(100, p));
+            setScrollPosition((100 * target.scrollTop) / (target.scrollHeight - target.clientHeight));
         }
     };
 
