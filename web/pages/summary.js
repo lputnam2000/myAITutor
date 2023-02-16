@@ -18,6 +18,7 @@ import HomeNavbar from "../components/HomeNavbar";
 
 export default function Summary() {
     // const defaultLayoutPluginInstance = defaultLayoutPlugin();
+    
 
     useEffect(() => {
         pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
