@@ -7,6 +7,7 @@ import Summary from "./Summary";
 import PDFViewer from "./PDFViewer";
 import readingIndicatorPlugin from "./ReadingIndicatorPlugin"
 
+import summaryJson from '/public/summary.json'
 
 const Container = styled.div`
   background-color: whitesmoke;
@@ -87,43 +88,16 @@ function PdfViewerWithSummary({pdfFile}) {
 
     return (
         <Container>
-            {/*<div>*/}
-            {/*    <p>*/}
-            {/*        /!*<div>*!/*/}
-            {/*        /!*    Staring Page Number to Summarize :*!/*/}
-            {/*        /!*    <Input type="number" name="" id="" value={startingPageNumber}*!/*/}
-            {/*        /!*           onChange={handleStartingPageNumber}/>*!/*/}
-            {/*        /!*</div>*!/*/}
-            {/*        /!*<div>*!/*/}
-            {/*        /!*    Ending Page Number to Summarize: <Input type="number" name="" id="" value={endingPageNumber}*!/*/}
-            {/*        /!*                                            onChange={handleEndingPageNumber}/>*!/*/}
-            {/*        /!*</div>*!/*/}
-            {/*        Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}*/}
-            {/*    </p>*/}
-            {/*    <button*/}
-            {/*        type="button"*/}
-            {/*        disabled={pageNumber <= 1}*/}
-            {/*        onClick={previousPage}*/}
-            {/*    >*/}
-            {/*        Previous*/}
-            {/*    </button>*/}
-            {/*    <button*/}
-            {/*        type="button"*/}
-            {/*        disabled={pageNumber >= numPages}*/}
-            {/*        onClick={nextPage}*/}
-            {/*    >*/}
-            {/*        Next*/}
-            {/*    </button>*/}
-            {/*</div>*/}
             <InnerContainer>
                 <ReadingIndicator/>
                 <PDFViewerContainer>
                     <PDFViewer pdfFile={pdfFile}/>
                 </PDFViewerContainer>
-                <Summary/>
+                <Summary summaryJson={summaryJson}/>
             </InnerContainer>
         </Container>
     );
 }
+
 
 export default PdfViewerWithSummary;
