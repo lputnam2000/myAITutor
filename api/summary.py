@@ -103,6 +103,10 @@ def make_gpt_summary(text, context=None):
             stop=["];"],
         )
         textResp = '[' + response.choices[0]['text']
+        import pdb
+        pdb.set_trace()
+        jsonResp = json.loads(textResp)
+
         return json.loads(textResp)
 
 
@@ -175,6 +179,6 @@ def get_summary(pdf='ex2.pdf', start_page=6, end_page=8):
     return summary
 
 if __name__ == "__main__":
-    s = get_summary()
+    s = get_summary('ex4.pdf', 1, 21)
     with open('summary.json', 'w') as f:
         json.dump(s, f)
