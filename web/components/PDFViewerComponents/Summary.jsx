@@ -5,11 +5,12 @@ import {Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
 const Container = styled.div`
   //flex: 1;
   width: 40vw;
-
+  overflow-y: auto;
   margin-top: 10px;
   margin-right: 20px;
   border: 2px black solid;
   border-radius: 3px;
+  height: 750px;
 
   &:hover {
     box-shadow: 5px 5px 0px #000000;
@@ -24,7 +25,8 @@ const SubHeading = styled.div`
 `
 const SummaryText = styled.div`
 `
-
+const SummaryContainer = styled.div`
+`
 
 function Summary({summaryJson}) {
 
@@ -58,7 +60,9 @@ function Summary({summaryJson}) {
 
                 <TabPanels>
                     <TabPanel>
-                        {SummaryPanel}
+                        <SummaryContainer>
+                            {SummaryPanel}
+                        </SummaryContainer>
                     </TabPanel>
                     <TabPanel>
                         <p>Search</p>
