@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import styled from "styled-components";
 import {Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
 
@@ -8,23 +8,57 @@ const Container = styled.div`
 
   margin-top: 10px;
   margin-right: 20px;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  border: 2px black solid;
+  border-radius: 3px;
 
+  &:hover {
+    box-shadow: 5px 5px 0px #000000;
+    transition: box-shadow 0.1s ease-in-out;
+  }
+`
+
+const SubHeading = styled.div`
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 5px;
+`
+const SummaryText = styled.div`
 `
 
 
-function Summary(props) {
+function Summary({summaryJson}) {
+
+    const SummaryPanel = useMemo(() => {
+        let panelOutput = []
+        for (let i = 0; i < summaryJson.length; i++) {
+            console.log(summaryJson[i][2])
+            for (let j = 0; j < summaryJson[i][2].length; j++) {
+                panelOutput.push(
+                    <>
+                        <SubHeading key={`${i}-${j}-0`}>
+                            {summaryJson[i][2][j][0]}
+                        </SubHeading>
+                        <SummaryText key={`${i}-${j}-1`}>
+                            {summaryJson[i][2][j][1]}
+                        </SummaryText>
+                    </>
+                )
+            }
+        }
+        return panelOutput
+    }, [summaryJson]);
+
     return (
         <Container>
             <Tabs variant='enclosed' isFitted>
                 <TabList>
-                    <Tab _selected={{color: 'black', bg: '#FFFF99'}}>Summary</Tab>
-                    <Tab _selected={{color: 'black', bg: '#FFFF99'}}>Search</Tab>
+                    <Tab _selected={{color: 'white', bg: 'black'}}>Summary</Tab>
+                    <Tab _selected={{color: 'white', bg: 'black'}}>Search</Tab>
                 </TabList>
 
                 <TabPanels>
                     <TabPanel>
-                        <p>Summary</p>
+                        {SummaryPanel}
                     </TabPanel>
                     <TabPanel>
                         <p>Search</p>
