@@ -5,6 +5,7 @@ import ViewerControls from "./ViewerControls";
 import {PDFViewerContext} from "./context";
 import Summary from "./Summary";
 import PDFViewer from "./PDFViewer";
+import readingIndicatorPlugin from "./ReadingIndicatorPlugin"
 
 
 const Container = styled.div`
@@ -34,6 +35,11 @@ function PdfViewerWithSummary({pdfFile}) {
 
     const {numPages, setNumPages, pageNumber, setPageNumber, pagesRef, getPagesMap} = useContext(PDFViewerContext);
     // const pagesRef = useRef([]);
+
+    const scrollCallback = (e) => {console.log("scrolled")}
+    const readingIndicatorPluginInstance = readingIndicatorPlugin();
+    const { ReadingIndicator } = readingIndicatorPluginInstance;
+
 
     const handleStartingPageNumber = (e) => {
         if (e.target.value >= 0 && e.target.value <= numPages) {
@@ -76,6 +82,8 @@ function PdfViewerWithSummary({pdfFile}) {
         }
     }
 
+    
+
 
     return (
         <Container>
@@ -108,6 +116,7 @@ function PdfViewerWithSummary({pdfFile}) {
             {/*    </button>*/}
             {/*</div>*/}
             <InnerContainer>
+                <ReadingIndicator/>
                 <PDFViewerContainer>
                     <PDFViewer pdfFile={pdfFile}/>
                 </PDFViewerContainer>

@@ -6,6 +6,8 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 import {toolbarPlugin} from '@react-pdf-viewer/toolbar';
 import '@react-pdf-viewer/toolbar/lib/styles/index.css';
 import styled from 'styled-components'
+import readingIndicatorPlugin from "./ReadingIndicatorPlugin"
+
 
 const Container = styled.div`
   margin-left: 30px;
@@ -27,6 +29,9 @@ function PdfViewer({pdfFile}) {
     const dropPluginInstance = dropPlugin();
     const toolbarPluginInstance = toolbarPlugin();
     const {renderDefaultToolbar, Toolbar} = toolbarPluginInstance;
+    const readingIndicatorPluginInstance = readingIndicatorPlugin();
+    const { ReadingIndicator } = readingIndicatorPluginInstance;
+
 
     const transform = (slot) => ({
         ...slot,
@@ -47,8 +52,9 @@ function PdfViewer({pdfFile}) {
             <Container>
                 <Toolbar>{renderDefaultToolbar(transform)}</Toolbar>
                 <Viewer fileUrl={pdfFile}
-                        plugins={[toolbarPluginInstance]}/>
+                        plugins={[toolbarPluginInstance, readingIndicatorPluginInstance]}/>
             </Container>
+            <ReadingIndicator />
         </Worker>
     );
 }
