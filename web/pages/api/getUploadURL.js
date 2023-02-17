@@ -5,13 +5,13 @@ import { authOptions } from 'pages/api/auth/[...nextauth]'
 import clientPromise from "/lib/mongodb"
 import { v4 as uuidv4 } from 'uuid';
 
-const S3_BUCKET = process.env.AWS_UPLOAD_BUCKET;
-const REGION = process.env.AWS_REGION;
+const S3_BUCKET = process.env.CB_AWS_UPLOAD_BUCKET;
+const REGION = process.env.CB_AWS_REGION;
 const URL_EXPIRATION_TIME = 60; // in seconds
 
 const myBucket = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_ID,
-    secretAccessKey: process.env.AWS_ACCESS_KEY,
+    accessKeyId: process.env.CB_AWS_ACCESS_ID,
+    secretAccessKey: process.env.CB_AWS_ACCESS_KEY,
     params: { Bucket: S3_BUCKET },
     region: REGION,
 })
