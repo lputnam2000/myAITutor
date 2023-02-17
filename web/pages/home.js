@@ -63,7 +63,7 @@ const sendS3 = (file) => {
 }
 
 export default function home() {
-    return(
+    return (
         <>
             <Navbar />
             <div className="tw-min-w-full tw-font-mono tw-bg-cbblue tw-py-5">
