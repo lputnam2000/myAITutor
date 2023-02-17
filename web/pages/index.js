@@ -61,11 +61,13 @@ const Main = styled.main`
 export default function Home() {
     const [email, setEmail] = useState('');
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
+    const [emailHelperMessage, setEmailHelperMessage] = useState('We\'ll never share your email.');
     const submitEntry = () => {
         const emailRegex =
             /^(?=[a-z0-9@._%+-]{6,254}$)[a-z0-9._%+-]{1,64}@(?:[a-z0-9-]{1,63}\.){1,8}[a-z]{2,63}$/;
         if (!emailRegex.test(email.toLowerCase())) {
             setEmailErrorMessage("invalid email");
+            setEmailHelperMessage('Invalid Email')
             return;
         } else {
             setEmailErrorMessage('')
@@ -75,9 +77,13 @@ export default function Home() {
                 email,
             })
             .then((res) => {
-                console.log(res);
-                setJoinedWaitlist(true)
-            });
+                setEmailErrorMessage('')
+                setEmailHelperMessage(
+                    'You have been added to the waiting list!')
+            }).catch(err => {
+            setEmailErrorMessage('')
+            setEmailHelperMessage('Error adding email to waiting list.')
+        },);
     }
 
 
@@ -106,7 +112,7 @@ export default function Home() {
                                    onChange={(e) => setEmail(e.target.value)} borderColor={'black'
                             } focusBorderColor={'black'}
                                    type='email'/>
-                            <FormHelperText>We&apos;ll never share your email.</FormHelperText>
+                            <FormHelperText>{emailHelperMessage}</FormHelperText>
                         </FormControl>
                         <Submit onClick={submitEntry}>
                             Join the Chimp Squad
