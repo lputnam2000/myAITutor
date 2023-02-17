@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "/pages/api/auth/[...nextauth]"
+import { authOptions } from "./pages/api/auth/[...nextauth]"
 import { getToken } from "next-auth/jwt";
 
 const requireAuth: string[] = ["/home"];
