@@ -1,10 +1,33 @@
 import Navbar from "../components/UIComponents/Navbar";
 import React, {useEffect, useState} from "react";
 import styled from 'styled-components'
-
+import axios from "axios";
 import Upload from "../components/UIComponents/Upload";
 import PDFCard from "../components/PDFCard";
-import axios from "axios";
+import AWS from 'aws-sdk'
+
+const S3_BUCKET = 'chimppdfstore';
+const REGION = 'us-east-1';
+const URL_EXPIRATION_TIME = 60; // in seconds
+AWS.config.update({signatureVersion: 'v4'})
+const myBucket = new AWS.S3({
+    accessKeyId: 'AKIA6NDMNPBRA4VZTMO6',
+    secretAccessKey: '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',
+    params: {Bucket: S3_BUCKET},
+    region: REGION,
+})
+
+function generatePreSignedPutUrl(fileName, fileType) {
+    let result = myBucket.getSignedUrlPromise('putObject', {
+        Key: fileName,
+        ContentType: fileType,
+        Expires: URL_EXPIRATION_TIME,
+    }).then((url) => {
+        console.log('url', url)
+        return url
+    })
+    return result
+}
 
 const sendS3 = (file) => {
     if (!file) {
@@ -62,7 +85,6 @@ export default function Home() {
     useEffect(() => {
         axios.get('/api/user/uploads').then((res) => {
             setUserUploads(res.data['uploads'])
-            console.log(res.data['uploads'])
         }).catch((err) => {
             console.log(err)
         })

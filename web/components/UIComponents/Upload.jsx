@@ -91,7 +91,7 @@ export default function Upload({handleFile}) {
     return (<>
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay/>
-            <ModalContent bg={theme.primary} sx={{'border': 'solid', 'border-width': '3px'}}>
+            <ModalContent bg={theme.primary} sx={{'border': 'solid', 'borderWidth': '3px'}}>
                 <ModalHeader color={theme.secondary}>Upload a PDF</ModalHeader>
                 <ModalBody>
                     <PopButton bg={theme.secondary} onClick={handleFileButtonClick}>
