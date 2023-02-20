@@ -1,0 +1,30 @@
+import weaviate
+import json
+import requests
+import tiktoken
+import json
+from nltk import tokenize
+import fitz
+import time
+
+ENCODER = tiktoken.get_encoding("gpt2")
+OPEN_AI_KEY = "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"
+
+def get_client() -> weaviate.Client:
+    resource_owner_config = weaviate.AuthClientPassword(
+    username = "aryamanparekh12@gmail.com", 
+    password = "pBCjEiL6GGN5fjQ", 
+    scope = "offline_access"
+    )
+    return weaviate.Client(
+      url = "https://chimpbase.weaviate.network/",
+      auth_client_secret=resource_owner_config,
+          additional_headers = {
+        "X-OpenAI-Api-Key": OPEN_AI_KEY
+    }
+    )
+
+client = get_client()
+for cl in client.schema.get()['classes']:
+    print(cl['class'])
+    client.schema.delete_all()
