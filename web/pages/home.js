@@ -1,10 +1,10 @@
 import Navbar from "../components/UIComponents/Navbar";
-import React, { useRef, useState } from "react";
-import { Card, CardHeader, CardBody, CardFooter, Text } from '@chakra-ui/react'
-import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons'
-import styles from '/styles/home.module.scss'
+import React, {useEffect, useState} from "react";
+import styled from 'styled-components'
 
 import Upload from "../components/UIComponents/Upload";
+import PDFCard from "../components/PDFCard";
+import axios from "axios";
 
 const sendS3 = (file) => {
     if (!file) {
@@ -13,43 +13,78 @@ const sendS3 = (file) => {
     }
 
     const requestObject = {
-        method:'POST' ,
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body:JSON.stringify({
-            "fileName":  file.name,
+        body: JSON.stringify({
+            "fileName": file.name,
             "fileType": file.type,
         })
     }
 
-    fetch('/api/getUploadURL',requestObject)
+    fetch('/api/getUploadURL', requestObject)
         .then(res => res.json())
         .then(data => {
-            fetch(data["signedUrl"] , {
+            fetch(data["signedUrl"], {
                 headers: {'content-type': file.type},
-                method:'PUT',
-                body:file,
+                method: 'PUT',
+                body: file,
             }).then((res) => {
                 return res.text()
-            }).then((txt) => {console.log(txt)})
-    })
+            }).then((txt) => {
+                console.log(txt)
+            })
+        })
 
 }
 
-export default function home() {
+const HomeContainer = styled.div`
+  margin: 30px
+`
+
+const UserFilesContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 150px);
+  grid-auto-flow: dense;
+  gap: 10px;
+`
+
+const HomeHeading = styled.h1`
+  font-size: 30px;
+  margin-bottom: 10px;
+
+`
+
+export default function Home() {
+    const [userUploads, setUserUploads] = useState([]);
+
+    useEffect(() => {
+        axios.get('/api/user/uploads').then((res) => {
+            setUserUploads(res.data['uploads'])
+            console.log(res.data['uploads'])
+        }).catch((err) => {
+            console.log(err)
+        })
+    }, []);
+
     return (
         <>
-            <Navbar />
-            <div className="tw-min-w-full tw-font-mono tw-bg-cbpink tw-py-5">
-                <div className={`tw-w-2/3 tw-min-h-screen tw-mx-auto`}>
-                    <div className={`tw-w-full tw-h-screen tw-grid tw-grid-cols-3 tw-grid-rows-3`}>
-                        <div className={`tw-col-start-2 tw-row-start-2 tw-col-span-1 tw-row-span-1 tw-h-full tw-mx-1`}>
-                            <Upload handleFile={sendS3}></Upload>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <Navbar/>
+            <HomeContainer>
+                <HomeHeading>
+                    Your Summaries:
+                </HomeHeading>
+                <UserFilesContainer>
+                    <Upload handleFile={sendS3}></Upload>
+                    {
+                        userUploads.map((upload) =>
+                            <PDFCard key={upload.uuid} uploadId={upload.uuid} title={upload.title}/>
+                        )
+                    }
+                </UserFilesContainer>
+            </HomeContainer>
+
         </>
     );
 }
