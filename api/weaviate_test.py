@@ -25,6 +25,6 @@ def get_client() -> weaviate.Client:
     )
 
 client = get_client()
-for cl in client.schema.get()['classes']:
-    print(cl['class'])
-    client.schema.delete_all()
+
+schema = client.schema.get()
+print(json.dumps(schema, indent=4))
