@@ -5,6 +5,7 @@ import axios from "axios";
 import Upload from "../components/UIComponents/Upload";
 import PDFCard from "../components/PDFCard";
 import AWS from 'aws-sdk'
+import { useRouter } from "next/router";
 
 const S3_BUCKET = 'chimppdfstore';
 const REGION = 'us-east-1';
@@ -29,7 +30,7 @@ function generatePreSignedPutUrl(fileName, fileType) {
     return result
 }
 
-const sendS3 = (file) => {
+const sendS3 = async (file) => {
     if (!file) {
         console.log("no file was found")
         return
@@ -46,7 +47,7 @@ const sendS3 = (file) => {
         })
     }
 
-    fetch('/api/getUploadURL', requestObject)
+    await fetch('/api/getUploadURL', requestObject)
         .then(res => res.json())
         .then(data => {
             fetch(data["signedUrl"], {
@@ -59,6 +60,8 @@ const sendS3 = (file) => {
                 console.log(txt)
             })
         })
+    
+    
 
 }
 
@@ -81,6 +84,7 @@ const HomeHeading = styled.h1`
 
 export default function Home() {
     const [userUploads, setUserUploads] = useState([]);
+    const router = useRouter();
 
     useEffect(() => {
         axios.get('/api/user/uploads').then((res) => {
@@ -98,7 +102,7 @@ export default function Home() {
                     Your Summaries:
                 </HomeHeading>
                 <UserFilesContainer>
-                    <Upload handleFile={sendS3}></Upload>
+                    <Upload handleFile={(file)=>{sendS3(file).then(router.reload("/home"))}}></Upload>
                     {
                         userUploads.map((upload) =>
                             <PDFCard key={upload.uuid} uploadId={upload.uuid} title={upload.title}/>
