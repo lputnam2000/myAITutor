@@ -47,7 +47,7 @@ def parsePDF():
     endingPageNumber = request.json['endingPageNumber']
     extractedText = []
     for i in range(startingPageNumber-1, endingPageNumber):
-        page = reader.pages[]
+        page = reader.pages[i]
         extractedText.append(page.extract_text()) 
 
 
