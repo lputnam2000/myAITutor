@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Viewer, Worker} from "@react-pdf-viewer/core";
 import {dropPlugin} from '@react-pdf-viewer/drop';
 import '@react-pdf-viewer/drop/lib/styles/index.css';
@@ -7,6 +7,7 @@ import {toolbarPlugin} from '@react-pdf-viewer/toolbar';
 import '@react-pdf-viewer/toolbar/lib/styles/index.css';
 import styled from 'styled-components'
 import readingIndicatorPlugin from "./ReadingIndicatorPlugin"
+import {PDFViewerContext} from "./context";
 
 
 const Container = styled.div`
@@ -30,7 +31,7 @@ function PdfViewer({pdfFile}) {
     const toolbarPluginInstance = toolbarPlugin();
     const {renderDefaultToolbar, Toolbar} = toolbarPluginInstance;
     const readingIndicatorPluginInstance = readingIndicatorPlugin();
-    const { ReadingIndicator } = readingIndicatorPluginInstance;
+    const {ReadingIndicator} = readingIndicatorPluginInstance;
 
 
     const transform = (slot) => ({
@@ -47,14 +48,21 @@ function PdfViewer({pdfFile}) {
         MoreActions: () => <></>,
     });
 
+    const {setNumPages} = useContext(PDFViewerContext);
+
+    const initializeContext = (info) => {
+        setNumPages(info.doc._pdfInfo.numPages)
+    }
+
     return (
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.3.122/build/pdf.worker.js">
             <Container>
                 <Toolbar>{renderDefaultToolbar(transform)}</Toolbar>
                 <Viewer fileUrl={pdfFile}
+                        onDocumentLoad={initializeContext}
                         plugins={[toolbarPluginInstance, readingIndicatorPluginInstance]}/>
             </Container>
-            <ReadingIndicator />
+            <ReadingIndicator/>
         </Worker>
     );
 }
