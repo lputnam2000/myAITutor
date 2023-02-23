@@ -33,13 +33,13 @@ function generatePreSignedPutUrl(fileName, fileType) {
 async function generateRecord(session, fileName) {
     const client = await clientPromise;
     const db = client.db("data");
-    var today = new Date();
-    var title = fileName ? fileName : ""
-    var owner = session.user.id
-    var uuid = uuidv4();
+    let today = new Date();
+    let title = fileName ? fileName : ""
+    let owner = session.user.id
+    let uuid = uuidv4();
 
-    var uploads = db.collection("uploads");
-
+    let uploads = db.collection("UserUploads");
+    const documentsCollection = db.collection('SummaryDocuments');
     const record = {userid: owner};
 
     uploads.findOne(record, (err, result) => {
@@ -55,9 +55,10 @@ async function generateRecord(session, fileName) {
             });
             uploads.updateOne(
                 record,
-                {$set: {"uploads": [{uuid, title}]}},
+                {$set: {"uploads": [{uuid, title, status: 'Not Ready'}]}},
                 {upsert: true}
             );
+            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: []});
         } else {
             console.log("Record already exists:", result);
             var currentData = uploads.count({'userid': owner}, {limit: 1})
@@ -66,15 +67,13 @@ async function generateRecord(session, fileName) {
                     uuid = uuidv4();
                 }
             }
-
             uploads.update(record, {
-                $push: {"uploads": {uuid, title}}
+                $push: {"uploads": {uuid, title, status: 'Not Ready'}}
             })
+            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: []});
         }
     });
-
-
-    var fullyQualifiedName = uuid;
+    let fullyQualifiedName = uuid;
     return fullyQualifiedName
 }
 

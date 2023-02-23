@@ -6,24 +6,32 @@ const Container = styled(Link)`
   width: 150px;
   height: 225px;
   border-radius: 10px;
-  padding: .5rem;
+  //padding: .5rem;
   background-color: ${props => props.theme.colors.pink};
   transition: box-shadow ease-in-out .2s;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  //display: flex;
+  //align-items: center;
+  //justify-content: center;
   color: white;
 
   &:hover {
     box-shadow: 5px 5px 0px #000000;
   }
 `;
+const ImageContainer = styled.div`
+  background-color: red;
+  width: 150px;
+  height: 125px;
+`
 
 
-function PdfCard({title, uploadId, thumbnail}) {
+function PdfCard({title, uploadId}) {
     return (
-        <Container href={`/summary/${uploadId}/`}><img src={thumbnail}></img></Container>
+        <Container href={`/summary/${uploadId}/`}>{title}
+            <ImageContainer>
+                s
+            </ImageContainer></Container>
     );
 }
 

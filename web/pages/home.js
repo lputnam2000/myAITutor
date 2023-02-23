@@ -99,7 +99,7 @@ export default function Home() {
             <Navbar/>
             <HomeContainer>
                 <HomeHeading>
-                    Your Summaries:
+                    Your Library:
                 </HomeHeading>
                 <UserFilesContainer>
                     <Upload handleFile={(file)=>{sendS3(file).then(()=>setTimeout(() => router.reload("/home"), 5000))}}></Upload>
