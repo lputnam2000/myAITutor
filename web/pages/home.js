@@ -102,10 +102,11 @@ export default function Home() {
                     Your Summaries:
                 </HomeHeading>
                 <UserFilesContainer>
-                    <Upload handleFile={(file)=>{sendS3(file).then(router.reload("/home"))}}></Upload>
+                    <Upload handleFile={(file)=>{sendS3(file).then(()=>setTimeout(() => router.reload("/home"), 5000))}}></Upload>
                     {
-                        userUploads.map((upload) =>
-                            <PDFCard key={upload.uuid} uploadId={upload.uuid} title={upload.title}/>
+                        userUploads.map((upload) => {
+                                return(<PDFCard key={upload.uuid} uploadId={upload.uuid} title={upload.title} thumbnail={upload.thumbnail}/>);
+                            }
                         )
                     }
                 </UserFilesContainer>

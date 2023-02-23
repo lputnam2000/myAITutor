@@ -21,9 +21,9 @@ const Container = styled(Link)`
 `;
 
 
-function PdfCard({title, uploadId}) {
+function PdfCard({title, uploadId, thumbnail}) {
     return (
-        <Container href={`/summary/${uploadId}/`}>{title}</Container>
+        <Container href={`/summary/${uploadId}/`}><img src={thumbnail}></img></Container>
     );
 }
 
