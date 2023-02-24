@@ -3,35 +3,45 @@ import styled from 'styled-components'
 import Link from 'next/link'
 
 const Container = styled(Link)`
-  width: 150px;
+  width: 200px;
   height: 225px;
   border-radius: 10px;
   //padding: .5rem;
-  background-color: ${props => props.theme.colors.pink};
   transition: box-shadow ease-in-out .2s;
   cursor: pointer;
   //display: flex;
   //align-items: center;
   //justify-content: center;
-  color: white;
-
   &:hover {
     box-shadow: 5px 5px 0px #000000;
   }
 `;
 const ImageContainer = styled.div`
-  background-color: red;
-  width: 150px;
-  height: 125px;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+`
+
+const Title = styled.div`
+  font-family: mono;
+  font-size: 1rem;
+  max-height: 40px;
+  white-space:nowrap;
+  overflow: hidden;
+  padding: auto;
+  margin: auto;
+
 `
 
 
-function PdfCard({title, uploadId}) {
+function PdfCard({title, uploadId, thumbnail}) {
     return (
-        <Container href={`/summary/${uploadId}/`}>{title}
+        <Container href={`/summary/${uploadId}/`}>
             <ImageContainer>
-                s
-            </ImageContainer></Container>
+              <img src={thumbnail}/>
+            </ImageContainer>
+            <Title>{title}</Title>
+        </Container>
     );
 }
 

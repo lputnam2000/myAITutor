@@ -71,7 +71,7 @@ const HomeContainer = styled.div`
 
 const UserFilesContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, 150px);
+  grid-template-columns: repeat(auto-fit, 200px);
   grid-auto-flow: dense;
   gap: 10px;
 `
