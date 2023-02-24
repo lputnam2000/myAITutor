@@ -12,6 +12,9 @@ const Container = styled(Link)`
   //display: flex;
   //align-items: center;
   //justify-content: center;
+  border: solid;
+  border-width: 1px;
+  overflow: hidden;
   &:hover {
     box-shadow: 5px 5px 0px #000000;
   }
@@ -30,6 +33,8 @@ const Title = styled.div`
   overflow: hidden;
   padding: auto;
   margin: auto;
+  border: solid;
+  border-width: 1px 0 0 0;
 
 `
 
