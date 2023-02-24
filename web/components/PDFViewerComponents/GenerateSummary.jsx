@@ -114,6 +114,7 @@ function GenerateSummary(props) {
             setStartError(false)
         }
         // summarize document
+        setShowOption(false)
         axios.post('/api/user/generate_summary', {
             pdfKey, startPage, endPage
         }).then((res) => {

@@ -25,7 +25,12 @@ const requestHandler = async (req, res) => {
     if (req.method === "GET") {
         const {key} = req.query
         let s3Url = await generatePreSignedGetUrl(key)
-        return res.status(200).json({s3Url: s3Url})
+        const client = await clientPromise;
+        const db = client.db("data");
+        const summaryDocuments = db.collection("SummaryDocuments");
+        const documentDetails = await summaryDocuments.findOne({_id: key});
+
+        return res.status(200).json({s3Url: s3Url, documentDetails: documentDetails})
     } else {
         return res.status(404).json({message: "URL Not Found"});
     }

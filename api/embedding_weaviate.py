@@ -77,7 +77,7 @@ def format_for_documents(text_list):
 def get_documents(doc):
     print('STARTED EXTRACTING TEXT')
     extracted_text = []
-    for i in range(0, len(doc)):
+    for i in range(145,1 91):
         page = doc.load_page(i)
         page_text = ''
         blocks = page.get_text('blocks')
@@ -124,6 +124,7 @@ def configure_batch(client, batch_size: int, batch_target_rate: int):
 def upload_documents(documents, client, class_name):
     configure_batch(client, 100, 1)
     with client.batch as batch:
+        print(len(documents))
         # Batch import all Questions
         for i in range(len(documents)):
             properties = {
@@ -131,8 +132,10 @@ def upload_documents(documents, client, class_name):
             }
             print(i)
             client.batch.add_data_object(properties, class_name)
+            import time 
+            time.sleep(1.1)
 
-documents = get_documents(fitz.open('ex4.pdf'))
+documents = get_documents(fitz.open('ex2.pdf'))
 client = get_client()
-class_name = create_class('_sasokwhatsdfs', client)
+class_name = create_class('new_class', client)
 upload_documents(documents, client, class_name)

@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {pdfjs} from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import PDFViewerContextProvider from "../components/PDFViewerComponents/context";
@@ -17,13 +16,7 @@ import HomeNavbar from "../components/HomeNavbar";
 
 
 export default function Ss() {
-    // const defaultLayoutPluginInstance = defaultLayoutPlugin();
-
-
-    useEffect(() => {
-        pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
-
-    }, [])
+    //
 
     const [pdfFile, setPdfFile] = useState('');
 

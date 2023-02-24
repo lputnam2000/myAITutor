@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {PDFViewerContext} from "./context";
 import Summary from "./Summary";
 import PDFViewer from "./PDFViewer";
+import axios from "axios";
 
 
 const Container = styled.div`
@@ -24,12 +25,34 @@ const PDFViewerContainer = styled.div`
   flex: 1;
 `
 
-function PdfViewerWithSummary({pdfFile, uploadId}) {
+function PdfViewerWithSummary({uploadId}) {
 
-    const {setPdfKey} = useContext(PDFViewerContext);
+    const {setPdfKey, setSummary} = useContext(PDFViewerContext);
+    const [pdfFile, setPdfFile] = useState('')
+
+    const getDocumentDetails = () => {
+        let params = {'key': uploadId}
+        axios.get('/api/user/get_pdf', {params: params}).then(res => {
+            setSummary(res.data.documentDetails.summary)
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+
     useEffect(() => {
-        setPdfKey(uploadId)
-    }, [uploadId]);
+        let params = {'key': uploadId}
+        axios.get('/api/user/get_pdf', {params: params}).then(res => {
+            setPdfFile(res.data.s3Url)
+            setSummary(res.data.documentDetails.summary)
+            setPdfKey(uploadId)
+        }).catch(err => {
+            console.log(err)
+        })
+        let timer = setInterval(() => getDocumentDetails(), 1000);
+        return () => {
+            timer = null
+        }
+    }, [uploadId])
 
 
     // const pagesRef = useRef([]);
@@ -39,7 +62,7 @@ function PdfViewerWithSummary({pdfFile, uploadId}) {
         <Container>
             <InnerContainer>
                 <PDFViewerContainer>
-                    <PDFViewer pdfFile={pdfFile} uploadId={uploadId}/>
+                    {pdfFile && <PDFViewer pdfFile={pdfFile} uploadId={uploadId}/>}
                 </PDFViewerContainer>
                 <Summary uploadId={uploadId}/>
             </InnerContainer>

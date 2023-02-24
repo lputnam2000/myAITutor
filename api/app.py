@@ -58,12 +58,14 @@ def index():
     return "<p>Hello, World!</p>"
 
 
-@app.route('/generate_summary', methods=["POST"])
+@app.route('/summaries/', methods=["POST"])
 def generate_summary():
     data = request.json  # data is empty
+    print(data)
     pdfKey = data['pdfKey']
-    startPage = data['startPage']
-    endPage = data['endPage']
+    startPage = int(data['startPage'])
+    endPage = int(data['endPage'])
+
     s3 = get_s3_client()
     response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
     pdf_bytes = response['Body'].read()
@@ -79,3 +81,5 @@ def generate_summary():
     summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
 
     return jsonify(s)
+
+

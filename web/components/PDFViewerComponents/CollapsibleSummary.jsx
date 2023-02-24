@@ -1,5 +1,4 @@
 import React, {useMemo, useState} from 'react';
-import Summary from '../../public/summary.json'
 import styled from 'styled-components'
 import {IconButton} from "@chakra-ui/react";
 import {ChevronDownIcon, ChevronRightIcon, TriangleDownIcon, TriangleUpIcon} from "@chakra-ui/icons";
@@ -47,6 +46,7 @@ const SubHeading = styled.div`
 
 `
 const SummaryText = styled.div`
+  margin-bottom: 5px;
 `
 
 const StyledIconButton = styled(IconButton)`
@@ -54,22 +54,20 @@ const StyledIconButton = styled(IconButton)`
 `
 
 
-function CollapsibleSummary(props) {
-    const [open, setOpen] = useState(true);
-
-    let summaryJson = Summary;
+function CollapsibleSummary({summaryJson, isOpen}) {
+    const [open, setOpen] = useState(isOpen);
     const SummaryPanel = useMemo(() => {
         let panelOutput = []
-        for (let i = 0; i < summaryJson.length; i++) {
-            console.log(summaryJson[i][2])
-            for (let j = 0; j < summaryJson[i][2].length; j++) {
+        let formattedSummary = summaryJson.formattedSummary
+        for (let i = 0; i < formattedSummary.length; i++) {
+            for (let j = 0; j < formattedSummary[i][2].length; j++) {
                 panelOutput.push(
                     <>
                         <SubHeading key={`${i}-${j}-0`}>
-                            {summaryJson[i][2][j][0]}
+                            {formattedSummary[i][2][j][0]}
                         </SubHeading>
                         <SummaryText key={`${i}-${j}-1`}>
-                            {summaryJson[i][2][j][1]}
+                            {formattedSummary[i][2][j][1]}
                         </SummaryText>
                     </>
                 )
@@ -78,11 +76,9 @@ function CollapsibleSummary(props) {
         return panelOutput
     }, [summaryJson]);
 
-
-    let metadata = {startLoc: 1, endLoc: 5}
     const heading = useMemo(() => {
-        return `Summary for Pages ${metadata.startLoc}-${metadata.endLoc}`
-    }, [metadata]);
+        return `Summary for Pages ${summaryJson.startPage}-${summaryJson.endPage}`
+    }, [summaryJson]);
 
     return (
         <Container>

@@ -21,23 +21,14 @@ const Container = styled.div`
 function PageSummary(props) {
     const router = useRouter()
     const {uploadId} = router.query
-    const [pdfFile, setPdfFile] = useState('')
-    useEffect(() => {
-        let params = {'key': uploadId}
-        axios.get('/api/user/get_pdf', {params: params}).then(res => {
-            setPdfFile(res.data.s3Url)
-        }).catch(err => {
-            console.log(err)
-        })
-    }, [uploadId])
 
 
     return <Container>
 
         <Navbar/>
-        {pdfFile && <PDFViewerContextProvider>
-            <PDFViewerWithSummary pdfFile={pdfFile} uploadId={uploadId}/>
-        </PDFViewerContextProvider>}
+        <PDFViewerContextProvider>
+            <PDFViewerWithSummary uploadId={uploadId}/>
+        </PDFViewerContextProvider>
 
     </Container>
 
