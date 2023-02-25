@@ -29,7 +29,7 @@ const Title = styled.div`
   font-family: mono;
   font-size: 1rem;
   max-height: 40px;
-  white-space:nowrap;
+  white-space: nowrap;
   overflow: hidden;
   padding: auto;
   margin: auto;
