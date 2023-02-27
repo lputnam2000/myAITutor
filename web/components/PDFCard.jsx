@@ -3,18 +3,21 @@ import styled from 'styled-components'
 import Link from 'next/link'
 
 const Container = styled(Link)`
+  display: flex;
+  flex-direction: column;
   width: 200px;
   height: 225px;
   border-radius: 10px;
   //padding: .5rem;
-  transition: box-shadow ease-in-out .2s;
   cursor: pointer;
   //display: flex;
   //align-items: center;
   //justify-content: center;
-  border: solid;
+  border: none;
   border-width: 1px;
   overflow: hidden;
+  box-shadow: 1px 1px 2px rgba(0,0,0,.5);
+  transition: box-shadow ease-in-out .2s;
   &:hover {
     box-shadow: 5px 5px 0px #000000;
   }
@@ -26,16 +29,20 @@ const ImageContainer = styled.div`
 `
 
 const Title = styled.div`
-  font-family: mono;
-  font-size: 1rem;
-  max-height: 40px;
+  display:flex;
+  flex-grow: 1;
   white-space: nowrap;
   overflow: hidden;
-  padding: auto;
-  margin: auto;
   border: solid;
   border-width: 1px 0 0 0;
+  flex-direction: column;
+  justify-content: center;
+`
 
+const CenteredText = styled.div`
+  margin: auto;
+  text-align: center;
+  padding: .5rem;
 `
 
 
@@ -45,7 +52,7 @@ function PdfCard({title, uploadId, thumbnail}) {
             <ImageContainer>
               <img src={thumbnail}/>
             </ImageContainer>
-            <Title>{title}</Title>
+            <Title><CenteredText>{title}</CenteredText></Title>
         </Container>
     );
 }
