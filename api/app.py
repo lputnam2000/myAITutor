@@ -82,3 +82,4 @@ def generate_summary():
 
     return jsonify(s)
 
+
