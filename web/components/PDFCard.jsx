@@ -17,9 +17,10 @@ const Container = styled(Link)`
   border-width: 1px;
   overflow: hidden;
   box-shadow: 1px 1px 2px rgba(0,0,0,.5);
-  transition: box-shadow ease-in-out .2s;
+  transition: box-shadow ease-in-out .1s;
   &:hover {
-    box-shadow: 5px 5px 0px #000000;
+    box-shadow: 1px 1px 2px rgba(0,0,0,.5), 5px 5px 0px #000000;
+    transform: translate(-0.5px, -0.5px)
   }
 `;
 const ImageContainer = styled.div`
