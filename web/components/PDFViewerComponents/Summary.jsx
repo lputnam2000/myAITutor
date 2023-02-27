@@ -1,6 +1,11 @@
-import React, {useMemo} from 'react';
+import React, {useContext, useMemo} from 'react';
 import styled from "styled-components";
 import {Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
+import SemanticSearch from "./SemanticSearch";
+import CollapsibleSummary from "./CollapsibleSummary";
+import {SmallAddIcon} from "@chakra-ui/icons";
+import GenerateSummary from "./GenerateSummary";
+import {PDFViewerContext} from "./context";
 
 const Container = styled.div`
   //flex: 1;
@@ -28,44 +33,30 @@ const SummaryText = styled.div`
 const SummaryContainer = styled.div`
 `
 
-function Summary({summaryJson}) {
 
-    const SummaryPanel = useMemo(() => {
-        let panelOutput = []
-        for (let i = 0; i < summaryJson.length; i++) {
-            console.log(summaryJson[i][2])
-            for (let j = 0; j < summaryJson[i][2].length; j++) {
-                panelOutput.push(
-                    <>
-                        <SubHeading key={`${i}-${j}-0`}>
-                            {summaryJson[i][2][j][0]}
-                        </SubHeading>
-                        <SummaryText key={`${i}-${j}-1`}>
-                            {summaryJson[i][2][j][1]}
-                        </SummaryText>
-                    </>
-                )
-            }
-        }
-        return panelOutput
-    }, [summaryJson]);
-
+function Summary({uploadId}) {
+    const {summary} = useContext(PDFViewerContext)
     return (
         <Container>
-            <Tabs variant='enclosed' isFitted>
+            <Tabs height={'100%'} variant='enclosed' isFitted>
                 <TabList>
-                    <Tab _selected={{color: 'white', bg: 'black'}}>Summary</Tab>
+                    <Tab _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
                     <Tab _selected={{color: 'white', bg: 'black'}}>Search</Tab>
                 </TabList>
 
-                <TabPanels>
-                    <TabPanel>
+                <TabPanels height={'94%'}>
+                    <TabPanel style={{height: '100%', padding: '0px'}}>
                         <SummaryContainer>
-                            {SummaryPanel}
+                            <GenerateSummary/>
+                            {
+                                summary.map((s, idx) => <CollapsibleSummary isOpen={idx === 0} key={idx}
+                                                                            summaryJson={s}/>)
+                            }
+                            {/*{SummaryPanel}*/}
                         </SummaryContainer>
                     </TabPanel>
-                    <TabPanel>
-                        <p>Search</p>
+                    <TabPanel style={{height: '100%'}}>
+                        <SemanticSearch uploadId={uploadId}/>
                     </TabPanel>
                 </TabPanels>
             </Tabs>

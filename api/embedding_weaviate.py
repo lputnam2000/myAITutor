@@ -1,0 +1,141 @@
+import weaviate
+import json
+import requests
+import tiktoken
+import json
+from nltk import tokenize
+import fitz
+import time
+
+ENCODER = tiktoken.get_encoding("gpt2")
+OPEN_AI_KEY = "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"
+
+def get_client():
+    resource_owner_config = weaviate.AuthClientPassword(
+    username = "aryamanparekh12@gmail.com", 
+    password = "pBCjEiL6GGN5fjQ", 
+    scope = "offline_access"
+    )
+    return weaviate.Client(
+      url = "https://chimpbase.weaviate.network/",
+      auth_client_secret=resource_owner_config,
+          additional_headers = {
+        "X-OpenAI-Api-Key": OPEN_AI_KEY
+    }
+    )
+
+def create_class(key:str, client):
+    key_fmtd = key.replace('-', '')
+    class_name = f'Document{key_fmtd}'
+    client.schema.delete_class(class_name)
+
+    class_obj = {
+        "class": class_name,
+        "description": f'Document Embeddings class for {key}',
+        "vectorizer": "text2vec-openai",
+        "moduleConfig": {
+            "text2vec-openai": {
+            "model": "ada",
+            "modelVersion": "002",
+            "type": "text"
+            }
+        },
+        "properties": [
+        {
+            "dataType": ["text"],
+            "description": "The text for the document",
+            "name": "text",
+            "moduleConfig": {
+                "text2vec-openai": {
+                "skip": False,
+                "vectorizePropertyName": False
+                }
+            },
+        },
+        ]
+    }
+    client.schema.create_class(class_obj)
+    return class_name
+
+
+def format_for_documents(text_list):
+    encodings = ENCODER.encode_batch(text_list)
+    to_return = []
+
+    for i in range(len(encodings)):
+        doc_length = len(encodings[i])
+        doc_text = ""
+        while doc_length < 500 and i+1 < len(encodings):
+            i += 1
+            doc_length += len(encodings[i]) 
+            doc_text += ' ' + text_list[i]
+        to_return.append(doc_text)
+    return to_return
+
+
+
+def get_documents(doc):
+    print('STARTED EXTRACTING TEXT')
+    extracted_text = []
+    for i in range(145,1 91):
+        page = doc.load_page(i)
+        page_text = ''
+        blocks = page.get_text('blocks')
+        for block in blocks:
+            if block[6] == 0:
+                text = block[4]
+                text = text.replace('\n', " ")
+                page_text += text        
+        text_split = tokenize.sent_tokenize(page_text)
+        extracted_text.extend(text_split)
+    formatted_documents = format_for_documents(extracted_text)
+    print('FINISHED EXTRACTING TEXT')
+    return formatted_documents
+
+def configure_batch(client, batch_size: int, batch_target_rate: int):
+    """
+    Configure the weaviate client's batch so it creates objects at `batch_target_rate`.
+
+    Parameters
+    ----------
+    client : Client
+        The Weaviate client instance.
+    batch_size : int
+        The batch size.
+    batch_target_rate : int
+        The batch target rate as # of objects per second.
+    """
+
+    def callback(batch_results: dict) -> None:
+
+        # you could print batch errors here
+        time_took_to_create_batch = batch_size * (client.batch.creation_time/client.batch.recommended_num_objects)
+        time.sleep(
+            max(batch_size/batch_target_rate - time_took_to_create_batch + 1, 0)
+        )
+    client.batch.batch_size = 100
+    client.batch.configure(
+        batch_size=batch_size,
+        timeout_retries=5,
+        callback=callback,
+    )
+
+
+def upload_documents(documents, client, class_name):
+    configure_batch(client, 100, 1)
+    with client.batch as batch:
+        print(len(documents))
+        # Batch import all Questions
+        for i in range(len(documents)):
+            properties = {
+                "text": documents[i]
+            }
+            print(i)
+            client.batch.add_data_object(properties, class_name)
+            import time 
+            time.sleep(1.1)
+
+documents = get_documents(fitz.open('ex2.pdf'))
+client = get_client()
+class_name = create_class('new_class', client)
+upload_documents(documents, client, class_name)

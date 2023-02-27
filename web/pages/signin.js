@@ -78,7 +78,6 @@ export default function SignIn({ csrfToken, providers }) {
                                         width="18"
                                         height="18"
                                         fill="currentColor"
-                                        class="bi bi-google"
                                         viewBox="0 0 16 16"
                                     >
                                         <path
