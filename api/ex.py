@@ -127,6 +127,8 @@ def get_summary(pdf='ex2.pdf', start_page=6, end_page=10):
     for i in range(start_page-1, end_page):
         page = doc.load_page(i)
         extracted_text[i] = extract_text(page)
+    print(extracted_text)
+    exit()
     s = json.dumps(extracted_text)
     print(len(ENCODER.encode(s)))
 
