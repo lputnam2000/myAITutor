@@ -6,42 +6,17 @@ import React from 'react';
 
 function PDFViewerContextProvider({children}) {
     const [numPages, setNumPages] = useState(1);
-    const [pageNumber, setPageNumber] = useState(1);
-
-    const pagesRef = useRef(null);
-    const getPagesMap = () => {
-        if (!pagesRef.current) {
-            pagesRef.current = new Map()
-        }
-        return pagesRef.current
-    }
-
-    const scrollToPage = (pageNumber) => {
-        const map = getPagesMap();
-        const node = map.get(pageNumber);
-        if (node) {
-            node.scrollIntoView({
-                block: 'nearest',
-                inline: 'center',
-            });
-        }
-    }
-
-    useEffect(() => {
-        if (pageNumber >= 1 && pageNumber <= numPages) {
-            scrollToPage(pageNumber - 1)
-        }
-    }, [pageNumber]);
-
+    const [pdfKey, setPdfKey] = useState('');
+    const [summary, setSummary] = useState([])
 
     return (
         <PDFViewerContext.Provider value={{
             numPages,
             setNumPages,
-            pageNumber,
-            setPageNumber,
-            pagesRef,
-            getPagesMap
+            pdfKey,
+            setPdfKey,
+            summary,
+            setSummary
         }}>
             {children}
         </PDFViewerContext.Provider>
