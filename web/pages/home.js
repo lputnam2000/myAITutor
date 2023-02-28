@@ -1,6 +1,6 @@
 import Navbar from "../components/UIComponents/Navbar";
 import React, {useEffect, useState} from "react";
-import styled from 'styled-components'
+import styled, {keyframes} from 'styled-components'
 import axios from "axios";
 import Upload from "../components/UIComponents/Upload";
 import PDFCard from "../components/PDFCard";
@@ -65,9 +65,29 @@ const sendS3 = async (file) => {
 
 }
 
-const HomeContainer = styled.div`
-  margin: 30px
+const gradientKeyframes = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 `
+
+const HomeContainer = styled.div`
+  margin: 30px;
+`
+
+const Container = styled.div`
+  background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0 );
+  background-size: 400% 400%;
+  animation: ${gradientKeyframes} 300s ease infinite;
+  min-height: 100vh;
+`
+
 
 const UserFilesContainer = styled.div`
   display: grid;
@@ -95,7 +115,7 @@ export default function Home() {
     }, []);
 
     return (
-        <>
+        <Container>
             <Navbar/>
             <HomeContainer>
                 <HomeHeading>
@@ -112,6 +132,6 @@ export default function Home() {
                 </UserFilesContainer>
             </HomeContainer>
 
-        </>
+        </Container>
     );
 }
