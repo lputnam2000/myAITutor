@@ -246,9 +246,9 @@ function Navbar(props) {
                 chimpbase
             </Logo>
             <ButtonsContainer>
-                <StyledLink href={'home'}>
-                    Home
-                </StyledLink>
+                {/*<StyledLink href={'home'}>*/}
+                {/*    Home*/}
+                {/*</StyledLink>*/}
                 <ProfileDropdown>
                     <IconContainer>
 
