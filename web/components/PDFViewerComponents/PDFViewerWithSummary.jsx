@@ -7,7 +7,6 @@ import axios from "axios";
 
 
 const Container = styled.div`
-  background-color: whitesmoke;
   //min-height: 100vh;
   display: flex;
   flex-direction: column;
