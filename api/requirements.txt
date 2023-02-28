@@ -9,3 +9,10 @@ typing-extensions==4.4.0
 Werkzeug==2.2.2
 zipp==3.12.0
 python-dotenv==1.0.0
+PyMuPDF==1.21.1
+boto3==1.26.80
+pymongo==4.3.3
+openai==0.26.5
+tiktoken
+nltk
+langchain
