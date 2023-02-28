@@ -22,6 +22,7 @@ const Container = styled(Link)`
     box-shadow: 1px 1px 2px rgba(0,0,0,.5), 5px 5px 0px #000000;
     transform: translate(-0.5px, -0.5px)
   }
+  background-color: ${props => props.theme.colors.primary};
 `;
 const ImageContainer = styled.div`
   width: 100%;
