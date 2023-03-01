@@ -11,6 +11,7 @@ import pymongo
 import openai
 from flask import g
 from summary import get_summary
+from functools import wraps
 
 def create_app():
     load_dotenv()
@@ -18,8 +19,23 @@ def create_app():
     return app
 
 app = create_app()
+if __name__ =="__main__":
+    app.run(host='0.0.0.0')
+
 
 BUCKET_NAME = 'chimppdfstore'
+
+def require_api_key(view_function):
+    @wraps(view_function)
+    def decorated_function(*args, **kwargs):
+        api_key = request.headers.get('X-API-Key')
+        if not api_key:
+            api_key = request.args.get('api_key')
+        if not api_key:
+            return jsonify({'error': 'API key is missing'}), 401
+        if api_key == os.getenv('CB_API_SECRET'):
+            return view_function(*args, **kwargs)
+    return decorated_function
 
 def get_s3_client():
     s3 = getattr(g, 's3', None)
@@ -54,11 +70,13 @@ def teardown_mongo_client(exception):
 
 
 @app.route("/")
+@require_api_key
 def index():
     return "<p>Hello, World!</p>"
 
 
 @app.route('/summaries/', methods=["POST"])
+@require_api_key
 def generate_summary():
     data = request.json  # data is empty
     print(data)
