@@ -1,15 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import styled, {keyframes} from 'styled-components';
-import {pdfjs} from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import PDFViewerContextProvider from "../../components/PDFViewerComponents/context";
 import PDFViewerWithSummary from "../../components/PDFViewerComponents/PDFViewerWithSummary";
-import {Viewer, Worker} from '@react-pdf-viewer/core';
-import {defaultLayoutPlugin} from '@react-pdf-viewer/default-layout';
-import HomeNavbar from "../../components/HomeNavbar";
 import {useRouter} from "next/router";
-import axios from "axios";
 import Navbar from "../../components/UIComponents/Navbar";
 
 
