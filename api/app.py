@@ -12,6 +12,29 @@ import openai
 from flask import g
 from summary import get_summary
 from functools import wraps
+import logging
+import sys
+from logging.config import dictConfig
+import nltk
+nltk.download('punkt')
+
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'stream': 'ext://flask.logging.wsgi_errors_stream',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+})
+
+BUCKET_NAME = 'chimppdfstore'
 
 def create_app():
     load_dotenv()
@@ -19,11 +42,6 @@ def create_app():
     return app
 
 app = create_app()
-if __name__ =="__main__":
-    app.run(host='0.0.0.0')
-
-
-BUCKET_NAME = 'chimppdfstore'
 
 def require_api_key(view_function):
     @wraps(view_function)
@@ -79,7 +97,6 @@ def index():
 @require_api_key
 def generate_summary():
     data = request.json  # data is empty
-    print(data)
     pdfKey = data['pdfKey']
     startPage = int(data['startPage'])
     endPage = int(data['endPage'])
@@ -97,7 +114,9 @@ def generate_summary():
     summaryDict['endPage'] = endPage
     summaryDict['formattedSummary'] = s
     summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
+    result = jsonify(s)
+    return result
 
-    return jsonify(s)
 
-
+if __name__ =="__main__":
+    app.run(host='0.0.0.0')
