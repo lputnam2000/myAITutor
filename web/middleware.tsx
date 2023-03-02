@@ -25,6 +25,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.rewrite(url);
     }*/
   }
+  /*
   if (redirectAuth.some((path) => pathname.startsWith(path))) {
     const token = await getToken({
       req: request,
@@ -35,6 +36,6 @@ export async function middleware(request: NextRequest) {
       const url = new URL(`/home`, request.url);
       return NextResponse.redirect(url);
     }
-  }
+  }*/
   return res;
 }
