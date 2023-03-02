@@ -48,7 +48,7 @@ const CenteredText = styled.div`
 
 function PdfCard({title, uploadId, thumbnail}) {
     return (
-        <Container href={`/summary/${uploadId}/`}>
+        <Container href={`/summary?uploadId=${uploadId}`}>
             <ImageContainer>
                 <img src={thumbnail}/>
             </ImageContainer>
