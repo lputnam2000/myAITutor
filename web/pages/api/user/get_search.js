@@ -23,22 +23,19 @@ const client = weaviate.client({
 });
 
 
-async function getGPT3Answer(prompt) {
+async function getChatGPTAnswer(prompt) {
 
     try {
-        const model = 'text-davinci-003';
-        const temperature = 0.5;
-        const maxTokens = 300;
-        const n = 1;
-        const stop = '\n';
-
-        const response = await openai.createCompletion({
-            model: model,
-            prompt: prompt,
-            max_tokens: 300,
-            temperature: 0.5
-        });
-        const output = response.data.choices[0].text.trim();
+        let response = openai.createChatCompletion(
+            {
+            model:'gpt-3.5-turbo',
+            messages:[
+                {"role": "system", "content":"You are an AI assistant that is designed to quickly find answers given context, making you incredibly helpful at answering questions."},
+                {"role": "user", "content":prompt}
+            ]
+            }
+        )
+        const output = response.choices[0]['message']['content']
         return output;
     } catch (error) {
         console.log(error);
@@ -70,7 +67,7 @@ const requestHandler = async (req, res) => {
         console.log(prompt)
 
         prompt += `Q:${query}` + "\nA:"
-        getGPT3Answer(prompt).then(answer => {
+        getChatGPTAnswer(prompt).then(answer => {
             console.log(answer)
             return res.status(200).json({'answer': answer})
         })

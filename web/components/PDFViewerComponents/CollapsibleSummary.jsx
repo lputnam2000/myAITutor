@@ -62,14 +62,14 @@ function CollapsibleSummary({summaryJson, isOpen}) {
         for (let i = 0; i < formattedSummary.length; i++) {
             for (let j = 0; j < formattedSummary[i][2].length; j++) {
                 panelOutput.push(
-                    <>
+                    <span key={`number-${i}-${j}`}>
                         <SubHeading key={`${i}-${j}-0`}>
                             {formattedSummary[i][2][j][0]}
                         </SubHeading>
                         <SummaryText key={`${i}-${j}-1`}>
                             {formattedSummary[i][2][j][1]}
                         </SummaryText>
-                    </>
+                    </span>
                 )
             }
         }
