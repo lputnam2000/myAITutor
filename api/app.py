@@ -96,6 +96,7 @@ def index():
 @app.route('/summaries/', methods=["POST"])
 @require_api_key
 def generate_summary():
+    print('here')
     data = request.json  # data is empty
     pdfKey = data['pdfKey']
     startPage = int(data['startPage'])
@@ -106,6 +107,7 @@ def generate_summary():
     pdf_bytes = response['Body'].read()
     doc = fitz.open(stream=pdf_bytes, filetype="pdf")
     s = get_summary(doc,startPage, endPage)
+    print(s)
     db_client = get_mongo_client()
     data_db = db_client["data"]
     summariesCollection = data_db["SummaryDocuments"]
