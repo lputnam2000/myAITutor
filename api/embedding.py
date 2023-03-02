@@ -19,21 +19,14 @@ EMBEDDING_MODEL = "text-embedding-ada-002"
 def get_text(pdf, starting_page, ending_page):
     reader = PdfReader(pdf)
     number_of_pages = len(reader.pages)
-    # extractedText = ""
-    text = {}
+    extractedText = ""
     for i in range(starting_page-1, ending_page):
         page = reader.pages[i]
-        # extractedText += page.extract_text() 
-        text[i] = page.extract_text()
-    return text
+        extractedText += page.extract_text() 
+    return extractedText
 
 def get_documents(pdf, starting_page, ending_page):
     text = get_text(pdf, starting_page, ending_page)
-    with open('ex.txt', 'w') as f:
-        import json
-        f.write(json.dumps(text))
-        print(text)
-    exit()
     text_splitter = CharacterTextSplitter.from_tiktoken_encoder(chunk_size=500, chunk_overlap=0, separator='.')
     docs = text_splitter.split_text(text)
     return docs
@@ -47,10 +40,10 @@ def get_embedding(text: str, model: str=EMBEDDING_MODEL):
 
 
 # Get the Documents
-docs = get_documents('ex.pdf', 1, 3)
+docs = get_documents('ex2.pdf', 146, 180)
 print('Parsed Documents')
 # Create A PineCone Index
-index_name = 'openai-ex12'
+index_name = 'openai-ex212'
 pinecone.init(
     api_key="cf4533bd-b762-4b24-8d04-585d4050ea90",
     environment="us-east1-gcp"
@@ -73,8 +66,7 @@ if index_name not in pinecone.list_indexes():
         i+=1
         data  = get_embedding(doc)
         to_upsert.append((str(i), data, {'text': doc}))
-        import time
-        time.sleep(2)
+
         print(i)
     index.upsert(vectors=to_upsert)
     print('Populated Index')
@@ -112,10 +104,11 @@ while True:
     for match in res['matches']:
         context += match['metadata']['text'] + "\n";
     
-    prompt = """Answer the question as truthfully as possible using the provided context, and if the answer is not contained within the text below, say "I don't know."\n\nContext:\n"""
+    prompt = """Answer the question as truthfully as possible using the provided context, and if the answer is not contained within the text below, say "I dont know" and then continue the answer.\n\nContext:\n"""
+    print(prompt)
     prompt += context
     prompt += f'\n\n{user_input}' + "\nA:"
-    print(prompt)
+    # print(prompt)
     print(get_answer(prompt))
 
 

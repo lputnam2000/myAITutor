@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {pdfjs} from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import PDFViewerContextProvider from "../components/PDFViewerComponents/context";
@@ -16,14 +15,8 @@ import {defaultLayoutPlugin} from '@react-pdf-viewer/default-layout';
 import HomeNavbar from "../components/HomeNavbar";
 
 
-export default function Summary() {
-    // const defaultLayoutPluginInstance = defaultLayoutPlugin();
-    
-
-    useEffect(() => {
-        pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
-
-    }, [])
+export default function Ss() {
+    //
 
     const [pdfFile, setPdfFile] = useState('');
 
@@ -71,6 +64,7 @@ export default function Summary() {
                     :
                     <input type="file" accept=".pdf" onChange={handleFileInput} name="" id=""/>
             }
+
         </Container>
     )
 }
