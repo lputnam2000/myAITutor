@@ -14,18 +14,13 @@ export async function middleware(request: NextRequest) {
       secret: process.env.AUTH_SECRET,
     });
     //check not logged in
-    /*
+    
     if (!token) {
-      const url = new URL(`/api/auth/signin`, request.url);
+      const url = new URL(`/api/auth/signin`, process.env.NEXTAUTH_URL);
       return NextResponse.redirect(url);
-    }*/
-    /*//check if not authorized
-    if (token.role !== "admin") {
-      const url = new URL(`/403`, request.url);
-      return NextResponse.rewrite(url);
-    }*/
+    }
   }
-  /*
+  
   if (redirectAuth.some((path) => pathname.startsWith(path))) {
     const token = await getToken({
       req: request,
@@ -36,6 +31,6 @@ export async function middleware(request: NextRequest) {
       const url = new URL(`/home`, request.url);
       return NextResponse.redirect(url);
     }
-  }*/
+  }
   return res;
 }
