@@ -23,22 +23,20 @@ const client = weaviate.client({
 });
 
 
-async function getGPT3Answer(prompt) {
+async function getChatGPTAnswer(prompt) {
 
     try {
-        const model = 'text-davinci-003';
-        const temperature = 0.5;
-        const maxTokens = 300;
-        const n = 1;
-        const stop = '\n';
-
-        const response = await openai.createCompletion({
-            model: model,
-            prompt: prompt,
-            max_tokens: 300,
-            temperature: 0.5
-        });
-        const output = response.data.choices[0].text.trim();
+        let response = await openai.createChatCompletion(
+            {
+            model:'gpt-3.5-turbo',
+            messages:[
+                {"role": "system", "content":"You are an AI assistant that is designed to quickly find answers given context, making you incredibly helpful at answering questions."},
+                {"role": "user", "content":prompt}
+            ]
+            }
+        )
+        console.log(response)
+        const output = response.data.choices[0]['message']['content']
         return output;
     } catch (error) {
         console.log(error);
@@ -63,14 +61,14 @@ const requestHandler = async (req, res) => {
             .withLimit(2)
             .do()
         const matchingText = weaviateRes.data.Get[className]
-        let prompt = "Answer the question as truthfully as possible and in detail using the provided context, and if the answer is not contained within the text below, say 'I don't know.'\n\nContext:\n"
+        let prompt = "Answer the question in detail using the provided context, and if the answer is not contained within the text below, say 'I don't know.'\n\nContext:\n"
         for (let i = 0; i < matchingText.length; i++) {
             prompt += '\n' + matchingText[i].text + '\n'
         }
         console.log(prompt)
 
         prompt += `Q:${query}` + "\nA:"
-        getGPT3Answer(prompt).then(answer => {
+        getChatGPTAnswer(prompt).then(answer => {
             console.log(answer)
             return res.status(200).json({'answer': answer})
         })

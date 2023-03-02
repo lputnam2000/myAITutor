@@ -4,7 +4,6 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import PDFViewerContextProvider from "../components/PDFViewerComponents/context";
 import PDFViewerWithSummary from "../components/PDFViewerComponents/PDFViewerWithSummary";
-import {useRouter} from "next/router";
 import Navbar from "../components/UIComponents/Navbar";
 
 
@@ -30,15 +29,11 @@ const Container = styled.div`
 
 
 function PageSummary(props) {
-    const router = useRouter()
-    const {uploadId} = router.query
-
-
     return <Container>
 
         <Navbar/>
         <PDFViewerContextProvider>
-            <PDFViewerWithSummary uploadId={uploadId}/>
+            <PDFViewerWithSummary/>
         </PDFViewerContextProvider>
 
     </Container>

@@ -34,8 +34,8 @@ const SummaryContainer = styled.div`
 `
 
 
-function Summary({uploadId}) {
-    const {summary} = useContext(PDFViewerContext)
+function Summary({}) {
+    const {summary, pdfKey} = useContext(PDFViewerContext)
     return (
         <Container>
             <Tabs height={'100%'} variant='enclosed' isFitted>
@@ -56,7 +56,7 @@ function Summary({uploadId}) {
                         </SummaryContainer>
                     </TabPanel>
                     <TabPanel style={{height: '100%'}}>
-                        <SemanticSearch uploadId={uploadId}/>
+                        <SemanticSearch uploadId={pdfKey}/>
                     </TabPanel>
                 </TabPanels>
             </Tabs>

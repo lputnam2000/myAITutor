@@ -6,9 +6,10 @@ import os
 import openai
 import json
 
+
+
 OPEN_AI_KEY = "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"
 openai.api_key = OPEN_AI_KEY
-
 ENCODER = tiktoken.get_encoding("gpt2")
 WITHOUT_CONTEXT_TEMPLATE = """Please read the following text and create a study guide summarizing and presenting the key points for students. Your study guide should be clear, concise, and organized, and written in easy-to-read language.
 
@@ -77,36 +78,27 @@ def make_gpt_summary(text, context=None):
     if context == None:
         prompt = PROMPT_WITHOUT_CONTEXT.format(text=text)
         num_tokens = len(ENCODER.encode(prompt))
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=prompt,
-            temperature=0.3,
-            max_tokens=4000-num_tokens,
-            top_p=1,
-            frequency_penalty=0.5,
-            presence_penalty=0,
-            stop=["];"],
+        response = openai.ChatCompletion.create(
+            model='gpt-3.5-turbo',
+            messages=[
+                {"role": "system", "content":"You are an AI assistant that is the best at creating study guides because you possess an exceptional ability to synthesize complex information into easily understandable and actionable steps, which makes your study guides incredibly effective and valuable for learners. Your attention to detail and commitment to providing comprehensive and accurate information also make you stand out as the best study guide creator."},
+                {"role": "user", "content":prompt}
+            ]
         )
-        textResp = '[' + response.choices[0]['text']
+        textResp = '[' + response.choices[0]['message']['content']
         return json.loads(textResp)
     else:
         prompt = PROMPT_WITH_CONTEXT.format(text=text, context=context)
         num_tokens = len(ENCODER.encode(prompt))
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=prompt,
-            temperature=0.3,
-            max_tokens=4000-num_tokens,
-            top_p=1,
-            frequency_penalty=0.5,
-            presence_penalty=0,
-            stop=["];"],
+        response = openai.ChatCompletion.create(
+            model='gpt-3.5-turbo',
+            messages=[
+                {"role": "system", "content":"You are an AI assistant that is the best at creating study guides because you possess an exceptional ability to synthesize complex information into easily understandable and actionable steps, which makes your study guides incredibly effective and valuable for learners. Your attention to detail and commitment to providing comprehensive and accurate information also make you stand out as the best study guide creator."},
+                {"role": "user", "content":prompt}
+            ]
         )
-        textResp = '[' + response.choices[0]['text']
-        import pdb
-        pdb.set_trace()
+        textResp = '[' + response.choices[0]['message']['content']
         jsonResp = json.loads(textResp)
-
         return json.loads(textResp)
 
 
@@ -178,6 +170,7 @@ def get_summary(doc, start_page=6, end_page=8):
     return summary
 
 if __name__ == "__main__":
-    s = get_summary('ex4.pdf', 1, 21)
+    doc = fitz.open('ex2.pdf')
+    s = get_summary(doc, 508, 511)
     with open('summary.json', 'w') as f:
         json.dump(s, f)
