@@ -14,16 +14,14 @@ export async function middleware(request: NextRequest) {
       secret: process.env.AUTH_SECRET,
     });
     //check not logged in
+    
     if (!token) {
-      const url = new URL(`/api/auth/signin`, request.url);
-      return NextResponse.redirect(url);
+      const redirectHref = request.nextUrl.origin + `/signin`;
+      console.log(redirectHref)
+      return NextResponse.redirect(redirectHref);
     }
-    /*//check if not authorized
-    if (token.role !== "admin") {
-      const url = new URL(`/403`, request.url);
-      return NextResponse.rewrite(url);
-    }*/
   }
+  
   if (redirectAuth.some((path) => pathname.startsWith(path))) {
     const token = await getToken({
       req: request,

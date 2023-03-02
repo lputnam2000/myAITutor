@@ -18,6 +18,8 @@ const Container = styled.div`
   width: 80%;
   padding-bottom: 32px;
   border-radius: 3px;
+  background-color: whitesmoke;
+
 
   &:hover {
     box-shadow: 5px 5px 0px #000000;

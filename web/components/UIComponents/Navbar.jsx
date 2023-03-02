@@ -229,6 +229,14 @@ function Navbar(props) {
     const {data: session} = useSession()
     const [color1, setColor1] = useState('');
     const [color2, setColor2] = useState('');
+    const [username, setUsername] = useState('');
+
+    useEffect(() => {
+      if (session) {
+        setUsername(session.user.name);
+      }
+    }, [session]);
+
     useEffect(() => {
         setColor1(getRandomColor())
         setColor2(getRandomColor())
@@ -246,9 +254,9 @@ function Navbar(props) {
                 chimpbase
             </Logo>
             <ButtonsContainer>
-                <StyledLink href={'home'}>
-                    Home
-                </StyledLink>
+                {/*<StyledLink href={'home'}>*/}
+                {/*    Home*/}
+                {/*</StyledLink>*/}
                 <ProfileDropdown>
                     <IconContainer>
 
@@ -256,6 +264,7 @@ function Navbar(props) {
                         />
                     </IconContainer>
                     <ProfileMenu>
+                        <SignOutOption>{username}</SignOutOption>
                         <SignOutOption onClick={signOutClick}>Sign Out</SignOutOption>
                     </ProfileMenu>
                 </ProfileDropdown>

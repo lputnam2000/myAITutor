@@ -11,6 +11,30 @@ import pymongo
 import openai
 from flask import g
 from summary import get_summary
+from functools import wraps
+import logging
+import sys
+from logging.config import dictConfig
+import nltk
+nltk.download('punkt')
+
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'stream': 'ext://flask.logging.wsgi_errors_stream',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+})
+
+BUCKET_NAME = 'chimppdfstore'
 
 def create_app():
     load_dotenv()
@@ -19,7 +43,17 @@ def create_app():
 
 app = create_app()
 
-BUCKET_NAME = 'chimppdfstore'
+def require_api_key(view_function):
+    @wraps(view_function)
+    def decorated_function(*args, **kwargs):
+        api_key = request.headers.get('X-API-Key')
+        if not api_key:
+            api_key = request.args.get('api_key')
+        if not api_key:
+            return jsonify({'error': 'API key is missing'}), 401
+        if api_key == os.getenv('CB_API_SECRET'):
+            return view_function(*args, **kwargs)
+    return decorated_function
 
 def get_s3_client():
     s3 = getattr(g, 's3', None)
@@ -54,14 +88,16 @@ def teardown_mongo_client(exception):
 
 
 @app.route("/")
+@require_api_key
 def index():
     return "<p>Hello, World!</p>"
 
 
 @app.route('/summaries/', methods=["POST"])
+@require_api_key
 def generate_summary():
+    print('here')
     data = request.json  # data is empty
-    print(data)
     pdfKey = data['pdfKey']
     startPage = int(data['startPage'])
     endPage = int(data['endPage'])
@@ -71,6 +107,7 @@ def generate_summary():
     pdf_bytes = response['Body'].read()
     doc = fitz.open(stream=pdf_bytes, filetype="pdf")
     s = get_summary(doc,startPage, endPage)
+    print(s)
     db_client = get_mongo_client()
     data_db = db_client["data"]
     summariesCollection = data_db["SummaryDocuments"]
@@ -79,6 +116,9 @@ def generate_summary():
     summaryDict['endPage'] = endPage
     summaryDict['formattedSummary'] = s
     summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
+    result = jsonify(s)
+    return result
 
-    return jsonify(s)
 
+if __name__ =="__main__":
+    app.run(host='0.0.0.0')

@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import styled from 'styled-components'
+import styled, {keyframes} from 'styled-components'
 import HomeNavbar from "../components/HomeNavbar";
 import {FormControl, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
 import {useState} from "react";
@@ -17,7 +17,7 @@ const WaitingListCard = styled.div`
   margin-top: 20px;
   border-radius: 3px;
   width: 400px;
-    //background-color: ${(props) => props.theme.colors.blue};
+    background-color: ${(props) => props.theme.colors.primary};
   border: ${(props) => props.theme.colors.secondary} 2px solid;
 
   &:hover {
@@ -53,8 +53,23 @@ const Submit = styled.div`
   }
 `
 
+const gradientKeyframes = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+`
+
 const Main = styled.main`
   height: 100vh;
+  background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0 );
+  background-size: 400% 400%;
+  animation: ${gradientKeyframes} 300s ease infinite;
 `
 
 
