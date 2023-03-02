@@ -2,10 +2,10 @@ import React, {useEffect, useState} from 'react';
 import styled, {keyframes} from 'styled-components';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
-import PDFViewerContextProvider from "../../components/PDFViewerComponents/context";
-import PDFViewerWithSummary from "../../components/PDFViewerComponents/PDFViewerWithSummary";
+import PDFViewerContextProvider from "../components/PDFViewerComponents/context";
+import PDFViewerWithSummary from "../components/PDFViewerComponents/PDFViewerWithSummary";
 import {useRouter} from "next/router";
-import Navbar from "../../components/UIComponents/Navbar";
+import Navbar from "../components/UIComponents/Navbar";
 
 
 const gradientKeyframes = keyframes`
@@ -44,11 +44,11 @@ function PageSummary(props) {
     </Container>
 
 }
-
+/*
 export async function getServerSideProps(context) {
     return {
         props: {}, // will be passed to the page component as props
     }
-}
+}*/
 
 export default PageSummary;
