@@ -26,7 +26,7 @@ const client = weaviate.client({
 async function getChatGPTAnswer(prompt) {
 
     try {
-        let response = openai.createChatCompletion(
+        let response = await openai.createChatCompletion(
             {
             model:'gpt-3.5-turbo',
             messages:[
@@ -35,7 +35,8 @@ async function getChatGPTAnswer(prompt) {
             ]
             }
         )
-        const output = response.choices[0]['message']['content']
+        console.log(response)
+        const output = response.data.choices[0]['message']['content']
         return output;
     } catch (error) {
         console.log(error);
@@ -60,7 +61,7 @@ const requestHandler = async (req, res) => {
             .withLimit(2)
             .do()
         const matchingText = weaviateRes.data.Get[className]
-        let prompt = "Answer the question as truthfully as possible and in detail using the provided context, and if the answer is not contained within the text below, say 'I don't know.'\n\nContext:\n"
+        let prompt = "Answer the question in detail using the provided context, and if the answer is not contained within the text below, say 'I don't know.'\n\nContext:\n"
         for (let i = 0; i < matchingText.length; i++) {
             prompt += '\n' + matchingText[i].text + '\n'
         }
