@@ -1,37 +1,36 @@
 import Navbar from "../components/UIComponents/Navbar";
-import React, { useRef, useState } from "react";
-import { Card, CardHeader, CardBody, CardFooter, Text } from '@chakra-ui/react'
-import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons'
-import styles from '/styles/home.module.scss'
-import Upload from "../components/UIComponents/Upload";
+import React, {useEffect, useState} from "react";
 import styled from 'styled-components'
+import axios from "axios";
+import Upload from "../components/UIComponents/Upload";
+import PDFCard from "../components/PDFCard";
+import AWS from 'aws-sdk'
+import { useRouter } from "next/router";
 
-const StyledUpload = styled.div`
-    grid-column-start: 2;
-    grid-column-end: 6;
-    @media (min-width: 700px) {
-        grid-column-start: 3;
-        grid-column-end: 5;
-        padding: 10px;
-    }
-`
+const S3_BUCKET = 'chimppdfstore';
+const REGION = 'us-east-1';
+const URL_EXPIRATION_TIME = 60; // in seconds
+AWS.config.update({signatureVersion: 'v4'})
+const myBucket = new AWS.S3({
+    accessKeyId: '',
+    secretAccessKey: '',
+    params: {Bucket: S3_BUCKET},
+    region: REGION,
+})
 
-const StyledH1 = styled.div`
-    display:block;
-    grid-column-start: 1;
-    grid-column-end: 7;
-    width: 100%;
-    height: 100%;
-    font-family: 'Josefin Sans', sans-serif;
-    font-size: 3rem;
-    text-align: center;
-    color: #FBFBFF;
-    @media (max-width: 700px) {
-        font-size: 2rem;
-    }
-`
+function generatePreSignedPutUrl(fileName, fileType) {
+    let result = myBucket.getSignedUrlPromise('putObject', {
+        Key: fileName,
+        ContentType: fileType,
+        Expires: URL_EXPIRATION_TIME,
+    }).then((url) => {
+        console.log('url', url)
+        return url
+    })
+    return result
+}
 
-const sendS3 = (file) => {
+const sendS3 = async (file) => {
     if (!file) {
         console.log("no file was found")
         return
@@ -48,34 +47,71 @@ const sendS3 = (file) => {
         })
     }
 
-    fetch('/api/getUploadURL', requestObject)
+    await fetch('/api/getUploadURL', requestObject)
         .then(res => res.json())
         .then(data => {
             fetch(data["signedUrl"], {
-                headers: { 'content-type': file.type },
+                headers: {'content-type': file.type},
                 method: 'PUT',
                 body: file,
             }).then((res) => {
                 return res.text()
-            }).then((txt) => { console.log(txt) })
+            }).then((txt) => {
+                console.log(txt)
+            })
         })
+    
+    
 
 }
 
-export default function home() {
+const HomeContainer = styled.div`
+  margin: 30px
+`
+
+const UserFilesContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 200px);
+  grid-auto-flow: dense;
+  gap: 10px;
+`
+
+const HomeHeading = styled.h1`
+  font-size: 30px;
+  margin-bottom: 10px;
+
+`
+
+export default function Home() {
+    const [userUploads, setUserUploads] = useState([]);
+    const router = useRouter();
+
+    useEffect(() => {
+        axios.get('/api/user/uploads').then((res) => {
+            setUserUploads(res.data['uploads'])
+        }).catch((err) => {
+            console.log(err)
+        })
+    }, []);
+
     return (
         <>
-            <Navbar />
-            <div className="tw-min-w-full tw-font-mono tw-bg-cbblue tw-py-5">
-                <div className={`lg:tw-w-2/3 sm:tw-w-full tw-min-h-screen tw-mx-auto`}>
-                    <div className={`tw-w-full tw-h-screen tw-grid tw-grid-cols-6 tw-grid-rows-6`}>
-                            <StyledH1>Upload a PDF to get started!</StyledH1>
-                            <StyledUpload>
-                                <Upload handleFile={sendS3}></Upload>
-                            </StyledUpload>
-                    </div>
-                </div>
-            </div>
+            <Navbar/>
+            <HomeContainer>
+                <HomeHeading>
+                    Your Library:
+                </HomeHeading>
+                <UserFilesContainer>
+                    <Upload handleFile={(file)=>{sendS3(file).then(()=>setTimeout(() => router.reload("/home"), 5000))}}></Upload>
+                    {
+                        userUploads.map((upload) => {
+                                return(<PDFCard key={upload.uuid} uploadId={upload.uuid} title={upload.title} thumbnail={upload.thumbnail}/>);
+                            }
+                        )
+                    }
+                </UserFilesContainer>
+            </HomeContainer>
+
         </>
     );
 }

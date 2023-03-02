@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, {useRef, useState} from "react";
 import styled from "styled-components"
 import {
     Modal,
@@ -21,62 +21,61 @@ const theme = {
 }
 
 const DottedRound = styled.div`
-    width: 100%;
-    border: none;
-    height: 100%;
-    border-radius: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    background-color: ${theme.primary};
+  width: 100%;
+  border: none;
+  height: 100%;
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: ${theme.primary};
 `;
 
 const Directions = styled.div`
-    margin: 0 auto 0 auto;
-    color: ${theme.pink};
+  color: ${theme.pink};
+  font-weight: 400;
+  font-size: 1.3rem;
 `
 
 const Container = styled.div`
-    width: 100%;
-    height: 100%;
-    border: solid;
-    border-width: 5px;
-    border-radius: 2rem;
-    padding: .5rem;
-    background-color: ${theme.blue};
-    transition: transform ease .5s, box-shadow ease .5s;
-    &:hover {
-        transform: translate(-0.3rem, -0.3rem);
-        box-shadow: .2rem .2rem 0px rgba(0,0,0,1);
-    }
-    &:hover ${Directions} {
-        color: ${theme.blue};
-      }
-      &:hover ${DottedRound} {
-        background-color: ${theme.pink};
-    }
+  width: 150px;
+  height: 225px;
+  border: solid 3px;
+  border-radius: 10px;
+  padding: .5rem;
+  background-color: ${theme.blue};
+  transition: box-shadow ease-in-out .2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    box-shadow: 5px 5px 0px #000000;
+  }
 `;
 
 const PopButton = styled.button`
-    width: 100%;
-    height: 100%;
-    border: solid;
-    border-width: 5px;
-    border-radius: 2rem;
-    padding: .5rem;
-    background-color: ${theme.blue};
-    transition: transform ease .5s, box-shadow ease .5s;
-    &:hover {
-        transform: translate(-0.125rem, -0.125rem);
-        box-shadow: .125rem .125rem 0px rgba(0,0,0,1);
-    }
+  width: 100%;
+  height: 100%;
+  border: solid;
+  border-width: 3px;
+  border-radius: 4px;
+  padding: .5rem;
+  background-color: ${theme.blue};
+  color: black;
+  transition: box-shadow ease-in-out .3s;
+  font-weight: 500;
+
+  &:hover {
+    box-shadow: 5px 5px 0px #000000;
+  }
 `
 
-export default function Upload({ handleFile }) {
+export default function Upload({handleFile}) {
 
-    const { isOpen, onOpen, onClose } = useDisclosure("");
+    const {isOpen, onOpen, onClose} = useDisclosure("");
     const hiddenFileInput = React.useRef(null);
-
 
 
     const handleFileButtonClick = () => {
@@ -90,21 +89,19 @@ export default function Upload({ handleFile }) {
     };
 
     return (<>
-
         <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalOverlay />
-            <ModalContent bg={theme.primary} sx={{'border':'solid', 'border-width':'5px'}}>
+            <ModalOverlay/>
+            <ModalContent bg={theme.primary} sx={{'border': 'solid', 'borderWidth': '3px'}}>
                 <ModalHeader color={theme.secondary}>Upload a PDF</ModalHeader>
-                <ModalCloseButton />
                 <ModalBody>
                     <PopButton bg={theme.secondary} onClick={handleFileButtonClick}>
-                        <span style={{ color: theme.primary }}>Upload a file</span>
+                        Select PDF
                     </PopButton>
                     <input
                         type="file"
                         ref={hiddenFileInput}
                         onChange={handleFileChange}
-                        style={{ display: 'none' }}
+                        style={{display: 'none'}}
                     />
                 </ModalBody>
 
@@ -117,9 +114,7 @@ export default function Upload({ handleFile }) {
         </Modal>
 
         <Container onClick={onOpen}>
-            <DottedRound>
-                <Directions>Upload New PDF</Directions>
-            </DottedRound>
+            <Directions>Upload New PDF</Directions>
         </Container>
     </>);
 }

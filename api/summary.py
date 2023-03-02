@@ -136,8 +136,7 @@ def generate_context(summary):
     return final_context
 
 
-def get_summary(pdf='ex2.pdf', start_page=6, end_page=8):
-    doc = fitz.open(pdf)
+def get_summary(doc, start_page=6, end_page=8):
     summary = []
 
     # extract the text and clean it up
