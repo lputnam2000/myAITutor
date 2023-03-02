@@ -16,8 +16,9 @@ export async function middleware(request: NextRequest) {
     //check not logged in
     
     if (!token) {
-      const url = new URL(request.nextUrl.host + `/api/auth/signin`);
-      return NextResponse.redirect(url.href);
+      const redirectHref = request.nextUrl.host + `/api/auth/signin`;
+      console.log(redirectHref)
+      return NextResponse.redirect(redirectHref);
     }
   }
   
