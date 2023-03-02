@@ -14,10 +14,11 @@ export async function middleware(request: NextRequest) {
       secret: process.env.AUTH_SECRET,
     });
     //check not logged in
+    /*
     if (!token) {
       const url = new URL(`/api/auth/signin`, request.url);
       return NextResponse.redirect(url);
-    }
+    }*/
     /*//check if not authorized
     if (token.role !== "admin") {
       const url = new URL(`/403`, request.url);
