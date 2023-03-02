@@ -1,11 +1,11 @@
 import Navbar from "../components/UIComponents/Navbar";
 import React, {useEffect, useState} from "react";
-import styled from 'styled-components'
+import styled, {keyframes} from 'styled-components'
 import axios from "axios";
 import Upload from "../components/UIComponents/Upload";
 import PDFCard from "../components/PDFCard";
 import AWS from 'aws-sdk'
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 
 const S3_BUCKET = 'chimppdfstore';
 const REGION = 'us-east-1';
@@ -60,14 +60,33 @@ const sendS3 = async (file) => {
                 console.log(txt)
             })
         })
-    
-    
+
 
 }
 
-const HomeContainer = styled.div`
-  margin: 30px
+const gradientKeyframes = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 `
+
+const HomeContainer = styled.div`
+  margin: 30px;
+`
+
+const Container = styled.div`
+  background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0);
+  background-size: 400% 400%;
+  animation: ${gradientKeyframes} 300s ease infinite;
+  min-height: 100vh;
+`
+
 
 const UserFilesContainer = styled.div`
   display: grid;
@@ -79,6 +98,7 @@ const UserFilesContainer = styled.div`
 const HomeHeading = styled.h1`
   font-size: 30px;
   margin-bottom: 10px;
+  cursor: default;
 
 `
 
@@ -95,23 +115,26 @@ export default function Home() {
     }, []);
 
     return (
-        <>
+        <Container>
             <Navbar/>
             <HomeContainer>
                 <HomeHeading>
-                    Your Library:
+                    Home
                 </HomeHeading>
                 <UserFilesContainer>
-                    <Upload handleFile={(file)=>{sendS3(file).then(()=>setTimeout(() => router.reload("/home"), 5000))}}></Upload>
+                    <Upload handleFile={(file) => {
+                        sendS3(file).then(() => setTimeout(() => router.reload("/home"), 5000))
+                    }}></Upload>
                     {
                         userUploads.map((upload) => {
-                                return(<PDFCard key={upload.uuid} uploadId={upload.uuid} title={upload.title} thumbnail={upload.thumbnail}/>);
+                                return (<PDFCard key={upload.uuid} uploadId={upload.uuid} title={upload.title}
+                                                 thumbnail={upload.thumbnail}/>);
                             }
                         )
                     }
                 </UserFilesContainer>
             </HomeContainer>
 
-        </>
+        </Container>
     );
 }

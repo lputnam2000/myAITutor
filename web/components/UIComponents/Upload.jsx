@@ -12,63 +12,43 @@ import {
     Button,
 } from '@chakra-ui/react'
 
-const theme = {
-    primary: '#FBFBFF',
-    secondary: '#000000',
-    green: '#39ff14',
-    blue: '#1FDDFF',
-    pink: '#FF1f8f'
-}
-
-const DottedRound = styled.div`
-  width: 100%;
-  border: none;
-  height: 100%;
-  border-radius: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-color: ${theme.primary};
-`;
 
 const Directions = styled.div`
-  color: ${theme.pink};
-  font-weight: 400;
-  font-size: 1.3rem;
+  color: ${props => props.theme.colors.secondary};
+  font-weight: 500;
+  font-size: 30px;
 `
 
 const Container = styled.div`
-  width: 150px;
+  width: 200px;
   height: 225px;
-  border: solid 3px;
-  border-radius: 10px;
+  border: solid 2px;
+  border-radius: 4px;
   padding: .5rem;
-  background-color: ${theme.blue};
   transition: box-shadow ease-in-out .2s;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: border-radius ease-in-out .1s;
 
   &:hover {
-    box-shadow: 5px 5px 0px #000000;
+    border-radius: 40px;
   }
 `;
 
 const PopButton = styled.button`
   width: 100%;
   height: 100%;
-  border: solid;
-  border-width: 3px;
+  border: solid 1px;
   border-radius: 4px;
   padding: .5rem;
-  background-color: ${theme.blue};
-  color: black;
-  transition: box-shadow ease-in-out .3s;
+  background-color: ${props => props.theme.colors.blue};
+  transition: box-shadow ease-in-out .1s;
   font-weight: 500;
 
   &:hover {
-    box-shadow: 5px 5px 0px #000000;
+    box-shadow: 3px 3px 0px #000000;
   }
 `
 
@@ -91,10 +71,10 @@ export default function Upload({handleFile}) {
     return (<>
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay/>
-            <ModalContent bg={theme.primary} sx={{'border': 'solid', 'borderWidth': '3px'}}>
-                <ModalHeader color={theme.secondary}>Upload a PDF</ModalHeader>
+            <ModalContent bg={'white'} sx={{'border': 'solid', 'borderWidth': '2px'}}>
+                <ModalHeader color={'black'}>Upload a PDF</ModalHeader>
                 <ModalBody>
-                    <PopButton bg={theme.secondary} onClick={handleFileButtonClick}>
+                    <PopButton bg={'white'} onClick={handleFileButtonClick}>
                         Select PDF
                     </PopButton>
                     <input
@@ -106,7 +86,7 @@ export default function Upload({handleFile}) {
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button color={theme.secondary} mr={3} onClick={onClose}>
+                    <Button color={'black'} mr={3} onClick={onClose}>
                         Close
                     </Button>
                 </ModalFooter>
@@ -114,7 +94,7 @@ export default function Upload({handleFile}) {
         </Modal>
 
         <Container onClick={onOpen}>
-            <Directions>Upload New PDF</Directions>
+            <Directions>Import Information</Directions>
         </Container>
     </>);
 }

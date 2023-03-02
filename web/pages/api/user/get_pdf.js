@@ -23,14 +23,17 @@ async function generatePreSignedGetUrl(key) {
 
 const requestHandler = async (req, res) => {
     if (req.method === "GET") {
-        const {key} = req.query
-        let s3Url = await generatePreSignedGetUrl(key)
-        const client = await clientPromise;
-        const db = client.db("data");
-        const summaryDocuments = db.collection("SummaryDocuments");
-        const documentDetails = await summaryDocuments.findOne({_id: key});
-
-        return res.status(200).json({s3Url: s3Url, documentDetails: documentDetails})
+        const { key } = req.query
+        if (key) {
+            let s3Url = await generatePreSignedGetUrl(key)
+            const client = await clientPromise;
+            const db = client.db("data");
+            const summaryDocuments = db.collection("SummaryDocuments");
+            const documentDetails = await summaryDocuments.findOne({_id: key});
+            return res.status(200).json({s3Url: s3Url, documentDetails: documentDetails})
+        } else {
+            res.status(400).json({ 'error': 'Invalid Key' })
+        }
     } else {
         return res.status(404).json({message: "URL Not Found"});
     }

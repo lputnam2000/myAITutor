@@ -8,7 +8,7 @@ interface ReadingIndicatorPlugin extends Plugin {
     ReadingIndicator: () => React.ReactElement;
 }
 
-const readingIndicatorPlugin = (): ReadingIndicatorPlugin => {
+const ReadingIndicatorPlugin = (): ReadingIndicatorPlugin => {
     const store = React.useMemo(() => createStore<StoreProps>({}), []);
 
     const ReadingIndicatorDecorator = () => <ReadingIndicator store={store} />;
@@ -21,4 +21,4 @@ const readingIndicatorPlugin = (): ReadingIndicatorPlugin => {
     };
 };
 
-export default readingIndicatorPlugin;
+export default ReadingIndicatorPlugin;

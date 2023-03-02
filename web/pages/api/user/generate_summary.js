@@ -6,7 +6,7 @@ const requestHandler = async (req, res) => {
     if (req.method === "POST") {
         const {pdfKey, startPage, endPage} = req.body
         console.log(pdfKey)
-        fetch('http://127.0.0.1:5000/summaries/', {
+        fetch(process.env.BACKEND_URL+'/summaries/', {
             method: 'POST',
             body: JSON.stringify({
                 pdfKey,
@@ -14,7 +14,8 @@ const requestHandler = async (req, res) => {
                 endPage
             }),
             headers: {
-                'Content-Type': 'application/json'
+                'X-API-Key' : process.env.CB_API_SECRET,
+                'Content-Type' : 'application/json'
             }
         })
         console.log('hi')
