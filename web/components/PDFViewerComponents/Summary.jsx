@@ -9,7 +9,7 @@ import {PDFViewerContext} from "./context";
 
 const Container = styled.div`
   //flex: 1;
-  width: 85%;
+  width: 95%;
   @media (min-width: 750px) {
     width: 40vw;
     margin-top: 10px;
