@@ -28,11 +28,14 @@ async function getChatGPTAnswer(prompt) {
     try {
         let response = await openai.createChatCompletion(
             {
-            model:'gpt-3.5-turbo',
-            messages:[
-                {"role": "system", "content":"You are an AI assistant that is designed to quickly find answers given context, making you incredibly helpful at answering questions."},
-                {"role": "user", "content":prompt}
-            ]
+                model: 'gpt-3.5-turbo',
+                messages: [
+                    {
+                        "role": "system",
+                        "content": "You are an AI assistant that is designed to quickly find answers given context, making you incredibly helpful at answering questions."
+                    },
+                    {"role": "user", "content": prompt}
+                ]
             }
         )
         console.log(response)
@@ -69,7 +72,7 @@ const requestHandler = async (req, res) => {
             .withLimit(2)
             .do()
         const matchingText = weaviateRes.data.Get[className]
-        let prompt = "Answer the question in detail using the provided context, and if the answer is not contained within the text below, say 'I don't know.'\n\nContext:\n"
+        let prompt = "Answer the question using the provided context, and if the answer is not contained use your own mind but tell the user that you are doing so.'\n\nContext:\n"
         for (let i = 0; i < matchingText.length; i++) {
             prompt += '\n' + matchingText[i].text + '\n'
         }
@@ -78,7 +81,7 @@ const requestHandler = async (req, res) => {
         prompt += `Q:${query}` + "\nA:"
         getChatGPTAnswer(prompt).then(answer => {
             console.log(answer)
-            return res.status(200).json({'answer': answer})
+            return res.status(200).json({'answer': answer, 'contexts': matchingText})
         })
 
         // return res.status(200).json({s3Url: ''})
