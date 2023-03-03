@@ -47,9 +47,12 @@ const sendS3 = async (file) => {
         })
     }
 
+    let uploadID
+
     await fetch('/api/getUploadURL', requestObject)
         .then(res => res.json())
         .then(data => {
+            uploadID = data["fileName"]
             fetch(data["signedUrl"], {
                 headers: {'content-type': file.type},
                 method: 'PUT',
@@ -60,8 +63,7 @@ const sendS3 = async (file) => {
                 console.log(txt)
             })
         })
-
-
+    return uploadID
 }
 
 const gradientKeyframes = keyframes`
@@ -113,6 +115,7 @@ export default function Home() {
             console.log(err)
         })
     }, []);
+    useEffect(()=>{}, [userUploads])
 
     return (
         <Container>
@@ -123,7 +126,9 @@ export default function Home() {
                 </HomeHeading>
                 <UserFilesContainer>
                     <Upload handleFile={(file) => {
-                        sendS3(file).then(() => setTimeout(() => router.reload("/home"), 5000))
+                        sendS3(file).then((uploadID) => {
+                            let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready'}
+                            setUserUploads(oldArray => [...oldArray, newValue] )})
                     }}></Upload>
                     {
                         userUploads.map((upload) => {
