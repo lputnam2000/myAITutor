@@ -8,7 +8,7 @@ import GenerateSummary from "./GenerateSummary";
 import {PDFViewerContext} from "./context";
 
 const Container = styled.div`
-  width: 90%;
+  width: 100%;
   @media (min-width: 750px) {
     flex: 4;
     width: 40vw;
