@@ -164,7 +164,7 @@ export default function Home() {
                 <Container>
                     <Banner>Please view on a bigger screen for the best experience</Banner>
                     <HeadlineContainer>
-                        <Text id="text">Don't Get Lost in the Details: Use <Underline
+                        <Text id="text">Don&apos;t Get Lost in the Details: Use <Underline
                             color={'#3394f3'}>ChimpBase</Underline> to <Underline
                             color={'#7083f1'}>Simplify&nbsp;</Underline>
                             and <Underline color={'#e97bf5'}>Conquer</Underline></Text>
