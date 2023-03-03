@@ -52,12 +52,20 @@ const requestHandler = async (req, res) => {
     if (req.method === "GET") {
         const {query, key} = req.query
         console.log(key)
-
+        let searchText = String(query);
+        if (!searchText) {
+            // handle empty query
+            return res.status(400).json({ message: 'Invalid search query' });
+          }
         const className = getClassName(key)
         let weaviateRes = await client.graphql
             .get()
             .withClassName(className)
             .withFields('text')
+            .withNearText({
+                concepts: [searchText],
+                distance: 0.6,
+              })
             .withLimit(2)
             .do()
         const matchingText = weaviateRes.data.Get[className]
