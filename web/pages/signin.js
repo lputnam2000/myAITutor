@@ -17,6 +17,28 @@ export default function SignIn({ csrfToken, providers }) {
     }
     const emailSubmit = async (e) => {
         e.preventDefault()
+        const emailRegex =
+            /^(?=[a-z0-9@._%+-]{6,254}$)[a-z0-9._%+-]{1,64}@(?:[a-z0-9-]{1,63}\.){1,8}[a-z]{2,63}$/;
+        if (!emailRegex.test(emailInputRef.current.value.toLowerCase())) {
+            setEmailForm(<div className="tw-grid tw-gap-y-3">
+                <input
+                    ref={emailInputRef}
+                    type="email" name="email"
+                    className="focus:tw-border-purple-400 tw-rounded-md tw-border tw-border-cbblue tw-bg-slate-700 tw-py-3 tw-px-4 tw-text-slate-200 tw-outline-none transition placeholder:tw-text-slate-400"
+                    placeholder="email@example.com"
+                />
+                <div className="tw-text-red-500 tw-m-auto">Invalid Email</div>
+                <button
+                    onClick={emailSubmit}
+                    className="tw-flex tw-items-center tw-justify-center tw-gap-x-2 tw-rounded-md tw-border tw-border-cbblue tw-bg-slate-700 tw-py-3 tw-px-4 tw-text-cbpink transition hover:tw-text-cbblack"
+                >
+                    Sign in with Email
+                </button>
+                
+            </div>)
+            return;
+        }
+
         const response = await fetch(
             `/api/auth/signin/email`,
             {
@@ -30,7 +52,6 @@ export default function SignIn({ csrfToken, providers }) {
                 }),
             }).then((response) => {
                 if (response.ok) {
-                    console.log("sent")
                     setEmailForm(<div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-x-2 tw-rounded-md tw-border tw-border-slate-600 tw-bg-slate-700 tw-py-3 tw-px-4 tw-text-cbgreen"><h1>Email Sent</h1><h2>Use link in email to login</h2></div>)
                 }
             })
@@ -73,7 +94,7 @@ export default function SignIn({ csrfToken, providers }) {
                                     onClick={googleSignIn}
                                 >
                                     <svg
-                                        style={{'color':"rgb(203, 213, 225)"}}
+                                        style={{ 'color': "rgb(203, 213, 225)" }}
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="18"
                                         height="18"
