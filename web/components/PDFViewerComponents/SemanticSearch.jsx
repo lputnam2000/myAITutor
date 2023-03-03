@@ -11,9 +11,10 @@ const SearchInputContainer = styled.div`
   margin-bottom: 5px;
 `
 const SearchButton = styled.button`
-  background-color: black;
+  background-color: ${({isSearchDisabled, theme}) => isSearchDisabled ? 'gray': theme.colors.secondary};
+  cursor: ${({isSearchDisabled, theme}) => isSearchDisabled ? 'not-allowed': 'pointer'};
+  
   color: white;
-  cursor: pointer;
   padding: 5px;
   margin-top: 10px;
 `
@@ -31,7 +32,7 @@ const PreviousSearches = styled.div`
 function SemanticSearch({uploadId}) {
     const [searchQuery, setSearchQuery] = useState('');
     const [answers, setAnswers] = useState([]);
-
+    const [isSearchDisabled, setIsSearchDisabled] = useState(false)
     const updateSearches = (inputQuery, inputResults) => {
       if (!inputResults || !inputQuery) {
         return
@@ -46,9 +47,11 @@ function SemanticSearch({uploadId}) {
 
     const searchAnswer = async () => {
         let params = {'key': uploadId, query: searchQuery}
-        let result
+        let result;
+        setIsSearchDisabled(true)
         await axios.get('/api/user/get_search', {params: params}).then(res => {
             result = res.data
+            setIsSearchDisabled(false)
         }).catch(err => {
             console.log(err)
         })
@@ -60,7 +63,7 @@ function SemanticSearch({uploadId}) {
             <SearchInputContainer>
                 <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                        placeholder='Ask a Question'/>
-                <SearchButton onClick={async (e) => {updateSearches(searchQuery, await searchAnswer(e))}}>Search</SearchButton>
+                <SearchButton isSearchDisabled={isSearchDisabled} onClick={async (e) => {updateSearches(searchQuery, await searchAnswer(e))}}>Search</SearchButton>
             </SearchInputContainer>
             <PreviousSearches>
             {answers.map((elem, key)=>{
