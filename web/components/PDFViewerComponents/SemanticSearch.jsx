@@ -13,7 +13,6 @@ const SearchInputContainer = styled.div`
 const SearchButton = styled.button`
   background-color: ${({isSearchDisabled, theme}) => isSearchDisabled ? 'gray': theme.colors.secondary};
   cursor: ${({isSearchDisabled, theme}) => isSearchDisabled ? 'not-allowed': 'pointer'};
-  
   color: white;
   padding: 5px;
   margin-top: 10px;
