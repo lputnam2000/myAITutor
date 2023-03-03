@@ -11,20 +11,30 @@ import {PDFViewerContext} from "./context";
 
 
 const Container = styled.div`
-  margin-left: 30px;
-  margin-right: 30px;
   border: 2px black solid;
   height: 750px;
-  width: 80%;
-  padding-bottom: 32px;
-  border-radius: 3px;
   background-color: whitesmoke;
+  border-radius: 3px;
+  margin-left: 30px;
+  margin-right: 30px;
+  padding-bottom: 32px;
+
+  @media (min-width: 750px) {
+    margin-left: 30px;
+    margin-right: 30px;
+    border: 2px black solid;
+    height: 750px;
+    width: 80%;
+    padding-bottom: 32px;
+    border-radius: 3px;
 
 
-  &:hover {
-    box-shadow: 5px 5px 0px #000000;
-    transition: box-shadow 0.1s ease-in-out;
+    &:hover {
+      box-shadow: 5px 5px 0px #000000;
+      transition: box-shadow 0.1s ease-in-out;
+    }
   }
+
 `
 
 
