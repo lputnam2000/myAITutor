@@ -9,14 +9,19 @@ import {PDFViewerContext} from "./context";
 
 const Container = styled.div`
   //flex: 1;
-  width: 40vw;
+  width: 85%;
+  @media (min-width: 750px) {
+    width: 40vw;
+    margin-top: 10px;
+    margin-right: 20px;
+  }
   overflow-y: auto;
-  margin-top: 10px;
-  margin-right: 20px;
+
   border: 2px black solid;
-  border-radius: 3px;
+  border-radius: 15px 3px 3px 3px;
   height: 750px;
   background-color: whitesmoke;
+
   &:hover {
     box-shadow: 5px 5px 0px #000000;
     transition: box-shadow 0.1s ease-in-out;
