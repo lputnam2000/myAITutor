@@ -23,9 +23,11 @@ const PDFViewerContainer = styled.div`
   flex: 6;
   width: 100%;
   @media (max-width: 750px) {
-    padding-left: 30px;
-    padding-right: 40px;
+    padding-left: 5px;
+    padding-right: 5px;
   }
+  padding-left: 0px;
+  padding-right: 0px;
 `
 const SelectDemoContainer = styled.div`
   margin-top: 20px;
