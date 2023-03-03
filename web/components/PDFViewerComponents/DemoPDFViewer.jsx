@@ -13,8 +13,8 @@ import {PDFViewerContext} from "./context";
 const Container = styled.div`
   margin-left: auto;
   margin-right: auto;
-  width: 95%;
-  height: 750px;
+  width: 100%;
+  height: 450px;
   background-color: whitesmoke;
   border-radius: 3px;
   padding-bottom: 32px;
