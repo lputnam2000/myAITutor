@@ -12,7 +12,8 @@ python-dotenv==1.0.0
 PyMuPDF==1.21.1
 boto3==1.26.80
 pymongo==4.3.3
-openai==0.26.5
+openai==0.27.0
 tiktoken
 nltk
 langchain
+gunicorn

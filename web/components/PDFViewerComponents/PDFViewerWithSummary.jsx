@@ -16,12 +16,17 @@ const Container = styled.div`
 
 const InnerContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  @media (min-width: 750px) {
+    flex-direction: row;
+  }
+  flex-direction: column;
+  align-items: center;
   //justify-content: space-between;
 `
 
 const PDFViewerContainer = styled.div`
   flex: 1;
+  width: 100%;
 `
 
 function PdfViewerWithSummary() {
@@ -40,7 +45,7 @@ function PdfViewerWithSummary() {
 
     useEffect(() => {
         if (!pdfKey) return
-        
+
         let params = {'key': pdfKey}
         axios.get('/api/user/get_pdf', {params: params}).then(res => {
             setPdfFile(res.data.s3Url)

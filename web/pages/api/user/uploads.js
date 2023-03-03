@@ -42,6 +42,7 @@ const requestHandler = async (req, res) => {
                         upload.thumbnail = await generatePreSignedGetUrl(thumbnailBucket, upload.uuid);
                         return upload;
                     }))
+
                     res.status(200).json({uploads: results})
                 } else {
                     res.status(200).json({uploads: []})
