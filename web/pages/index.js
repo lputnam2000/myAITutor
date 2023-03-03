@@ -17,7 +17,7 @@ const WaitingListCard = styled.div`
   margin-top: 20px;
   border-radius: 3px;
   width: 400px;
-    background-color: ${(props) => props.theme.colors.primary};
+  background-color: ${(props) => props.theme.colors.primary};
   border: ${(props) => props.theme.colors.secondary} 2px solid;
 
   &:hover {
@@ -30,7 +30,7 @@ const WaitingListCard = styled.div`
     width: 300px;
   }
 `
-const JoinWaitingListHeading = styled.div`
+const JoinWaitingListHeading = styled.h2`
   font-family: var(--font-b);
   font-size: 25px;
 `
@@ -67,7 +67,7 @@ const gradientKeyframes = keyframes`
 
 const Main = styled.main`
   height: 100vh;
-  background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0 );
+  background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0);
   background-size: 400% 400%;
   animation: ${gradientKeyframes} 300s ease infinite;
 `

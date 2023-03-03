@@ -13,7 +13,7 @@ const Container = styled.div`
   }
 `
 
-const Logo = styled.div`
+const Logo = styled.h1`
   font-family: var(--font-b);
   font-weight: 700;
   margin-left: 30px;
