@@ -16,7 +16,9 @@ import {
 const Directions = styled.div`
   color: ${props => props.theme.colors.secondary};
   font-weight: 500;
-  font-size: 30px;
+  font-size: 20px;
+  width: 100%;
+  text-align: center;
 `
 
 const Container = styled.div`
@@ -30,10 +32,12 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-radius ease-in-out .1s;
+  transition: border-radius ease-in-out .25s;
+  transition: background-color ease-in-out .25s;
 
   &:hover {
-    border-radius: 40px;
+    border-radius: 20px;
+    background-color: #fafdd4;
   }
 `;
 
@@ -81,6 +85,7 @@ export default function Upload({handleFile}) {
                         type="file"
                         ref={hiddenFileInput}
                         onChange={handleFileChange}
+                        accept="application/pdf"
                         style={{display: 'none'}}
                     />
                 </ModalBody>
@@ -94,7 +99,7 @@ export default function Upload({handleFile}) {
         </Modal>
 
         <Container onClick={onOpen}>
-            <Directions>Import Information</Directions>
+            <Directions>Upload to summarize</Directions>
         </Container>
     </>);
 }
