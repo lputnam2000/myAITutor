@@ -2,22 +2,26 @@ import Head from 'next/head'
 import styled, {keyframes} from 'styled-components'
 import HomeNavbar from "../components/HomeNavbar";
 import {FormControl, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import axios from "axios";
+import DemoPDFSummary from "../components/DemoPDFSummary";
 
 
 const Container = styled.div`
-  height: 70%;
+  //height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+
+  //justify-content: center;
 `
 
 const WaitingListCard = styled.div`
   margin-top: 20px;
+  margin-bottom: 40px;
   border-radius: 3px;
   width: 400px;
-    background-color: ${(props) => props.theme.colors.primary};
+  background-color: ${(props) => props.theme.colors.primary};
   border: ${(props) => props.theme.colors.secondary} 2px solid;
 
   &:hover {
@@ -30,7 +34,7 @@ const WaitingListCard = styled.div`
     width: 300px;
   }
 `
-const JoinWaitingListHeading = styled.div`
+const JoinWaitingListHeading = styled.h2`
   font-family: var(--font-b);
   font-size: 25px;
 `
@@ -65,17 +69,67 @@ const gradientKeyframes = keyframes`
   }
 `
 
+
 const Main = styled.main`
-  height: 100vh;
-  background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0 );
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0);
   background-size: 400% 400%;
   animation: ${gradientKeyframes} 300s ease infinite;
 `
 
+const HeadlineContainer = styled.div`
+  text-align: center;
+
+  font-family: var(--font-b);
+
+`
+
+const Text = styled.h1`
+  vertical-align: middle;
+  font-family: var(--font-b);
+
+  @media (min-width: 550px) {
+    font-size: 40px;
+  }
+  @media (min-width: 900px) {
+    font-size: 50px;
+  }
+  font-size: 24px;
+  color: black;
+`
+const Underline = styled.span`
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 95%;
+    width: 150%;
+    aspect-ratio: 3 / 1;
+    left: 50%;
+    transform: translate(-50%, 0);
+    border-radius: 50%;
+    border: 6px solid;
+    border-color: ${props => props.color};
+    /* Use a clip-path to hide and show the bits you want */
+    clip-path: polygon(0 0, 50% 50%, 100% 0);
+  }
+`
+const Banner = styled.div`
+  background-color: black;
+  color: white;
+  display: none;
+  width: 100%;
+  padding: 10px 15px;
+  @media (max-width: 500px) {
+    display: block;
+  }
+`
 
 export default function Home() {
     const [email, setEmail] = useState('');
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
+
     const submitEntry = () => {
         const emailRegex =
             /^(?=[a-z0-9@._%+-]{6,254}$)[a-z0-9._%+-]{1,64}@(?:[a-z0-9-]{1,63}\.){1,8}[a-z]{2,63}$/;
@@ -99,7 +153,7 @@ export default function Home() {
     return (
         <>
             <Head>
-                <title>Chimpbase</title>
+                <title>ChimpBase</title>
                 <meta name="description"
                       content="Chimpbase is revolutionizing the way people consume information. Our innovative software extracts key details from large pieces of text, video and PDFs to create smart notes that help users understand and retain information quickly and easily. Join the waitlist today and join the Chimp Squad to simplify your information overload "/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -108,7 +162,15 @@ export default function Home() {
             <Main>
                 <HomeNavbar/>
                 <Container>
-                    <WaitingListCard>
+                    <Banner>Please view on a bigger screen for the best experience</Banner>
+                    <HeadlineContainer>
+                        <Text id="text">Don&apos;t Get Lost in the Details: Use <Underline
+                            color={'#3394f3'}>ChimpBase</Underline> to <Underline
+                            color={'#7083f1'}>Simplify&nbsp;</Underline>
+                            and <Underline color={'#e97bf5'}>Conquer</Underline></Text>
+                    </HeadlineContainer>
+                    <DemoPDFSummary/>
+                    <WaitingListCard id={'waiting-list'}>
                         <JoinWaitingListHeading>
                             Join the Waiting list
                         </JoinWaitingListHeading>
