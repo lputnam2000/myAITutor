@@ -12,11 +12,11 @@ import {PDFViewerContext} from "./context";
 
 const Container = styled.div`
   border: 2px black solid;
-  height: 750px;
+  height: 500px;
   background-color: whitesmoke;
   border-radius: 3px;
-  margin-left: 30px;
-  margin-right: 30px;
+  margin-left: 8px;
+  margin-right: 8px;
   padding-bottom: 32px;
 
   @media (min-width: 750px) {
