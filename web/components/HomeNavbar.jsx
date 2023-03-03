@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components'
+import Link from "next/link";
 
 const Container = styled.div`
   height: 100px;
@@ -13,7 +14,7 @@ const Container = styled.div`
   }
 `
 
-const Logo = styled.div`
+const Logo = styled.h1`
   font-family: var(--font-b);
   font-weight: 700;
   margin-left: 30px;
@@ -30,7 +31,7 @@ const Logo = styled.div`
 `;
 
 
-const WaitlistContainer = styled.div`
+const WaitlistContainer = styled(Link)`
   border-left: ${(props) => props.theme.colors.secondary} 5px solid;
   font-family: var(--font-open);
   display: flex;
@@ -68,7 +69,7 @@ function HomeNavbar(props) {
             <Logo>
                 chimpbase
             </Logo>
-            <WaitlistContainer>
+            <WaitlistContainer href={'#waiting-list'}>
                 Join the Waitlist
             </WaitlistContainer>
         </Container>
