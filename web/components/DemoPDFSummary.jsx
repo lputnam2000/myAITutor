@@ -23,9 +23,11 @@ const PDFViewerContainer = styled.div`
   flex: 6;
   width: 100%;
   @media (max-width: 750px) {
-    padding-left: 30px;
-    padding-right: 40px;
+    padding-left: 5px;
+    padding-right: 5px;
   }
+  padding-left: 0px;
+  padding-right: 0px;
 `
 const SelectDemoContainer = styled.div`
   margin-top: 20px;
@@ -51,7 +53,7 @@ const DemoOption = styled.div`
 `
 
 function DemoPdfSummary(props) {
-    const [demoKey, setDemoKey] = useState('f8e566b6-3590-4f3d-b48e-61c8ef7690ec');
+    const [demoKey, setDemoKey] = useState('b1bee4f2-c9e1-45da-acaa-b560c145ecca');
     const [pdfFile, setPdfFile] = useState('');
     const [summary, setSummary] = useState([]);
     const [title, setTitle] = useState('');
