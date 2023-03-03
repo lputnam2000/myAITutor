@@ -78,7 +78,7 @@ const requestHandler = async (req, res) => {
         prompt += `Q:${query}` + "\nA:"
         getChatGPTAnswer(prompt).then(answer => {
             console.log(answer)
-            return res.status(200).json({'answer': answer})
+            return res.status(200).json({'answer': answer, 'contexts': matchingText})
         })
 
         // return res.status(200).json({s3Url: ''})
