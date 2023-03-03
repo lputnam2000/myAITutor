@@ -44,15 +44,15 @@ const InfoText = styled.div`
 
 const Submit = styled.div`
   margin-top: 15px;
-  background-color: black;
-  color: ${({theme}) => theme.colors.primary};
+  background-color: ${({isDisabled, theme}) => isDisabled ? 'gray': theme.colors.secondary};
+  color: white;
   display: inline-block;
   padding: 10px;
-  cursor: pointer;
+  cursor: ${({isDisabled, theme}) => isDisabled ? 'not-allowed': 'pointer'};
   font-weight: 500;
 
   &:hover {
-    background-color: ${({theme}) => theme.colors.blue};
+    background-color: ${({isDisabled, theme}) => isDisabled ? 'gray': theme.colors.blue};
     color: ${({theme}) => theme.colors.secondary};
   }
 `
@@ -98,21 +98,9 @@ const Text = styled.h1`
   color: black;
 `
 const Underline = styled.span`
-  position: relative;
-
-  &:after {
-    content: '';
-    position: absolute;
-    top: 95%;
-    width: 150%;
-    aspect-ratio: 3 / 1;
-    left: 50%;
-    transform: translate(-50%, 0);
-    border-radius: 50%;
-    border: 6px solid;
-    border-color: ${props => props.color};
-    /* Use a clip-path to hide and show the bits you want */
-    clip-path: polygon(0 0, 50% 50%, 100% 0);
+    position: relative;
+  text-decoration: underline;
+    color: ${props => props.color};
   }
 `
 const Banner = styled.div`
@@ -129,7 +117,8 @@ const Banner = styled.div`
 export default function Home() {
     const [email, setEmail] = useState('');
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
-
+    const [isDisabled, setIsDisabled] = useState(false)
+    const [joinedWaitlist, setJoinedWaitlist] = useState(false)
     const submitEntry = () => {
         const emailRegex =
             /^(?=[a-z0-9@._%+-]{6,254}$)[a-z0-9._%+-]{1,64}@(?:[a-z0-9-]{1,63}\.){1,8}[a-z]{2,63}$/;
@@ -139,12 +128,14 @@ export default function Home() {
         } else {
             setEmailErrorMessage('')
         }
+        setIsDisabled(true)
         axios
             .post("/api/waitingList", {
                 email,
             })
             .then((res) => {
-                console.log(res);
+                // console.log(res);
+                setIsDisabled(false)
                 setJoinedWaitlist(true)
             });
     }
@@ -165,9 +156,9 @@ export default function Home() {
                     <Banner>Please view on a bigger screen for the best experience</Banner>
                     <HeadlineContainer>
                         <Text id="text">Don&apos;t Get Lost in the Details: Use <Underline
-                            color={'#3394f3'}>ChimpBase</Underline> to <Underline
-                            color={'#7083f1'}>Simplify&nbsp;</Underline>
-                            and <Underline color={'#e97bf5'}>Conquer</Underline></Text>
+                            color={'#000'}>ChimpBase</Underline> to <Underline
+                            color={'#000'}>Simplify&nbsp;</Underline>
+                            and <Underline color={'#000'}>Conquer</Underline></Text>
                     </HeadlineContainer>
                     <DemoPDFSummary/>
                     <WaitingListCard id={'waiting-list'}>
@@ -183,9 +174,13 @@ export default function Home() {
                                    onChange={(e) => setEmail(e.target.value)} borderColor={'black'
                             } focusBorderColor={'black'}
                                    type='email'/>
-                            <FormHelperText>We&apos;ll never share your email.</FormHelperText>
+                            {
+                                joinedWaitlist ?
+                                <FormHelperText>Thanks for joining the waitlist! We&apos;ll keep you updated via email. Be sure to check your inbox regularly.</FormHelperText>
+                                : <FormHelperText>We&apos;ll never share your email.</FormHelperText>
+                            }
                         </FormControl>
-                        <Submit onClick={submitEntry}>
+                        <Submit isDisabled={isDisabled} onClick={submitEntry}>
                             Join the Chimp Squad
                         </Submit>
                     </WaitingListCard>

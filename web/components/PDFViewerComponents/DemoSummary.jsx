@@ -43,6 +43,7 @@ const SummaryContainer = styled.div`
 const StyledTabList = styled(TabList)`
   position: -webkit-sticky; /* Safari */
   position: sticky;
+  z-index: 4;
   top: 0;
 `
 

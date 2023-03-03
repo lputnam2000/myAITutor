@@ -26,13 +26,13 @@ const Container = styled.div`
     padding-bottom: 32px;
     border-radius: 3px;
     margin: 17px;
-
-
     &:hover {
       box-shadow: 5px 5px 0px #000000;
       transition: box-shadow 0.1s ease-in-out;
     }
   }
+  margin-left: 0px;
+  margin-right: 0px;
   padding-right: 2px;
 
 `
