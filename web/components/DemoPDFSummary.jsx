@@ -69,11 +69,11 @@ function DemoPdfSummary(props) {
 
     return (
         <Container>
-            <SelectDemoContainer>
-                <DemoOption>Bill of Rights</DemoOption>
-                <DemoOption>World War 2</DemoOption>
-                <DemoOption>Podcast Summary</DemoOption>
-            </SelectDemoContainer>
+            {/*<SelectDemoContainer>*/}
+            {/*    <DemoOption>Bill of Rights</DemoOption>*/}
+            {/*    <DemoOption>World War 2</DemoOption>*/}
+            {/*    <DemoOption>Podcast Summary</DemoOption>*/}
+            {/*</SelectDemoContainer>*/}
             <InnerContainer>
                 <PDFViewerContainer>
                     {pdfFile && <DemoPDFViewer pdfFile={pdfFile}/>}
