@@ -28,24 +28,23 @@ const PDFViewerContainer = styled.div`
   }
 `
 const SelectDemoContainer = styled.div`
-  border: 1px solid black;
   margin-top: 20px;
-  margin-bottom: 20px;
   margin-left: 80px;
   margin-right: 80px;
-  height: 40px;
+  height: 50px;
   border-radius: 3px;
   display: flex;
   align-items: center;
 `
 
 const DemoOption = styled.div`
-  font-size: 14px;
+  font-size: 15px;
 
   background-color: #9de87f;
   border: 1px solid black;
   margin: 1px 5px 1px 5px;
-  padding: 1px 2px 2px 2px;
+  padding: 4px 5px 3px 5px;
+  font-weight: 700;
   border-radius: 3px;
   cursor: pointer;
 

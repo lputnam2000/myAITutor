@@ -87,11 +87,12 @@ const HeadlineContainer = styled.div`
 const Text = styled.h1`
   vertical-align: middle;
   font-family: var(--font-b);
-  @media (min-width: 900px) {
-    font-size: 50px;
-  }
+
   @media (min-width: 550px) {
     font-size: 40px;
+  }
+  @media (min-width: 900px) {
+    font-size: 50px;
   }
   font-size: 24px;
   color: black;
