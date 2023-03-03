@@ -50,7 +50,7 @@ function PdfCard({title, uploadId, thumbnail}) {
     return (
         <Container href={`/summary?uploadId=${uploadId}`}>
             <ImageContainer>
-                <img src={thumbnail}/>
+                <img src={thumbnail} alt="" onerror={(e)=>{e.target.style.display = "none"}}/>
             </ImageContainer>
             <CardInformation><CenteredText>{title}</CenteredText></CardInformation>
         </Container>
