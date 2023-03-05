@@ -7,10 +7,10 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
+    ModalCloseButton,
     useDisclosure,
     Button, FormControl, FormLabel, Input, FormHelperText, FormErrorMessage,
 } from '@chakra-ui/react'
-import {Select} from '@chakra-ui/react'
 
 
 const Directions = styled.div`
@@ -103,7 +103,7 @@ export default function Upload({handleFile}) {
                                   placeholder='Choose information type'>
                         <option value='pdf'>Document (PDF)</option>
                         <option value='website'>Website link</option>
-                        {/*<option value='website.jsx'>YouTube video link</option>*/}
+                        {/*<option value='website'>YouTube video link</option>*/}
                     </StyledSelect>
                     {
                         fileType === 'pdf' && <>
