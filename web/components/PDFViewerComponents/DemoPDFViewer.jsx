@@ -14,7 +14,6 @@ const Container = styled.div`
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  height: 450px;
   background-color: whitesmoke;
   border-radius: 3px;
   padding-bottom: 32px;
@@ -22,7 +21,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 450px;
   @media (min-width: 750px) {
+    height: 750px;
     padding-bottom: 32px;
     border-radius: 3px;
     margin: 17px;
