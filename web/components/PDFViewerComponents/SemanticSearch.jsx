@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import {Input} from '@chakra-ui/react'
 import axios from "axios";
 import AnswerBox from "./Answer"
+import { Spinner } from "@chakra-ui/react";
 
 const Container = styled.div`
   height: 100%;
@@ -28,10 +29,20 @@ const PreviousSearches = styled.div`
   width: 100%;
 `
 
+const LoadingSpinner = styled.div`
+  padding: 3px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+`
+
 function SemanticSearch({uploadId}) {
     const [searchQuery, setSearchQuery] = useState('');
     const [answers, setAnswers] = useState([]);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false)
+    const [searchLoading, setSearchLoading] = useState(false)
     const updateSearches = (inputQuery, inputResults) => {
       if (!inputResults || !inputQuery) {
         return
@@ -59,11 +70,11 @@ function SemanticSearch({uploadId}) {
 
     return (
         <Container>
-            <SearchInputContainer>
+            {searchLoading ? <LoadingSpinner><Spinner size="xl" color="blue.500"/></LoadingSpinner> : <SearchInputContainer>
                 <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                        placeholder='Ask a Question'/>
-                <SearchButton isSearchDisabled={isSearchDisabled} onClick={async (e) => {updateSearches(searchQuery, await searchAnswer(e))}}>Search</SearchButton>
-            </SearchInputContainer>
+                <SearchButton isSearchDisabled={isSearchDisabled} onClick={async (e) => {setSearchLoading(true);updateSearches(searchQuery, await searchAnswer(e)); setSearchLoading(false)}}>Search</SearchButton>
+            </SearchInputContainer>}
             <PreviousSearches>
             {answers.map((elem, key)=>{
               return <AnswerBox key={key} question={elem.query} answer={elem.answer} contexts={elem.contexts}/>
