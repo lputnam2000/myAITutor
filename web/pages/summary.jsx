@@ -5,6 +5,7 @@ import 'react-pdf/dist/esm/Page/TextLayer.css';
 import PDFViewerContextProvider from "../components/PDFViewerComponents/context";
 import PDFViewerWithSummary from "../components/PDFViewerComponents/PDFViewerWithSummary";
 import Navbar from "../components/UIComponents/Navbar";
+import Layout from "../Layouts/basicLayout"
 
 
 const gradientKeyframes = keyframes`
@@ -32,7 +33,6 @@ const Container = styled.div`
 function PageSummary(props) {
     return <Container>
 
-        <Navbar/>
         <PDFViewerContextProvider>
             <PDFViewerWithSummary/>
         </PDFViewerContextProvider>
@@ -41,11 +41,6 @@ function PageSummary(props) {
 
 }
 
-/*
-export async function getServerSideProps(context) {
-    return {
-        props: {}, // will be passed to the page component as props
-    }
-}*/
+PageSummary.PageLayout = Layout;
 
 export default PageSummary;
