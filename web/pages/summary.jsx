@@ -33,9 +33,9 @@ const Container = styled.div`
 function PageSummary(props) {
     return <Container>
 
-        <PDFViewerContextProvider>
-            <PDFViewerWithSummary/>
-        </PDFViewerContextProvider>
+        <ViewerContextProvider>
+            <ViewerWithSummary/>
+        </ViewerContextProvider>
 
     </Container>
 
