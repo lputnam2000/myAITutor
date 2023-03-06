@@ -45,14 +45,34 @@ const CenteredText = styled.div`
   text-overflow: ellipsis;
 `
 
+const TagList = styled.div`
+  background-color: #fafdd4;
+  display: flex;
+`
+const Tag = styled.div`
+  margin: 10px;
+  font-size: 13px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background-color: #ef59e8;
+  color: white;
 
-function PdfCard({title, uploadId, thumbnail}) {
+`
+
+
+function PdfCard({title, uploadId, thumbnail, type}) {
     return (
         <Container href={`/summary?uploadId=${uploadId}`}>
-            <ImageContainer>
-                <img src={thumbnail} alt="" onerror={(e)=>{e.target.style.display = "none"}}/>
-            </ImageContainer>
-            <CardInformation><CenteredText>{title}</CenteredText></CardInformation>
+            {type === 'pdf' && <ImageContainer>
+                <img src={thumbnail} alt="" onerror={(e) => {
+                    e.target.style.display = "none"
+                }}/>
+            </ImageContainer>}
+            <CardInformation>
+                <CenteredText>{title}</CenteredText></CardInformation>
+            <TagList>
+                <Tag>{type === 'pdf' ? 'PDF' : 'Website'}</Tag>
+            </TagList>
         </Container>
     );
 }

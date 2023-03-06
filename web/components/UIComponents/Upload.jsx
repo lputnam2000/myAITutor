@@ -7,10 +7,11 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
-    ModalCloseButton,
     useDisclosure,
     Button, FormControl, FormLabel, Input, FormHelperText, FormErrorMessage,
 } from '@chakra-ui/react'
+import {Select} from '@chakra-ui/react'
+import axios from "axios";
 
 
 const Directions = styled.div`
@@ -60,13 +61,16 @@ const StyledSelect = styled(Select)`
   margin-bottom: 20px;
 `
 
-const WebsiteInput = () => {
-    const [input, setInput] = useState('')
-    const handleInputChange = (e) => setInput(e.target.value)
+const PreviewButton = styled(Button)`
+  margin-top: 20px;
+`
+
+const WebsiteInput = ({url, setUrl}) => {
+    const handleInputChange = (e) => setUrl(e.target.value)
     return (
         <FormControl>
             <FormLabel>Website URL</FormLabel>
-            <Input type='email' value={input} onChange={handleInputChange}/>
+            <Input type='email' value={url} onChange={handleInputChange}/>
             <FormHelperText>
                 Please make sure the website you enter is publicly accessible.
             </FormHelperText>
@@ -74,10 +78,12 @@ const WebsiteInput = () => {
     )
 }
 
+
 export default function Upload({handleFile}) {
     const [fileType, setFileType] = useState('');
     const {isOpen, onOpen, onClose} = useDisclosure("");
     const hiddenFileInput = React.useRef(null);
+    const [url, setUrl] = useState('');
 
     const handleSelectFileType = (e) => {
         setFileType(e.target.value)
@@ -93,6 +99,20 @@ export default function Upload({handleFile}) {
         onClose();
     };
 
+
+    const uploadDocument = () => {
+        if (fileType === 'url') {
+            axios.post('/api/user/add_website_document', {url,}).then((res) => {
+
+            }).catch((err) => {
+                console.error(err)
+            })
+        } else {
+            onClose()
+        }
+
+    }
+
     return (<>
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay/>
@@ -102,8 +122,7 @@ export default function Upload({handleFile}) {
                     <StyledSelect value={fileType} onChange={handleSelectFileType}
                                   placeholder='Choose information type'>
                         <option value='pdf'>Document (PDF)</option>
-                        <option value='website'>Website link</option>
-                        {/*<option value='website.jsx'>YouTube video link</option>*/}
+                        <option value='url'>Website link</option>
                     </StyledSelect>
                     {
                         fileType === 'pdf' && <>
@@ -120,12 +139,15 @@ export default function Upload({handleFile}) {
                         </>
                     }
                     {
-                        fileType === 'website' && <WebsiteInput/>
+                        fileType === 'url' &&
+                        <>
+                            <WebsiteInput url={url} setUrl={setUrl}/>
+                        </>
                     }
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button color={'black'} mr={3} onClick={onClose}>
+                    <Button color={'black'} mr={3} onClick={uploadDocument}>
                         Submit
                     </Button>
                     <Button color={'black'} mr={3} onClick={onClose}>

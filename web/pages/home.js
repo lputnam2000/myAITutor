@@ -116,7 +116,8 @@ function Home() {
             console.log(err)
         })
     }, []);
-    useEffect(()=>{}, [userUploads])
+    useEffect(() => {
+    }, [userUploads])
 
     return (
         <Container>
@@ -125,12 +126,13 @@ function Home() {
                     <Upload handleFile={(file) => {
                         sendS3(file).then((uploadID) => {
                             let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready'}
-                            setUserUploads(oldArray => [...oldArray, newValue] )})
+                            setUserUploads(oldArray => [...oldArray, newValue])
+                        })
                     }}></Upload>
                     {
                         userUploads.map((upload) => {
                                 return (<PDFCard key={upload.uuid} uploadId={upload.uuid} title={upload.title}
-                                                 thumbnail={upload.thumbnail}/>);
+                                                 thumbnail={upload.thumbnail} type={upload.type}/>);
                             }
                         )
                     }

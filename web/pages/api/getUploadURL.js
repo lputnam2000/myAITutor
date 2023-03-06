@@ -55,10 +55,10 @@ async function generateRecord(session, fileName) {
             });
             uploads.updateOne(
                 record,
-                {$set: {"uploads": [{uuid, title, status: 'Not Ready'}]}},
+                {$set: {"uploads": [{uuid, title, status: 'Not Ready', type: 'pdf'}]}},
                 {upsert: true}
             );
-            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: []});
+            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'pdf'});
         } else {
             console.log("Record already exists:", result);
             var currentData = uploads.count({'userid': owner}, {limit: 1})
@@ -68,9 +68,9 @@ async function generateRecord(session, fileName) {
                 }
             }
             uploads.update(record, {
-                $push: {"uploads": {uuid, title, status: 'Not Ready'}}
+                $push: {"uploads": {uuid, title, status: 'Not Ready', type: 'pdf'}}
             })
-            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: []});
+            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'pdf'});
         }
     });
     let fullyQualifiedName = uuid;
