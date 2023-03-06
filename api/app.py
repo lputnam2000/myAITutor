@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from http import HTTPStatus
 from pypdf import PdfReader
 from dotenv import load_dotenv
+from website_extraction import WebsiteTextExtracter
 import io
 import fitz
 import boto3
@@ -118,6 +119,15 @@ def generate_summary():
     summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
     result = jsonify(s)
     return result
+
+@app.route('/website_extraction/', methods=["POST"])
+@require_api_key
+def extract_website():
+    w = WebsiteTextExtracter()
+    data = request.json 
+    url = data['url']
+
+    text = w.extract_formatted_text(url)
 
 
 if __name__ =="__main__":
