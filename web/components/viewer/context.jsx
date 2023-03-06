@@ -1,21 +1,21 @@
 import {createContext, createRef, useEffect, useRef, useState} from "react";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 
-export const PDFViewerContext = createContext();
+export const ViewerContext = createContext();
 
 import React from 'react';
 
-function PDFViewerContextProvider({ children }) {
+function ViewerContextProvider({children}) {
     const router = useRouter()
     const [numPages, setNumPages] = useState(1);
     const [pdfKey, setPdfKey] = useState('');
     const [summary, setSummary] = useState([])
     useEffect(() => {
         if (!router.isReady) return;
-            setPdfKey(router.query.uploadId)
+        setPdfKey(router.query.uploadId)
     }, [router.isReady]);
     return (
-        <PDFViewerContext.Provider value={{
+        <ViewerContext.Provider value={{
             numPages,
             setNumPages,
             pdfKey,
@@ -24,8 +24,8 @@ function PDFViewerContextProvider({ children }) {
             setSummary
         }}>
             {children}
-        </PDFViewerContext.Provider>
+        </ViewerContext.Provider>
     );
 }
 
-export default PDFViewerContextProvider;
+export default ViewerContextProvider;
