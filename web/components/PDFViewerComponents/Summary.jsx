@@ -41,6 +41,7 @@ const SummaryContainer = styled.div`
 
 function Summary({}) {
     const {summary, pdfKey} = useContext(PDFViewerContext)
+
     return (
         <Container>
             <Tabs height={'100%'} variant='enclosed' isFitted>
