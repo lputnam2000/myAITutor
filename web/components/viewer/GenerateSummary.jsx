@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import styled from 'styled-components'
 import {SmallAddIcon} from "@chakra-ui/icons";
 import {Input, InputGroup, InputLeftAddon, InputRightAddon} from "@chakra-ui/react";
-import {PDFViewerContext} from "./context";
+import {ViewerContext} from "./context";
 import axios from "axios";
 
 const Container = styled.div`
@@ -86,7 +86,7 @@ function GenerateSummary(props) {
     const [startError, setStartError] = useState(false);
     const [endError, setEndError] = useState(false)
     const [endPage, setEndPage] = useState(1);
-    const {numPages, pdfKey} = useContext(PDFViewerContext)
+    const {numPages, pdfKey} = useContext(ViewerContext)
 
     const closeOptionsBox = (e) => {
         setShowOption(false)

@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import styled, {keyframes} from 'styled-components';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
-import PDFViewerContextProvider from "../components/PDFViewerComponents/context";
-import PDFViewerWithSummary from "../components/PDFViewerComponents/PDFViewerWithSummary";
+import ViewerContextProvider from "../components/viewer/context";
+import ViewerWithSummary from "../components/viewer/ViewerWithSummary";
 import Navbar from "../components/UIComponents/Navbar";
 import Layout from "../Layouts/basicLayout"
 

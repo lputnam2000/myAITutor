@@ -5,16 +5,17 @@ import SemanticSearch from "./SemanticSearch";
 import CollapsibleSummary from "./CollapsibleSummary";
 import {SmallAddIcon} from "@chakra-ui/icons";
 import GenerateSummary from "./GenerateSummary";
-import {PDFViewerContext} from "./context";
+import {ViewerContext} from "./context";
 
 const Container = styled.div`
-  //flex: 1;
-  width: 95%;
+  width: 100%;
   @media (min-width: 750px) {
+    flex: 4;
     width: 40vw;
-    margin-top: 10px;
-    margin-right: 20px;
+    margin-right: 10px;
   }
+  margin: 20px 30px 20px 30px;
+
   overflow-y: auto;
 
   border: 2px black solid;
@@ -36,27 +37,33 @@ const SubHeading = styled.div`
 const SummaryText = styled.div`
 `
 const SummaryContainer = styled.div`
+  overflow-y: hidden;
 `
 
+const StyledTabList = styled(TabList)`
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  z-index: 4;
+  top: 0;
+`
 
-function Summary({}) {
-    const {summary, pdfKey} = useContext(PDFViewerContext)
+function Summary({pdfKey, summary}) {
     return (
         <Container>
             <Tabs height={'100%'} variant='enclosed' isFitted>
-                <TabList>
-                    <Tab _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
-                    <Tab _selected={{color: 'white', bg: 'black'}}>Search</Tab>
-                </TabList>
+                <StyledTabList>
+                    <Tab backgroundColor={'white'} _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
+                    <Tab backgroundColor={'white'} _selected={{color: 'white', bg: 'black'}}>Search</Tab>
+                </StyledTabList>
 
                 <TabPanels height={'94%'}>
                     <TabPanel style={{height: '100%', padding: '0px'}}>
                         <SummaryContainer>
-                            <GenerateSummary/>
                             {
                                 summary.map((s, idx) => <CollapsibleSummary isOpen={idx === 0} key={idx}
                                                                             summaryJson={s}/>)
                             }
+
                             {/*{SummaryPanel}*/}
                         </SummaryContainer>
                     </TabPanel>

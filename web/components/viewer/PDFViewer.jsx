@@ -7,7 +7,7 @@ import {toolbarPlugin} from '@react-pdf-viewer/toolbar';
 import '@react-pdf-viewer/toolbar/lib/styles/index.css';
 import styled from 'styled-components'
 import readingIndicatorPlugin from "./ReadingIndicatorPlugin"
-import {PDFViewerContext} from "./context";
+import {ViewerContext} from "./context";
 
 
 const Container = styled.div`
@@ -60,7 +60,7 @@ function PdfViewer({pdfFile}) {
         MoreActions: () => <></>,
     });
 
-    const {setNumPages} = useContext(PDFViewerContext);
+    const {setNumPages} = useContext(ViewerContext);
 
     const initializeContext = (info) => {
         setNumPages(info.doc._pdfInfo.numPages)

@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
-import DemoPDFViewer from "./PDFViewerComponents/DemoPDFViewer";
-import Summary from "./PDFViewerComponents/Summary";
+import DemoPDFViewer from "./viewer/DemoPDFViewer";
+import Summary from "./viewer/Summary";
 import axios from "axios";
-import DemoSummary from "./PDFViewerComponents/DemoSummary";
+import DemoSummary from "./viewer/DemoSummary";
 
 const Container = styled.div`
   width: 100%;
