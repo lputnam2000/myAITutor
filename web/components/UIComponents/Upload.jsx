@@ -95,7 +95,7 @@ export default function Upload({handleFile}) {
 
     const handleFileChange = event => {
         const fileUploaded = event.target.files[0];
-        handleFile(fileUploaded);
+        handleFile(fileUploaded, fileType);
         onClose();
     };
 

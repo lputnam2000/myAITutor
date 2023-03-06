@@ -123,9 +123,9 @@ function Home() {
         <Container>
             <HomeContainer>
                 <UserFilesContainer>
-                    <Upload handleFile={(file) => {
+                    <Upload handleFile={(file, type) => {
                         sendS3(file).then((uploadID) => {
-                            let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready'}
+                            let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready', type: type}
                             setUserUploads(oldArray => [...oldArray, newValue])
                         })
                     }}></Upload>
