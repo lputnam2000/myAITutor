@@ -1,9 +1,21 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components'
-import {SmallAddIcon} from "@chakra-ui/icons";
-import {Input, InputGroup, InputLeftAddon, InputRightAddon} from "@chakra-ui/react";
-import {PDFViewerContext} from "./context";
+import { SmallAddIcon } from "@chakra-ui/icons";
+import { Input, InputGroup, InputLeftAddon, InputRightAddon } from "@chakra-ui/react";
+import { PDFViewerContext } from "./context";
 import axios from "axios";
+import {
+    Spinner,
+    Button,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
+} from '@chakra-ui/react';
+
 
 const Container = styled.div`
   position: relative
@@ -54,14 +66,14 @@ const InputContainer = styled.div`
   margin-bottom: 5px;
 `
 
-function PageInput({heading, end, value, setValue, error}) {
+function PageInput({ heading, end, value, setValue, error }) {
 
     return (
         <InputContainer>
             {heading}:
             <InputGroup size='sm' width={'50%'}>
                 <Input isInvalid={error} value={value} onChange={(e) => setValue(e.target.value)}
-                       type={"number"}/>
+                    type={"number"} />
                 <InputRightAddon>
                     /&nbsp;{end}
                 </InputRightAddon>
@@ -70,7 +82,7 @@ function PageInput({heading, end, value, setValue, error}) {
     )
 }
 
-const Button = styled.button`
+const StyledButton = styled.button`
   cursor: pointer;
   border: 1px solid black;
   padding: 5px 20px;
@@ -80,13 +92,24 @@ const Button = styled.button`
 `
 
 
+const LoadingSpinner = styled.div`
+  padding: 3px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+`
+
+
 function GenerateSummary(props) {
     const [showOption, setShowOption] = useState(false);
     const [startPage, setStartPage] = useState(1);
     const [startError, setStartError] = useState(false);
     const [endError, setEndError] = useState(false)
     const [endPage, setEndPage] = useState(1);
-    const {numPages, pdfKey} = useContext(PDFViewerContext)
+    const { numPages, pdfKey } = useContext(PDFViewerContext)
+    const [summaryLoading, setSummaryLoading] = useState(false)
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const closeOptionsBox = (e) => {
         setShowOption(false)
@@ -115,6 +138,8 @@ function GenerateSummary(props) {
         }
         // summarize document
         setShowOption(false)
+        setSummaryLoading(true)
+        setTimeout(() => { setSummaryLoading(false) }, 10000)
         axios.post('/api/user/generate_summary', {
             pdfKey, startPage, endPage
         }).then((res) => {
@@ -122,25 +147,40 @@ function GenerateSummary(props) {
         })
     }
 
+    const contents = <><NewSummaryButton onClick={() => setShowOption(true)}>
+        Generate New Summary <SmallAddIcon boxSize={6} />
+    </NewSummaryButton>
+        {
+            showOption ? <OptionsBox>
+                <PageInput heading={"Start Page"} error={startError} end={numPages} value={startPage}
+                    setValue={setStartPage} />
+                <PageInput heading={"End Page"} error={endError} end={numPages} value={endPage}
+                    setValue={setEndPage} />
+                <span style={{ display: "flex", gap: '10px', marginTop: '10px' }}>
+                    <StyledButton onClick={async () => {generateNewSummary(); onOpen()}}>Generate</StyledButton>
+                    <StyledButton onClick={closeOptionsBox}>Close</StyledButton>
+                </span>
+            </OptionsBox>
+                : <></>
+        }
+    </>
+
+    const loadingNotice = <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+            <ModalHeader>Your Summary</ModalHeader>
+            <ModalBody>
+            Thank you for submitting your request. Your summary will be available as soon as it's ready. It may take a few minutes to generate, especially for longer documents. You'll see a loading symbol while we work on it, and it should disappear after about 10 seconds. Please note that even after the loading symbol disappears, your summary may still be processing in the background. We appreciate your patience and will display your summary as soon as it's ready            </ModalBody>
+            <ModalFooter>
+                <Button onClick={onClose}>Close</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
 
     return (
         <Container>
-            <NewSummaryButton onClick={() => setShowOption(true)}>
-                Generate New Summary <SmallAddIcon boxSize={6}/>
-            </NewSummaryButton>
-            {
-                showOption ? <OptionsBox>
-                        <PageInput heading={"Start Page"} error={startError} end={numPages} value={startPage}
-                                   setValue={setStartPage}/>
-                        <PageInput heading={"End Page"} error={endError} end={numPages} value={endPage}
-                                   setValue={setEndPage}/>
-                        <span style={{display: "flex", gap: '10px', marginTop: '10px'}}>
-                    <Button onClick={generateNewSummary}>Generate</Button>
-                    <Button onClick={closeOptionsBox}>Close</Button>
-                    </span>
-                    </OptionsBox>
-                    : <></>
-            }
+            {summaryLoading ? <LoadingSpinner><Spinner size="xl" color="blue.500" /></LoadingSpinner> : contents}
+            {loadingNotice}
         </Container>
     );
 }
