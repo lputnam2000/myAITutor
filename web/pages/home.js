@@ -1,4 +1,3 @@
-import Navbar from "../components/UIComponents/Navbar";
 import React, {useEffect, useState} from "react";
 import styled, {keyframes} from 'styled-components'
 import axios from "axios";
@@ -6,6 +5,7 @@ import Upload from "../components/UIComponents/Upload";
 import PDFCard from "../components/PDFCard";
 import AWS from 'aws-sdk'
 import {useRouter} from "next/router";
+import Layout from "../Layouts/basicLayout"
 
 const S3_BUCKET = 'chimppdfstore';
 const REGION = 'us-east-1';
@@ -79,7 +79,8 @@ const gradientKeyframes = keyframes`
 `
 
 const HomeContainer = styled.div`
-  margin: 30px;
+  margin: 0 30px 30px 30px;
+  padding: 30px;
 `
 
 const Container = styled.div`
@@ -104,7 +105,7 @@ const HomeHeading = styled.h1`
 
 `
 
-export default function Home() {
+function Home() {
     const [userUploads, setUserUploads] = useState([]);
     const router = useRouter();
 
@@ -119,11 +120,7 @@ export default function Home() {
 
     return (
         <Container>
-            <Navbar/>
             <HomeContainer>
-                <HomeHeading>
-                    Home
-                </HomeHeading>
                 <UserFilesContainer>
                     <Upload handleFile={(file) => {
                         sendS3(file).then((uploadID) => {
@@ -143,3 +140,7 @@ export default function Home() {
         </Container>
     );
 }
+
+Home.PageLayout = Layout;
+
+export default Home;
