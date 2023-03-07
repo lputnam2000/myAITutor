@@ -2,6 +2,7 @@ import {getServerSession} from "next-auth/next"
 import {authOptions} from 'pages/api/auth/[...nextauth]'
 import clientPromise from "/lib/mongodb"
 import {v4 as uuidv4} from 'uuid';
+import axios from "axios";
 
 /**
  * Return a uuid to store the object in s3 under while also keeping track of who owns the object
@@ -78,6 +79,17 @@ export default async (req, res) => {
             //First, validate the data and send back an error message if data is invalid
             //S3
             let fullyQualifiedName = await generateRecord(session, url)
+            fetch(process.env.BACKEND_URL + '/embeddings/websites/', {
+                method: 'POST',
+                body: JSON.stringify({
+                    key: fullyQualifiedName,
+                    url,
+                }),
+                headers: {
+                    'X-API-Key': process.env.CB_API_SECRET,
+                    'Content-Type': 'application/json'
+                }
+            })
         } else {
             res.status(404)
             res.json({"Error": "404"})

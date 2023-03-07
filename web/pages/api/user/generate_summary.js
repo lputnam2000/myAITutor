@@ -6,7 +6,7 @@ const requestHandler = async (req, res) => {
     if (req.method === "POST") {
         const {pdfKey, startPage, endPage} = req.body
         console.log(pdfKey)
-        fetch(process.env.BACKEND_URL+'/summaries/', {
+        fetch(process.env.BACKEND_URL + '/summaries/', {
             method: 'POST',
             body: JSON.stringify({
                 pdfKey,
@@ -14,11 +14,10 @@ const requestHandler = async (req, res) => {
                 endPage
             }),
             headers: {
-                'X-API-Key' : process.env.CB_API_SECRET,
-                'Content-Type' : 'application/json'
+                'X-API-Key': process.env.CB_API_SECRET,
+                'Content-Type': 'application/json'
             }
         })
-        console.log('hi')
 
     } else {
         return res.status(404).json({message: "URL Not Found"});
