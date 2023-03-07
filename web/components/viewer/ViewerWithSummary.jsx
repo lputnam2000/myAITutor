@@ -31,7 +31,10 @@ const Title = styled.h1`
   margin-left: 30px;
   font-family: var(--font-b);
   margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
 `
+
 const ViewerContainer = styled.div`
   flex: 1;
   height: 100%;

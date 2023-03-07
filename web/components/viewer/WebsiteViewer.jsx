@@ -4,9 +4,15 @@ import axios from "axios";
 import styled from 'styled-components'
 
 const StyledIframe = styled.iframe`
-  width: 100%;
-  padding: 5px 10px;
+  width: 90%;
+  margin: 5px 20px;
   height: 750px;
+  border: 2px black solid;
+
+  &:hover {
+    box-shadow: 5px 5px 0px #000000;
+    transition: box-shadow 0.1s ease-in-out;
+  }
 `
 
 function WebsiteViewer() {

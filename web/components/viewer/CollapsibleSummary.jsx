@@ -54,7 +54,7 @@ const StyledIconButton = styled(IconButton)`
 `
 
 
-function CollapsibleSummary({summaryJson, isOpen}) {
+function CollapsibleSummary({summaryJson, isOpen, fileType}) {
     const [open, setOpen] = useState(isOpen);
     const SummaryPanel = useMemo(() => {
         let panelOutput = []
@@ -77,8 +77,12 @@ function CollapsibleSummary({summaryJson, isOpen}) {
     }, [summaryJson]);
 
     const heading = useMemo(() => {
-        return `Summary for Pages ${summaryJson.startPage}-${summaryJson.endPage}`
-    }, [summaryJson]);
+        if (fileType === 'pdf') {
+            return `Summary for Pages ${summaryJson.startPage}-${summaryJson.endPage}`
+        } else {
+            return `Website Summary`
+        }
+    }, [summaryJson, fileType]);
 
     return (
         <Container>

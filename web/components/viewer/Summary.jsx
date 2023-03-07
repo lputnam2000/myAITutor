@@ -35,7 +35,7 @@ const SummaryContainer = styled.div`
 
 
 function Summary({}) {
-    const {summary, pdfKey} = useContext(ViewerContext)
+    const {summary, pdfKey, fileType} = useContext(ViewerContext)
     return (
         <Container>
             <Tabs height={'100%'} variant='enclosed' isFitted>
@@ -49,7 +49,8 @@ function Summary({}) {
                         <SummaryContainer>
                             <GenerateSummary/>
                             {
-                                summary.map((s, idx) => <CollapsibleSummary isOpen={idx === 0} key={idx}
+                                summary.map((s, idx) => <CollapsibleSummary fileType={fileType} isOpen={idx === 0}
+                                                                            key={idx}
                                                                             summaryJson={s}/>)
                             }
                             {/*{SummaryPanel}*/}
