@@ -1,0 +1,22 @@
+{
+    "name": "Chimpbase Page Collector",
+    "manifest_version": 3,
+    "version": "1.0.0",
+    "description": "Collects webpages to be processed using Chimpbase",
+    "permissions": [
+        "webRequest",
+        "scripting",
+        "activeTab",
+        "tabs"
+    ],
+    "host_permissions": [
+        "https://api.chimpbase.com/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_title": "Popup and Content Script",
+        "default_popup": "popup.html"
+    }
+}
