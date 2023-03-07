@@ -57,6 +57,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function getCookie(name) {
+        chrome.storage.local.get("chimpkey", function(data) {
+            console.log("Value of key is " + data.key);
+        });
       const cookies = document.cookie.split(";");
       for (let i = 0; i < cookies.length; i++) {
         const cookie = cookies[i].trim();
