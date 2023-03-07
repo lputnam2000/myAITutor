@@ -30,41 +30,6 @@ function generatePreSignedPutUrl(fileName, fileType) {
     return result
 }
 
-const sendS3 = async (file) => {
-    if (!file) {
-        console.log("no file was found")
-        return
-    }
-
-    const requestObject = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            "fileName": file.name,
-            "fileType": file.type,
-        })
-    }
-
-    let uploadID
-
-    await fetch('/api/getUploadURL', requestObject)
-        .then(res => res.json())
-        .then(data => {
-            uploadID = data["fileName"]
-            fetch(data["signedUrl"], {
-                headers: {'content-type': file.type},
-                method: 'PUT',
-                body: file,
-            }).then((res) => {
-                return res.text()
-            }).then((txt) => {
-                console.log(txt)
-            })
-        })
-    return uploadID
-}
 
 const gradientKeyframes = keyframes`
   0% {
@@ -116,21 +81,29 @@ function Home() {
             console.log(err)
         })
     }, []);
-    useEffect(()=>{}, [userUploads])
+    useEffect(() => {
+    }, [userUploads])
+
+    const handleFileUpload = (file, type, uploadID) => {
+        if (type === 'pdf') {
+            let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready', type: type}
+            setUserUploads(oldArray => [...oldArray, newValue])
+        } else {
+            let newValue = {uuid: uploadID, title: file, status: 'Not Ready', type: type}
+            setUserUploads(oldArray => [...oldArray, newValue])
+        }
+    }
+
 
     return (
         <Container>
             <HomeContainer>
                 <UserFilesContainer>
-                    <Upload handleFile={(file) => {
-                        sendS3(file).then((uploadID) => {
-                            let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready'}
-                            setUserUploads(oldArray => [...oldArray, newValue] )})
-                    }}></Upload>
+                    <Upload handleFile={handleFileUpload}></Upload>
                     {
                         userUploads.map((upload) => {
                                 return (<PDFCard key={upload.uuid} uploadId={upload.uuid} title={upload.title}
-                                                 thumbnail={upload.thumbnail}/>);
+                                                 thumbnail={upload.thumbnail} type={upload.type}/>);
                             }
                         )
                     }

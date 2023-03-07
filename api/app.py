@@ -1,19 +1,13 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, g
 from http import HTTPStatus
-from pypdf import PdfReader
 from dotenv import load_dotenv
-import io
 import fitz
 import boto3
-from botocore.config import Config
 import os
-import pymongo
 import openai
-from flask import g
-from summary import get_summary
-from functools import wraps
-import logging
-import sys
+from .embeddings.main_view import embeddings_bp
+from .summary import get_summary, get_summary_string
+from .utils import require_api_key, get_mongo_client
 from logging.config import dictConfig
 import nltk
 nltk.download('punkt')
@@ -39,21 +33,11 @@ BUCKET_NAME = 'chimppdfstore'
 def create_app():
     load_dotenv()
     app = Flask(__name__)
+    app.register_blueprint(embeddings_bp)
     return app
 
 app = create_app()
 
-def require_api_key(view_function):
-    @wraps(view_function)
-    def decorated_function(*args, **kwargs):
-        api_key = request.headers.get('X-API-Key')
-        if not api_key:
-            api_key = request.args.get('api_key')
-        if not api_key:
-            return jsonify({'error': 'API key is missing'}), 401
-        if api_key == os.getenv('CB_API_SECRET'):
-            return view_function(*args, **kwargs)
-    return decorated_function
 
 def get_s3_client():
     s3 = getattr(g, 's3', None)
@@ -73,11 +57,6 @@ def get_open_ai_client():
         openai_g = g.open_ai = openai
     return openai_g
 
-def get_mongo_client():
-    db = getattr(g, 'db', None)
-    if db is None:
-        db = g.db = pymongo.MongoClient(os.getenv('MONGODB_URI'))
-    return db
 
 @app.teardown_appcontext
 def teardown_mongo_client(exception):
@@ -97,7 +76,7 @@ def index():
 @require_api_key
 def generate_summary():
     print('here')
-    data = request.json  # data is empty
+    data = request.json# .data is empty
     pdfKey = data['pdfKey']
     startPage = int(data['startPage'])
     endPage = int(data['endPage'])
@@ -119,6 +98,26 @@ def generate_summary():
     result = jsonify(s)
     return result
 
+@app.route('/summaries/websites/', methods=["POST"])
+@require_api_key
+def generate_summary_websites():
+    data = request.json #.data is empty
+    key = data['key']
+    db_client = get_mongo_client()
+    data_db = db_client["data"]
+    websites_collection = data_db["SummaryWebsites"]
+    website_doc = websites_collection.find_one({'_id': key})
+    website_text = website_doc['documents']
+    s = get_summary_string(website_text)
+    summaryDict = {}
+    summaryDict['startPage'] = -1
+    summaryDict['endPage'] = -1
+    summaryDict['formattedSummary'] = s
+    websites_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
+    result = jsonify(s)
+    return result
+
+
 
 if __name__ =="__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True)
