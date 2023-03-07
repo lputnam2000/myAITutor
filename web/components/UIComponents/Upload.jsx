@@ -11,6 +11,7 @@ import {
     Button, FormControl, FormLabel, Input, FormHelperText, FormErrorMessage,
 } from '@chakra-ui/react'
 import {Select} from '@chakra-ui/react'
+import axios from "axios";
 
 
 const Directions = styled.div`
@@ -60,13 +61,16 @@ const StyledSelect = styled(Select)`
   margin-bottom: 20px;
 `
 
-const WebsiteInput = () => {
-    const [input, setInput] = useState('')
-    const handleInputChange = (e) => setInput(e.target.value)
+const PreviewButton = styled(Button)`
+  margin-top: 20px;
+`
+
+const WebsiteInput = ({url, setUrl}) => {
+    const handleInputChange = (e) => setUrl(e.target.value)
     return (
         <FormControl>
             <FormLabel>Website URL</FormLabel>
-            <Input type='email' value={input} onChange={handleInputChange}/>
+            <Input type='email' value={url} onChange={handleInputChange}/>
             <FormHelperText>
                 Please make sure the website you enter is publicly accessible.
             </FormHelperText>
@@ -74,10 +78,48 @@ const WebsiteInput = () => {
     )
 }
 
+const sendS3 = async (file) => {
+    if (!file) {
+        console.log("no file was found")
+        return
+    }
+
+    const requestObject = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "fileName": file.name,
+            "fileType": file.type,
+        })
+    }
+
+    let uploadID
+
+    await fetch('/api/getUploadURL', requestObject)
+        .then(res => res.json())
+        .then(data => {
+            uploadID = data["fileName"]
+            fetch(data["signedUrl"], {
+                headers: {'content-type': file.type},
+                method: 'PUT',
+                body: file,
+            }).then((res) => {
+                return res.text()
+            }).then((txt) => {
+                console.log(txt)
+            })
+        })
+    return uploadID
+}
+
+
 export default function Upload({handleFile}) {
     const [fileType, setFileType] = useState('');
     const {isOpen, onOpen, onClose} = useDisclosure("");
     const hiddenFileInput = React.useRef(null);
+    const [url, setUrl] = useState('');
 
     const handleSelectFileType = (e) => {
         setFileType(e.target.value)
@@ -87,11 +129,29 @@ export default function Upload({handleFile}) {
         hiddenFileInput.current.click();
     };
 
-    const handleFileChange = event => {
+    const handleFileChange = async event => {
         const fileUploaded = event.target.files[0];
-        handleFile(fileUploaded);
+        const uploadID = await sendS3(fileUploaded)
+        console.log(uploadID)
+        handleFile(fileUploaded, fileType, uploadID);
         onClose();
     };
+
+
+    const uploadDocument = () => {
+        if (fileType === 'url') {
+            axios.post('/api/user/add_website_document', {url,}).then((res) => {
+                const {key, fileName} = res.data
+                handleFile(fileName, fileType, key);
+                onClose()
+            }).catch((err) => {
+                console.error(err)
+            })
+        } else {
+            onClose()
+        }
+
+    }
 
     return (<>
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -102,8 +162,7 @@ export default function Upload({handleFile}) {
                     <StyledSelect value={fileType} onChange={handleSelectFileType}
                                   placeholder='Choose information type'>
                         <option value='pdf'>Document (PDF)</option>
-                        <option value='website'>Website link</option>
-                        {/*<option value='website.jsx'>YouTube video link</option>*/}
+                        <option value='url'>Website link</option>
                     </StyledSelect>
                     {
                         fileType === 'pdf' && <>
@@ -120,12 +179,15 @@ export default function Upload({handleFile}) {
                         </>
                     }
                     {
-                        fileType === 'website' && <WebsiteInput/>
+                        fileType === 'url' &&
+                        <>
+                            <WebsiteInput url={url} setUrl={setUrl}/>
+                        </>
                     }
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button color={'black'} mr={3} onClick={onClose}>
+                    <Button color={'black'} mr={3} onClick={uploadDocument}>
                         Submit
                     </Button>
                     <Button color={'black'} mr={3} onClick={onClose}>

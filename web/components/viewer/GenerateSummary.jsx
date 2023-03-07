@@ -107,7 +107,7 @@ function GenerateSummary(props) {
     const [startError, setStartError] = useState(false);
     const [endError, setEndError] = useState(false)
     const [endPage, setEndPage] = useState(1);
-    const {numPages, pdfKey} = useContext(ViewerContext)
+    const {numPages, pdfKey, fileType} = useContext(ViewerContext)
     const [summaryLoading, setSummaryLoading] = useState(false)
     const {isOpen, onOpen, onClose} = useDisclosure();
 
@@ -149,7 +149,23 @@ function GenerateSummary(props) {
         })
     }
 
-    const contents = <><NewSummaryButton onClick={() => setShowOption(true)}>
+    const generateSummaryButton = () => {
+        if (fileType === 'pdf') {
+            setShowOption(true)
+        } else {
+            setSummaryLoading(true)
+            setTimeout(() => {
+                setSummaryLoading(false)
+            }, 10000)
+            axios.post('/api/user/generate_summary_web', {
+                key: pdfKey
+            }).then((res) => {
+                console.log(res)
+            })
+        }
+    }
+
+    const contents = <><NewSummaryButton onClick={generateSummaryButton}>
         Generate New Summary <SmallAddIcon boxSize={6}/>
     </NewSummaryButton>
         {

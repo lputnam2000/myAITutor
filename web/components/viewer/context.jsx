@@ -10,9 +10,14 @@ function ViewerContextProvider({children}) {
     const [numPages, setNumPages] = useState(1);
     const [pdfKey, setPdfKey] = useState('');
     const [summary, setSummary] = useState([])
+    const [title, setTitle] = useState('');
+    const [fileType, setFileType] = useState('');
+
+
     useEffect(() => {
         if (!router.isReady) return;
         setPdfKey(router.query.uploadId)
+        setFileType(router.query.fileType)
     }, [router.isReady]);
     return (
         <ViewerContext.Provider value={{
@@ -21,7 +26,11 @@ function ViewerContextProvider({children}) {
             pdfKey,
             setPdfKey,
             summary,
-            setSummary
+            setSummary,
+            title,
+            setTitle,
+            fileType,
+            setFileType
         }}>
             {children}
         </ViewerContext.Provider>
