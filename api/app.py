@@ -6,7 +6,7 @@ import boto3
 import os
 import openai
 from .embeddings.main_view import embeddings_bp
-from .summary import get_summary
+from .summary import get_summary, get_summary_string
 from .utils import require_api_key, get_mongo_client
 from logging.config import dictConfig
 import nltk
@@ -73,6 +73,7 @@ def index():
 
 
 @app.route('/summaries/', methods=["POST"])
+@require_api_key
 def generate_summary():
     print('here')
     data = request.json# .data is empty
@@ -97,6 +98,26 @@ def generate_summary():
     result = jsonify(s)
     return result
 
+@app.route('/summaries/websites/', methods=["POST"])
+@require_api_key
+def generate_summary_websites():
+    data = request.json #.data is empty
+    key = data['key']
+    db_client = get_mongo_client()
+    data_db = db_client["data"]
+    websites_collection = data_db["SummaryWebsites"]
+    website_doc = websites_collection.find_one({'_id': key})
+    website_text = website_doc['documents']
+    s = get_summary_string(website_text)
+    summaryDict = {}
+    summaryDict['startPage'] = -1
+    summaryDict['endPage'] = -1
+    summaryDict['formattedSummary'] = s
+    websites_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
+    result = jsonify(s)
+    return result
+
+
 
 if __name__ =="__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True)
