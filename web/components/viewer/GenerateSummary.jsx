@@ -107,9 +107,9 @@ function GenerateSummary(props) {
     const [startError, setStartError] = useState(false);
     const [endError, setEndError] = useState(false)
     const [endPage, setEndPage] = useState(1);
-    const {numPages, pdfKey} = useContext(ViewerContext)
+    const {numPages, pdfKey, fileType} = useContext(ViewerContext)
     const [summaryLoading, setSummaryLoading] = useState(false)
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const {isOpen, onOpen, onClose} = useDisclosure();
 
     const closeOptionsBox = (e) => {
         setShowOption(false)
@@ -139,7 +139,9 @@ function GenerateSummary(props) {
         // summarize document
         setShowOption(false)
         setSummaryLoading(true)
-        setTimeout(() => { setSummaryLoading(false) }, 10000)
+        setTimeout(() => {
+            setSummaryLoading(false)
+        }, 10000)
         axios.post('/api/user/generate_summary', {
             pdfKey, startPage, endPage
         }).then((res) => {
@@ -168,25 +170,34 @@ function GenerateSummary(props) {
     </NewSummaryButton>
         {
             showOption ? <OptionsBox>
-                <PageInput heading={"Start Page"} error={startError} end={numPages} value={startPage}
-                    setValue={setStartPage} />
-                <PageInput heading={"End Page"} error={endError} end={numPages} value={endPage}
-                    setValue={setEndPage} />
-                <span style={{ display: "flex", gap: '10px', marginTop: '10px' }}>
-                    <StyledButton onClick={async () => {generateNewSummary(); onOpen()}}>Generate</StyledButton>
+                    <PageInput heading={"Start Page"} error={startError} end={numPages} value={startPage}
+                               setValue={setStartPage}/>
+                    <PageInput heading={"End Page"} error={endError} end={numPages} value={endPage}
+                               setValue={setEndPage}/>
+                    <span style={{display: "flex", gap: '10px', marginTop: '10px'}}>
+                    <StyledButton onClick={async () => {
+                        generateNewSummary();
+                        onOpen()
+                    }}>Generate</StyledButton>
                     <StyledButton onClick={closeOptionsBox}>Close</StyledButton>
                 </span>
-            </OptionsBox>
+                </OptionsBox>
                 : <></>
         }
     </>
 
     const loadingNotice = <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
+        <ModalOverlay/>
         <ModalContent>
             <ModalHeader>Your Summary</ModalHeader>
             <ModalBody>
-            Thank you for submitting your request. Your summary will be available as soon as it's ready. It may take a few minutes to generate, especially for longer documents. You'll see a loading symbol while we work on it, and it should disappear after about 10 seconds. Please note that even after the loading symbol disappears, your summary may still be processing in the background. We appreciate your patience and will display your summary as soon as it's ready            </ModalBody>
+                Thank you for submitting your request. Your summary will be available as soon as it&apos;s ready. It may
+                take
+                a few minutes to generate, especially for longer documents. You&apos;ll see a loading symbol while we
+                work on
+                it, and it should disappear after about 10 seconds. Please note that even after the loading symbol
+                disappears, your summary may still be processing in the background. We appreciate your patience and will
+                display your summary as soon as it&apos;s ready </ModalBody>
             <ModalFooter>
                 <Button onClick={onClose}>Close</Button>
             </ModalFooter>
@@ -195,7 +206,7 @@ function GenerateSummary(props) {
 
     return (
         <Container>
-            {summaryLoading ? <LoadingSpinner><Spinner size="xl" color="blue.500" /></LoadingSpinner> : contents}
+            {summaryLoading ? <LoadingSpinner><Spinner size="xl" color="blue.500"/></LoadingSpinner> : contents}
             {loadingNotice}
         </Container>
     );
