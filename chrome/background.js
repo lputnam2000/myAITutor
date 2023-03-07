@@ -1,3 +1,4 @@
+
 const extensionId = chrome.runtime.id;
 
 chrome.action.onClicked.addListener(async function () {
@@ -24,3 +25,4 @@ chrome.runtime.onMessage.addListener(
         }
     }
 );
+

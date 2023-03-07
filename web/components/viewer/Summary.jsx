@@ -5,17 +5,11 @@ import SemanticSearch from "./SemanticSearch";
 import CollapsibleSummary from "./CollapsibleSummary";
 import {SmallAddIcon} from "@chakra-ui/icons";
 import GenerateSummary from "./GenerateSummary";
-import {PDFViewerContext} from "./context";
+import {ViewerContext} from "./context";
 
 const Container = styled.div`
+  height: 100%;
   width: 100%;
-  @media (min-width: 750px) {
-    flex: 4;
-    width: 40vw;
-    margin-right: 10px;
-  }
-  margin: 20px 30px 20px 30px;
-
   overflow-y: auto;
 
   border: 2px black solid;
@@ -37,33 +31,27 @@ const SubHeading = styled.div`
 const SummaryText = styled.div`
 `
 const SummaryContainer = styled.div`
-  overflow-y: hidden;
 `
 
-const StyledTabList = styled(TabList)`
-  position: -webkit-sticky; /* Safari */
-  position: sticky;
-  z-index: 4;
-  top: 0;
-`
 
-function Summary({pdfKey, summary}) {
+function Summary({}) {
+    const {summary, pdfKey} = useContext(ViewerContext)
     return (
         <Container>
             <Tabs height={'100%'} variant='enclosed' isFitted>
-                <StyledTabList>
-                    <Tab backgroundColor={'white'} _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
-                    <Tab backgroundColor={'white'} _selected={{color: 'white', bg: 'black'}}>Search</Tab>
-                </StyledTabList>
+                <TabList>
+                    <Tab _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
+                    <Tab _selected={{color: 'white', bg: 'black'}}>Search</Tab>
+                </TabList>
 
                 <TabPanels height={'94%'}>
                     <TabPanel style={{height: '100%', padding: '0px'}}>
                         <SummaryContainer>
+                            <GenerateSummary/>
                             {
                                 summary.map((s, idx) => <CollapsibleSummary isOpen={idx === 0} key={idx}
                                                                             summaryJson={s}/>)
                             }
-
                             {/*{SummaryPanel}*/}
                         </SummaryContainer>
                     </TabPanel>

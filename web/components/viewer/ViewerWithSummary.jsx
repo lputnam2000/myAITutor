@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import styled from "styled-components";
-import {PDFViewerContext} from "./context";
+import {ViewerContext} from "./context";
 import Summary from "./Summary";
 import PDFViewer from "./PDFViewer";
 import axios from "axios";
@@ -24,20 +24,30 @@ const InnerContainer = styled.div`
   //justify-content: space-between;
 `
 
-const PDFViewerContainer = styled.div`
-  flex: 1;
-  width: 100%;
-`
+
 const Title = styled.h1`
   font-size: 40px;
   margin-left: 30px;
   font-family: var(--font-b);
   margin-bottom: 10px;
 `
+const ViewerContainer = styled.div`
+  flex: 1;
+  width: 100%;
+`
+const SummaryContainer = styled.div`
+  width: 95%;
+  height: 750px;
+  @media (min-width: 750px) {
+    width: 40vw;
+    margin-top: 10px;
+    margin-right: 20px;
+  }
+`
 
-function PdfViewerWithSummary() {
+function ViewerWithSummary() {
 
-    const {setPdfKey, pdfKey, setSummary} = useContext(PDFViewerContext);
+    const {setPdfKey, pdfKey, setSummary} = useContext(ViewerContext);
     const [pdfFile, setPdfFile] = useState('')
     const [title, setTitle] = useState('');
     const getDocumentDetails = (pdfKey) => {
@@ -74,13 +84,15 @@ function PdfViewerWithSummary() {
         <Container>
             <Title>{title}</Title>
             <InnerContainer>
-                <PDFViewerContainer>
+                <ViewerContainer>
                     {pdfFile && <PDFViewer pdfFile={pdfFile}/>}
-                </PDFViewerContainer>
-                <Summary/>
+                </ViewerContainer>
+                <SummaryContainer>
+                    <Summary/>
+                </SummaryContainer>
             </InnerContainer>
         </Container>
     );
 }
 
-export default PdfViewerWithSummary;
+export default ViewerWithSummary;

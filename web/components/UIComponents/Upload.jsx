@@ -7,10 +7,10 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
-    ModalCloseButton,
     useDisclosure,
-    Button,
+    Button, FormControl, FormLabel, Input, FormHelperText, FormErrorMessage,
 } from '@chakra-ui/react'
+import {Select} from '@chakra-ui/react'
 
 
 const Directions = styled.div`
@@ -56,11 +56,32 @@ const PopButton = styled.button`
   }
 `
 
-export default function Upload({handleFile}) {
+const StyledSelect = styled(Select)`
+  margin-bottom: 20px;
+`
 
+const WebsiteInput = () => {
+    const [input, setInput] = useState('')
+    const handleInputChange = (e) => setInput(e.target.value)
+    return (
+        <FormControl>
+            <FormLabel>Website URL</FormLabel>
+            <Input type='email' value={input} onChange={handleInputChange}/>
+            <FormHelperText>
+                Please make sure the website you enter is publicly accessible.
+            </FormHelperText>
+        </FormControl>
+    )
+}
+
+export default function Upload({handleFile}) {
+    const [fileType, setFileType] = useState('');
     const {isOpen, onOpen, onClose} = useDisclosure("");
     const hiddenFileInput = React.useRef(null);
 
+    const handleSelectFileType = (e) => {
+        setFileType(e.target.value)
+    }
 
     const handleFileButtonClick = () => {
         hiddenFileInput.current.click();
@@ -76,21 +97,37 @@ export default function Upload({handleFile}) {
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay/>
             <ModalContent bg={'white'} sx={{'border': 'solid', 'borderWidth': '2px'}}>
-                <ModalHeader color={'black'}>Upload a PDF</ModalHeader>
+                <ModalHeader color={'black'}>Upload To Summarize</ModalHeader>
                 <ModalBody>
-                    <PopButton bg={'white'} onClick={handleFileButtonClick}>
-                        Select PDF
-                    </PopButton>
-                    <input
-                        type="file"
-                        ref={hiddenFileInput}
-                        onChange={handleFileChange}
-                        accept="application/pdf"
-                        style={{display: 'none'}}
-                    />
+                    <StyledSelect value={fileType} onChange={handleSelectFileType}
+                                  placeholder='Choose information type'>
+                        <option value='pdf'>Document (PDF)</option>
+                        <option value='website'>Website link</option>
+                        {/*<option value='website.jsx'>YouTube video link</option>*/}
+                    </StyledSelect>
+                    {
+                        fileType === 'pdf' && <>
+                            <PopButton bg={'white'} onClick={handleFileButtonClick}>
+                                Select PDF
+                            </PopButton>
+                            <input
+                                type="file"
+                                ref={hiddenFileInput}
+                                onChange={handleFileChange}
+                                accept="application/pdf"
+                                style={{display: 'none'}}
+                            />
+                        </>
+                    }
+                    {
+                        fileType === 'website' && <WebsiteInput/>
+                    }
                 </ModalBody>
 
                 <ModalFooter>
+                    <Button color={'black'} mr={3} onClick={onClose}>
+                        Submit
+                    </Button>
                     <Button color={'black'} mr={3} onClick={onClose}>
                         Close
                     </Button>
