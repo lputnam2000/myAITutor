@@ -1,10 +1,13 @@
-.popup{
-    font-family:monospace;
+.popup {
+    font-family: monospace;
     padding: 10px;
     position: relative;
     display: block;
     margin: auto;
     width: 300px;
+    border: solid;
+    border-width: 2px;
+    overflow: hidden;
 }
 
 p {
@@ -17,4 +20,76 @@ a {
     margin: auto;
     color: #45b6fe;
     font-size: 12px;
+}
+
+#logoflex {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 10px 0 10px 0;
+}
+
+#bananas {
+    width: 50%;
+}
+
+#innerLogo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 10px 0 10px 0;
+    width: min-content;
+    align-items: center;
+}
+
+#submitFlex {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%
+}
+
+.colflex {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#apihelp {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+}
+
+#apihelp a {
+    font-size: larger;
+    width: min-content;
+    margin: 0 0 0 1rem;
+}
+
+
+#apihelp span {
+    font-size: larger;
+}
+
+#submit-button {
+    margin: 10px auto 10px auto;
+    display: block;
+    padding: 4px 8px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+    background-color: #6B3FA0;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+#submit-button:hover {
+    background-color: #55318F;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }

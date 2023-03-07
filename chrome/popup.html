@@ -11,12 +11,21 @@
     <script src="popup.js"></script>
 </head>
 
-<body>
-    <div class="popup">
-        <label for="api-key">API Key:</label>
-        <input type="text" id="api-key" name="api-key">
-        <br>
-        <button id="submit-button">Submit</button>
+<body class="popup">
+    <div id="logoflex">
+        <div id="innerLogo">
+            <h1>Chimpbase</h1>
+            <img id="bananas" src="./bananas.svg" alt="">
+        </div>
+    </div>
+    <div id="submitFlex">
+        <div id="colflex">
+            <label for="api-key">API Key:</label>
+            <input type="text" id="api-key" name="api-key">
+            <button id="submit-button">Bookmark</button>
+            <div id="apihelp"><span>Get an API key from </span> <a href="https://chimpbase.com">chimpbase.com</a></div>
+        </div>
     </div>
 </body>
+
 </html>
