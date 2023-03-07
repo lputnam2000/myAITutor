@@ -62,7 +62,7 @@ const Tag = styled.div`
 
 function PdfCard({title, uploadId, thumbnail, type}) {
     return (
-        <Container href={`/summary?uploadId=${uploadId}`}>
+        <Container href={`/summary?uploadId=${uploadId}&fileType=${type}`}>
             {type === 'pdf' && <ImageContainer>
                 <img src={thumbnail} alt="" onerror={(e) => {
                     e.target.style.display = "none"

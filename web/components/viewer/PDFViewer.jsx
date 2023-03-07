@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Viewer, Worker} from "@react-pdf-viewer/core";
 import {dropPlugin} from '@react-pdf-viewer/drop';
 import '@react-pdf-viewer/drop/lib/styles/index.css';
@@ -8,6 +8,7 @@ import '@react-pdf-viewer/toolbar/lib/styles/index.css';
 import styled from 'styled-components'
 import readingIndicatorPlugin from "./ReadingIndicatorPlugin"
 import {ViewerContext} from "./context";
+import axios from "axios";
 
 
 const Container = styled.div`
@@ -38,12 +39,40 @@ const Container = styled.div`
 `
 
 
-function PdfViewer({pdfFile}) {
+function PdfViewer() {
     const dropPluginInstance = dropPlugin();
     const toolbarPluginInstance = toolbarPlugin();
     const {renderDefaultToolbar, Toolbar} = toolbarPluginInstance;
     const readingIndicatorPluginInstance = readingIndicatorPlugin();
     const {ReadingIndicator} = readingIndicatorPluginInstance;
+    const [pdfFile, setPdfFile] = useState('');
+    const {pdfKey, setSummary, setTitle, setFileType} = useContext(ViewerContext);
+
+    const getDocumentDetails = (pdfKey) => {
+        let params = {'key': pdfKey}
+        axios.get('/api/user/get_pdf', {params: params}).then(res => {
+            setSummary(res.data.documentDetails.summary)
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+    useEffect(() => {
+        if (!pdfKey) return
+
+        let params = {'key': pdfKey}
+        axios.get('/api/user/get_pdf', {params: params}).then(res => {
+            setPdfFile(res.data.s3Url)
+            setSummary(res.data.documentDetails.summary)
+            setTitle(res.data.documentDetails.title)
+            setFileType(res.data.documentDetails.type)
+        }).catch(err => {
+            console.log(err)
+        })
+        let timer = setInterval(() => getDocumentDetails(pdfKey), 3000);
+        return () => {
+            timer = null
+        }
+    }, [pdfKey])
 
 
     const transform = (slot) => ({
@@ -68,12 +97,14 @@ function PdfViewer({pdfFile}) {
 
     return (
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.3.122/build/pdf.worker.js">
-            <Container>
-                <Toolbar>{renderDefaultToolbar(transform)}</Toolbar>
+            (<Container>
+            <Toolbar>{renderDefaultToolbar(transform)}</Toolbar>
+            {pdfFile &&
                 <Viewer fileUrl={pdfFile}
                         onDocumentLoad={initializeContext}
                         plugins={[toolbarPluginInstance, readingIndicatorPluginInstance]}/>
-            </Container>
+            }
+        </Container>
             <ReadingIndicator/>
         </Worker>
     );

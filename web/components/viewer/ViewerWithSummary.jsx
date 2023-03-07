@@ -4,6 +4,7 @@ import {ViewerContext} from "./context";
 import Summary from "./Summary";
 import PDFViewer from "./PDFViewer";
 import axios from "axios";
+import WebsiteViewer from "./WebsiteViewer";
 
 
 const Container = styled.div`
@@ -33,6 +34,7 @@ const Title = styled.h1`
 `
 const ViewerContainer = styled.div`
   flex: 1;
+  height: 100%;
   width: 100%;
 `
 const SummaryContainer = styled.div`
@@ -47,34 +49,7 @@ const SummaryContainer = styled.div`
 
 function ViewerWithSummary() {
 
-    const {setPdfKey, pdfKey, setSummary} = useContext(ViewerContext);
-    const [pdfFile, setPdfFile] = useState('')
-    const [title, setTitle] = useState('');
-    const getDocumentDetails = (pdfKey) => {
-        let params = {'key': pdfKey}
-        axios.get('/api/user/get_pdf', {params: params}).then(res => {
-            setSummary(res.data.documentDetails.summary)
-        }).catch(err => {
-            console.log(err)
-        })
-    }
-
-    useEffect(() => {
-        if (!pdfKey) return
-
-        let params = {'key': pdfKey}
-        axios.get('/api/user/get_pdf', {params: params}).then(res => {
-            setPdfFile(res.data.s3Url)
-            setSummary(res.data.documentDetails.summary)
-            setTitle(res.data.documentDetails.title)
-        }).catch(err => {
-            console.log(err)
-        })
-        let timer = setInterval(() => getDocumentDetails(pdfKey), 1000);
-        return () => {
-            timer = null
-        }
-    }, [pdfKey])
+    const {title, fileType} = useContext(ViewerContext);
 
 
     // const pagesRef = useRef([]);
@@ -85,7 +60,12 @@ function ViewerWithSummary() {
             <Title>{title}</Title>
             <InnerContainer>
                 <ViewerContainer>
-                    {pdfFile && <PDFViewer pdfFile={pdfFile}/>}
+                    {
+                        fileType === 'pdf' && <PDFViewer/>
+                    }
+                    {
+                        fileType === 'url' && <WebsiteViewer/>
+                    }
                 </ViewerContainer>
                 <SummaryContainer>
                     <Summary/>
