@@ -90,6 +90,8 @@ export default async (req, res) => {
                     'Content-Type': 'application/json'
                 }
             })
+            res.status(200)
+            res.json({"key": fullyQualifiedName, 'fileName': url})
         } else {
             res.status(404)
             res.json({"Error": "404"})

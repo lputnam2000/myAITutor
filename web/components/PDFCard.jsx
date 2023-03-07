@@ -40,9 +40,9 @@ const CardInformation = styled.div`
 const CenteredText = styled.div`
   font-weight: 600;
   font-size: 14px;
-  white-space: nowrap;
+  white-space: ${props => props.fileType === 'url' ? 'normal' : 'nowrap'};
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ${props => props.fileType === 'url' ? 'none' : 'ellipsis'};
 `
 
 const TagList = styled.div`
@@ -69,7 +69,7 @@ function PdfCard({title, uploadId, thumbnail, type}) {
                 }}/>
             </ImageContainer>}
             <CardInformation>
-                <CenteredText>{title}</CenteredText></CardInformation>
+                <CenteredText fileType={type}>{title}</CenteredText></CardInformation>
             <TagList>
                 <Tag>{type === 'pdf' ? 'PDF' : 'Website'}</Tag>
             </TagList>

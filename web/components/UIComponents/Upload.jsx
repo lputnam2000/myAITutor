@@ -78,6 +78,42 @@ const WebsiteInput = ({url, setUrl}) => {
     )
 }
 
+const sendS3 = async (file) => {
+    if (!file) {
+        console.log("no file was found")
+        return
+    }
+
+    const requestObject = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "fileName": file.name,
+            "fileType": file.type,
+        })
+    }
+
+    let uploadID
+
+    await fetch('/api/getUploadURL', requestObject)
+        .then(res => res.json())
+        .then(data => {
+            uploadID = data["fileName"]
+            fetch(data["signedUrl"], {
+                headers: {'content-type': file.type},
+                method: 'PUT',
+                body: file,
+            }).then((res) => {
+                return res.text()
+            }).then((txt) => {
+                console.log(txt)
+            })
+        })
+    return uploadID
+}
+
 
 export default function Upload({handleFile}) {
     const [fileType, setFileType] = useState('');
@@ -93,9 +129,11 @@ export default function Upload({handleFile}) {
         hiddenFileInput.current.click();
     };
 
-    const handleFileChange = event => {
+    const handleFileChange = async event => {
         const fileUploaded = event.target.files[0];
-        handleFile(fileUploaded, fileType);
+        const uploadID = await sendS3(fileUploaded)
+        console.log(uploadID)
+        handleFile(fileUploaded, fileType, uploadID);
         onClose();
     };
 
@@ -103,7 +141,9 @@ export default function Upload({handleFile}) {
     const uploadDocument = () => {
         if (fileType === 'url') {
             axios.post('/api/user/add_website_document', {url,}).then((res) => {
-
+                const {key, fileName} = res.data
+                handleFile(fileName, fileType, key);
+                onClose()
             }).catch((err) => {
                 console.error(err)
             })
