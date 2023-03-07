@@ -3,10 +3,11 @@
     padding: 10px;
     position: relative;
     display: block;
-    margin: auto;
+    margin: 2px;
     width: 300px;
     border: solid;
-    border-width: 2px;
+    border-width: 5px;
+    border-color: #6B3FA0;
     overflow: hidden;
 }
 
