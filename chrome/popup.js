@@ -3,10 +3,10 @@ function sendPage(token, contentHTML) {
     fetch('http://localhost:3000/api/chromeExtension/collectWeb', {
         method: 'POST',
         headers: {
-            'Content-Type': 'text/html',
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         },
-        body: contentHTML
+        body: JSON.stringify(contentHTML)
     })
         .then(response => {
             if (response.ok) {

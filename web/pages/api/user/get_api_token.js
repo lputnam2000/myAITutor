@@ -13,14 +13,14 @@ const requestHandler = async (req, res) => {
                 const client = await clientPromise;
                 const db = client.db("admin");
                 const accountCollection = db.collection("accounts");
-                const objectId = new ObjectId(session.user.id);
-                const userRecord = await accountCollection.findOne({"userId": objectId});
+                const userIDObject = new ObjectId(session.user.id);
+                const userRecord = await accountCollection.findOne({"userId": userIDObject});
                 if (userRecord !== null) {
                     let apikey = uuidv4();
-                    await accountCollection.updateOne(
-                        { userid: session.user.id },
+                    console.log(await accountCollection.updateOne(
+                        { "userId": userIDObject },
                         { $set: { "apikey": apikey } }
-                      );
+                      ))
                     res.status(200).json({"apikey": apikey})
                 } else {
                     res.status(200).json({"apikey": "no account found"})
