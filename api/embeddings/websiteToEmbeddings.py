@@ -57,9 +57,15 @@ def create_class(key:str, client):
 
 
 
-def get_documents(url:str):
+def get_documents_from_url(url:str):
     textExtractor = WebsiteTextExtracter()
-    extracted_text = textExtractor.extract_formatted_text(url)
+    extracted_text = textExtractor.extract_formatted_text_from_url(url)
+    formatted_documents = extracted_text.split("\n\n")
+    return formatted_documents
+
+def get_documents_from_html(html):
+    textExtractor = WebsiteTextExtracter()
+    extracted_text = textExtractor.extract_formatted_text_from_html(html)
     formatted_documents = extracted_text.split("\n\n")
     return formatted_documents
 
@@ -137,18 +143,34 @@ class WebsiteTextExtracter:
     def num_tokens(self, text):
         return len(text.split(' '))
     
-    def extract_formatted_text(self, url):
-        site_content = self.get_site_content(url)
+    def text_from_document(self, document):
+        text = self.htmlParser.handle(document.summary())
+        if self.num_tokens(text) < 100:
+            text = self.htmlParser.handle(document.content())
+        cleaned_text = self.remove_garbage_text(text)
+
+        return cleaned_text
+
+
+    def extract_formatted_text_from_html(self, html):
+        document = Document(html)
+        return self.text_from_document(document)
+
+
+    def extract_formatted_text_from_url(self, url):
+        # site_content = self.get_site_content(url)
+        document = self.get_site_content(url)
 
         # First try to get doc.summary because of better formatting
         # Otherwise get content. 
         #TODO: figure out why this is fucked
-        text = self.htmlParser.handle(site_content.summary())
-        if self.num_tokens(text) < 100:
-            text = self.htmlParser.handle(site_content.content())
-        cleaned_text = self.remove_garbage_text(text)
+        return self.text_from_document(document)
+        # text = self.htmlParser.handle(site_content.summary())
+        # if self.num_tokens(text) < 100:
+        #     text = self.htmlParser.handle(site_content.content())
+        # cleaned_text = self.remove_garbage_text(text)
 
-        return cleaned_text
+        # return cleaned_text
     
 
 if __name__ == "__main__":

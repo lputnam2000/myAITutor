@@ -12,13 +12,15 @@ const requestHandler = async (req, res) => {
             try {
                 const client = await clientPromise;
                 const db = client.db("admin");
-                const accountCollection = db.collection("accounts");
+                const usersCollection = db.collection("users");
                 const userIDObject = new ObjectId(session.user.id);
-                const userRecord = await accountCollection.findOne({"userId": userIDObject});
+                console.log(userIDObject)
+                const userRecord = await usersCollection.findOne({"_id": userIDObject});
                 if (userRecord !== null) {
                     let apikey = uuidv4();
-                    console.log(await accountCollection.updateOne(
-                        { "userId": userIDObject },
+
+                    console.log(await usersCollection.updateOne(
+                        { "_id": userIDObject },
                         { $set: { "apikey": apikey } }
                       ))
                     res.status(200).json({"apikey": apikey})
