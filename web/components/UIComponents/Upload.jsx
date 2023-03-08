@@ -185,7 +185,7 @@ export default function Upload({handleFile}) {
             axios.post('/api/user/add_youtube_video', {url,}).then((res) => {
                 const {key, fileName} = res.data
                 handleFile(fileName, fileType, key);
-                onClose()
+                // onClose()
             }).catch((err) => {
                 console.error(err)
             })

@@ -93,7 +93,12 @@ export default async (req, res) => {
                     'X-API-Key': process.env.CB_API_SECRET,
                     'Content-Type': 'application/json'
                 }
+            }).then((res)=> {
+                console.log(res)
+            }).catch(() => {
+                console.log('error')
             })
+
             res.status(200)
             res.json({"key": fullyQualifiedName, 'fileName': url})
         } else {
