@@ -5,11 +5,11 @@ import fitz
 import boto3
 import os
 import openai
-from .embeddings.main_view import embeddings_bp
-from .summary import get_summary, get_summary_string
-from .utils.utils import require_api_key, get_mongo_client, send_notification_to_client
-from .weaviate_embeddings import get_documents, upload_documents, get_client, create_class
-from .utils.aws import get_pdf
+from api.embeddings.main_view import embeddings_bp
+from api.summary import get_summary, get_summary_string
+from api.utils.utils import require_api_key, get_mongo_client, send_notification_to_client
+from api.weaviate_embeddings import get_documents, upload_documents, get_client, create_class
+from api.utils.aws import get_pdf
 from logging.config import dictConfig
 import nltk
 # load_dotenv()
