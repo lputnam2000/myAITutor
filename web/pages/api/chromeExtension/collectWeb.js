@@ -20,7 +20,6 @@ async function secretToUser(secret) {
 }
 
 async function generateRecord(user_id, html, title) {
-    console.log(user_id)
     const client = await clientPromise;
     const db = client.db("data");
     let today = new Date();
@@ -91,7 +90,8 @@ export default async function handler(req, res) {
         if (req.method === "POST") {
             try {
                 const data = req.body['content'];
-                const title =  "ashank"// change once extension updated
+                const title =  req.body['title']// change once extension updated
+                console.log(req.body)
                 const authHeader = req.headers.authorization;
                 let secret = null
                 if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -113,20 +113,6 @@ export default async function handler(req, res) {
                 })
                 res.status(200)
                 res.json({"key": fullyQualifiedName, 'fileName': title})
-                //TODO use `user_id_from_secret` and `data.content` to add this html to someone's summaries
-                // fetch(process.env.BACKEND_URL + '/embeddings/extension/', {
-                //     method: 'POST',
-                //     body: JSON.stringify({
-                //         content: data,
-                //         user_id_from_secret: user_id_from_secret,
-                //     }),
-                //     headers: {
-                //         'X-API-Key': process.env.CB_API_SECRET,
-                //         'Content-Type': 'application/json'
-                //     }
-                // })
-                // res.json({"key": fullyQualifiedName, 'fileName': url})
-                // return res.status(200).json({ 'message': 'TODO: actually make this work' })
             } catch (e) {
                 console.error(e);
                 return res.status(400).json({ 'error': e }).end()
