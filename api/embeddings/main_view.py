@@ -9,7 +9,7 @@ embeddings_bp = Blueprint('embeddings', __name__, url_prefix='/embeddings')
 
 @embeddings_bp.route('/websites/', methods=['POST'])
 @require_api_key
-def main_view():
+def website_to_embedding():
     print("test")
     try:
         data = request.json # .data is empty
@@ -37,7 +37,7 @@ def main_view():
     
 @embeddings_bp.route('/youtube_video/', methods=['POST'])
 @require_api_key
-def main_view():
+def youtube_to_embedding():
     try:
         data = request.json # .data is empty
         url = data['url']
