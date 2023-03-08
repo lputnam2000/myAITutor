@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import Link from 'next/link'
 
@@ -60,7 +60,26 @@ const Tag = styled.div`
 `
 
 
+const typeToLabel = {
+    'pdf': 'PDF',
+    'url': 'Website',
+    'youtube': 'YouTube'
+}
+
 function PdfCard({title, uploadId, thumbnail, type}) {
+    const [thumbnailUrl, setThumbnailUrl] = useState('')
+    useEffect(() => {
+        if (type === 'youtube') {
+            const apiUrl = `https://noembed.com/embed?url=${encodeURIComponent(title)}`;
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    setThumbnailUrl(data.thumbnail_url);
+                })
+                .catch(error => console.error(error));
+        }
+    }, [type])
+
     return (
         <Container href={`/summary?uploadId=${uploadId}&fileType=${type}`}>
             {type === 'pdf' && <ImageContainer>
@@ -68,10 +87,15 @@ function PdfCard({title, uploadId, thumbnail, type}) {
                     e.target.style.display = "none"
                 }}/>
             </ImageContainer>}
+            {type === 'youtube' && <ImageContainer>
+                <img src={thumbnailUrl} alt="" onerror={(e) => {
+                    e.target.style.display = "none"
+                }}/>
+            </ImageContainer>}
             <CardInformation>
                 <CenteredText fileType={type}>{title}</CenteredText></CardInformation>
             <TagList>
-                <Tag>{type === 'pdf' ? 'PDF' : 'Website'}</Tag>
+                <Tag>{typeToLabel[type]}</Tag>
             </TagList>
         </Container>
     );

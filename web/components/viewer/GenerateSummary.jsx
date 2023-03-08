@@ -99,9 +99,7 @@ const LoadingSpinner = styled.div`
   flex-direction: row;
   justify-content: center;
 `
-
-
-function GenerateSummary(props) {
+function PDFGenerateSummary(props) {
     const [showOption, setShowOption] = useState(false);
     const [startPage, setStartPage] = useState(1);
     const [startError, setStartError] = useState(false);
@@ -150,19 +148,7 @@ function GenerateSummary(props) {
     }
 
     const generateSummaryButton = () => {
-        if (fileType === 'pdf') {
             setShowOption(true)
-        } else {
-            setSummaryLoading(true)
-            setTimeout(() => {
-                setSummaryLoading(false)
-            }, 10000)
-            axios.post('/api/user/generate_summary_web', {
-                key: pdfKey
-            }).then((res) => {
-                console.log(res)
-            })
-        }
     }
 
     const contents = <><NewSummaryButton onClick={generateSummaryButton}>
@@ -211,5 +197,115 @@ function GenerateSummary(props) {
         </Container>
     );
 }
+function YoutubeGenerateSummary(props) {
+    const { pdfKey} = useContext(ViewerContext)
+    const [summaryLoading, setSummaryLoading] = useState(false)
+    const {isOpen, onOpen, onClose} = useDisclosure();
+
+
+
+    const generateSummaryButton = () => {
+        setSummaryLoading(true)
+        setTimeout(() => {
+            setSummaryLoading(false)
+        }, 10000)
+        axios.post('/api/user/generate_summary_youtube', {
+            key: pdfKey
+        }).then((res) => {
+            console.log(res)
+        })
+    }
+
+    const contents = <><NewSummaryButton onClick={generateSummaryButton}>
+        Generate Video Summary <SmallAddIcon boxSize={6}/>
+    </NewSummaryButton>
+    </>
+
+    const loadingNotice = <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay/>
+        <ModalContent>
+            <ModalHeader>Your Summary</ModalHeader>
+            <ModalBody>
+                Thank you for submitting your request. Your summary will be available as soon as it&apos;s ready. It may
+                take
+                a few minutes to generate, especially for longer documents. You&apos;ll see a loading symbol while we
+                work on
+                it, and it should disappear after about 10 seconds. Please note that even after the loading symbol
+                disappears, your summary may still be processing in the background. We appreciate your patience and will
+                display your summary as soon as it&apos;s ready </ModalBody>
+            <ModalFooter>
+                <Button onClick={onClose}>Close</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+
+    return (
+        <Container>
+            {summaryLoading ? <LoadingSpinner><Spinner size="xl" color="blue.500"/></LoadingSpinner> : contents}
+            {loadingNotice}
+        </Container>
+    );
+}
+function URLGenerateSummary(props) {
+    const { pdfKey} = useContext(ViewerContext)
+    const [summaryLoading, setSummaryLoading] = useState(false)
+    const {isOpen, onOpen, onClose} = useDisclosure();
+
+
+
+    const generateSummaryButton = () => {
+            setSummaryLoading(true)
+            setTimeout(() => {
+                setSummaryLoading(false)
+            }, 10000)
+            axios.post('/api/user/generate_summary_web', {
+                key: pdfKey
+            }).then((res) => {
+                console.log(res)
+            })
+    }
+
+    const contents = <><NewSummaryButton onClick={generateSummaryButton}>
+        Generate Website Summary <SmallAddIcon boxSize={6}/>
+    </NewSummaryButton>
+    </>
+
+    const loadingNotice = <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay/>
+        <ModalContent>
+            <ModalHeader>Your Summary</ModalHeader>
+            <ModalBody>
+                Thank you for submitting your request. Your summary will be available as soon as it&apos;s ready. It may
+                take
+                a few minutes to generate, especially for longer documents. You&apos;ll see a loading symbol while we
+                work on
+                it, and it should disappear after about 10 seconds. Please note that even after the loading symbol
+                disappears, your summary may still be processing in the background. We appreciate your patience and will
+                display your summary as soon as it&apos;s ready </ModalBody>
+            <ModalFooter>
+                <Button onClick={onClose}>Close</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+
+    return (
+        <Container>
+            {summaryLoading ? <LoadingSpinner><Spinner size="xl" color="blue.500"/></LoadingSpinner> : contents}
+            {loadingNotice}
+        </Container>
+    );
+}
+
+
+function GenerateSummary() {
+    const {fileType} = useContext(ViewerContext)
+    return <>
+        {fileType ==='pdf' && <PDFGenerateSummary />}
+        {fileType ==='url' && <URLGenerateSummary />}
+        {fileType ==='youtube' && <YoutubeGenerateSummary />}
+
+    </>
+}
+
 
 export default GenerateSummary;
