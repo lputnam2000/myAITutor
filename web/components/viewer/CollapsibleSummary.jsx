@@ -79,6 +79,8 @@ function CollapsibleSummary({summaryJson, isOpen, fileType}) {
     const heading = useMemo(() => {
         if (fileType === 'pdf') {
             return `Summary for Pages ${summaryJson.startPage}-${summaryJson.endPage}`
+        } else if (fileType === 'youtube') {
+            return `Youtube Video Summary`
         } else {
             return `Website Summary`
         }

@@ -52,7 +52,7 @@ function SemanticSearch({uploadId}) {
         answer: inputResults.answer,
         contexts: inputResults.contexts
       }
-      setAnswers(oldArray => [...oldArray, newValue])
+      setAnswers(oldArray => [newValue,...oldArray])
     }
 
     const searchAnswer = async () => {

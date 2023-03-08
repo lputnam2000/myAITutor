@@ -142,6 +142,26 @@ def generate_summary_websites():
     send_notification_to_client(user_id, key, f'Summary complete for:{key}')
     return result
 
+@app.route('/summaries/youtube/', methods=["POST"])
+@require_api_key
+def generate_summary_youtube():
+    data = request.json #.data is empty
+    key = data['key']
+    user_id = data['user_id']
+    db_client = get_mongo_client()
+    data_db = db_client["data"]
+    video_collection = data_db["SummaryYoutube"]
+    video_doc = video_collection.find_one({'_id': key})
+    video_text = [t["text"] for t in video_doc['transcript']]
+    s = get_summary_string(video_text)
+    summaryDict = {}
+    summaryDict['startPage'] = -1
+    summaryDict['endPage'] = -1
+    summaryDict['formattedSummary'] = s
+    video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
+    result = jsonify(s)
+    send_notification_to_client(user_id, key, f'Summary complete for:{key}')
+    return result
 
 
 if __name__ =="__main__":

@@ -5,6 +5,7 @@ import Summary from "./Summary";
 import PDFViewer from "./PDFViewer";
 import axios from "axios";
 import WebsiteViewer from "./WebsiteViewer";
+import YoutubeViewer from "./YoutubeViewer";
 
 
 const Container = styled.div`
@@ -68,6 +69,9 @@ function ViewerWithSummary() {
                     }
                     {
                         fileType === 'url' && <WebsiteViewer/>
+                    }
+                    {
+                        fileType === 'youtube' && <YoutubeViewer/>
                     }
                 </ViewerContainer>
                 <SummaryContainer>
