@@ -1,22 +1,21 @@
 from http import HTTPStatus
 from flask import Flask, Blueprint, jsonify, request
 from ..utils.utils import require_api_key, get_mongo_client, send_notification_to_client
-# from api.utils import require_api_key, get_mongo_client, send_notification_to_client
-from .websiteToEmbeddings import get_documents, get_client, create_class, upload_documents
+from .websiteToEmbeddings import get_documents_from_url, get_documents_from_html, get_client, create_class, upload_documents
 from .youtubeToEmbeddings import get_video_transcript, get_weaviate_docs
+from uuid import uuid4
 
 embeddings_bp = Blueprint('embeddings', __name__, url_prefix='/embeddings')
 
 @embeddings_bp.route('/websites/', methods=['POST'])
 @require_api_key
 def website_to_embedding():
-    print("test")
     try:
         data = request.json # .data is empty
         url = data['url']
         key = data['key']
         user_id = data['user_id']
-        documents = get_documents(url)
+        documents = get_documents_from_url(url)
         print('#PARSED DOCUMENTS')
         client = get_client()
         class_name = create_class(key, client)
@@ -34,7 +33,35 @@ def website_to_embedding():
     except Exception as e:
         print(e)
         raise e
-    
+
+@embeddings_bp.route('/extension/', methods=['POST'])
+@require_api_key
+def extension_to_embedding():
+    print("test")
+    try:
+        data = request.json # .data is empty
+        html = data['content']
+        user_id = data['user_id']
+        key = data['key']
+        documents = get_documents_from_html(html)
+        print('#PARSED DOCUMENTS')
+        client = get_client()
+        class_name = create_class(key, client)
+        print(f'#CREATED CLASS {class_name}')
+        upload_documents(documents, client, class_name)
+        print("#UPLOADED DOCUMENTS")
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        websitesCollection = data_db["SummaryWebsites"]
+        update_query = {"$set": {"status": "Ready", "documents": documents}}
+        # Update the document matching the UUID with the new values
+        websitesCollection.update_one({"_id": key}, update_query)
+        send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+        return jsonify({"message": "Embeddings Uploaded"}), HTTPStatus.OK
+    except Exception as e:
+        print(e)
+        raise e
+
 @embeddings_bp.route('/youtube_video/', methods=['POST'])
 @require_api_key
 def youtube_to_embedding():
