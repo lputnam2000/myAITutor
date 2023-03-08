@@ -195,7 +195,7 @@ export default function Home() {
                             Join the Chimp Squad
                         </Submit>
                     </WaitingListCard>
-
+g
                 </Container>
             </Main>
         </>
