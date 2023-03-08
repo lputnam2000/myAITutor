@@ -45,7 +45,7 @@ async function generateRecord(session, url) {
                 url
             });
         } else {
-            console.log("Record already exists:", result);
+            // console.log("Record already exists:", result);
             let currentData = uploads.count({'userid': owner}, {limit: 1})
             if (currentData && currentData.uploads) {
                 while (currentData.uploads.includes(uuid)) {
@@ -78,11 +78,13 @@ export default async (req, res) => {
             const {url} = req.body
             //First, validate the data and send back an error message if data is invalid
             //S3
+            let user_id = session.user.id
             let fullyQualifiedName = await generateRecord(session, url)
             fetch(process.env.BACKEND_URL + '/embeddings/websites/', {
                 method: 'POST',
                 body: JSON.stringify({
                     key: fullyQualifiedName,
+                    user_id: user_id,
                     url,
                 }),
                 headers: {
