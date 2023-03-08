@@ -77,6 +77,7 @@ function Home() {
     useEffect(() => {
         axios.get('/api/user/uploads').then((res) => {
             setUserUploads(res.data['uploads'])
+            console.log(res.data['uploads'])
         }).catch((err) => {
             console.log(err)
         })
