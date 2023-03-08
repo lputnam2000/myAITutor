@@ -40,19 +40,39 @@ const CardInformation = styled.div`
 const CenteredText = styled.div`
   font-weight: 600;
   font-size: 14px;
-  white-space: nowrap;
+  white-space: ${props => props.fileType === 'url' ? 'normal' : 'nowrap'};
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ${props => props.fileType === 'url' ? 'none' : 'ellipsis'};
+`
+
+const TagList = styled.div`
+  background-color: #fafdd4;
+  display: flex;
+`
+const Tag = styled.div`
+  margin: 10px;
+  font-size: 13px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background-color: #ef59e8;
+  color: white;
+
 `
 
 
-function PdfCard({title, uploadId, thumbnail}) {
+function PdfCard({title, uploadId, thumbnail, type}) {
     return (
-        <Container href={`/summary?uploadId=${uploadId}`}>
-            <ImageContainer>
-                <img src={thumbnail} alt="" onerror={(e)=>{e.target.style.display = "none"}}/>
-            </ImageContainer>
-            <CardInformation><CenteredText>{title}</CenteredText></CardInformation>
+        <Container href={`/summary?uploadId=${uploadId}&fileType=${type}`}>
+            {type === 'pdf' && <ImageContainer>
+                <img src={thumbnail} alt="" onerror={(e) => {
+                    e.target.style.display = "none"
+                }}/>
+            </ImageContainer>}
+            <CardInformation>
+                <CenteredText fileType={type}>{title}</CenteredText></CardInformation>
+            <TagList>
+                <Tag>{type === 'pdf' ? 'PDF' : 'Website'}</Tag>
+            </TagList>
         </Container>
     );
 }

@@ -16,11 +16,14 @@ const myBucket = new AWS.S3({
     region: REGION,
 })
 
-function generatePreSignedPutUrl(fileName, fileType) {
+function generatePreSignedPutUrl(fileName, fileType, userid) {
     let result = myBucket.getSignedUrlPromise('putObject', {
         Key: fileName,
         ContentType: fileType,
         Expires: URL_EXPIRATION_TIME,
+        Metadata: {
+            userid: userid,
+        }
     }).then((url) => {
         return url
     })
@@ -55,12 +58,12 @@ async function generateRecord(session, fileName) {
             });
             uploads.updateOne(
                 record,
-                {$set: {"uploads": [{uuid, title, status: 'Not Ready'}]}},
+                {$set: {"uploads": [{uuid, title, status: 'Not Ready', type: 'pdf'}]}},
                 {upsert: true}
             );
-            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: []});
+            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'pdf'});
         } else {
-            console.log("Record already exists:", result);
+            // console.log("Record already exists:", result);
             var currentData = uploads.count({'userid': owner}, {limit: 1})
             if (currentData && currentData.uploads) {
                 while (currentData.uploads.includes(uuid)) {
@@ -68,9 +71,9 @@ async function generateRecord(session, fileName) {
                 }
             }
             uploads.update(record, {
-                $push: {"uploads": {uuid, title, status: 'Not Ready'}}
+                $push: {"uploads": {uuid, title, status: 'Not Ready', type: 'pdf'}}
             })
-            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: []});
+            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'pdf'});
         }
     });
     let fullyQualifiedName = uuid;
@@ -92,8 +95,9 @@ export default async (req, res) => {
                 res.json({"Error": "Please only upload pdf files"})
             } else {
                 //S3
+                const owner = session.user.id
                 let fullyQualifiedName = await generateRecord(session, body["fileName"])
-                await generatePreSignedPutUrl(fullyQualifiedName, body["fileType"]).then((url) => {
+                await generatePreSignedPutUrl(fullyQualifiedName, body["fileType"], owner).then((url) => {
                     res.status(200)
                     res.json({"signedUrl": url, 'fileName': fullyQualifiedName})
                 })

@@ -39,7 +39,9 @@ const requestHandler = async (req, res) => {
                 }, {uploads: 1})
                 if (userUploads !== null) {
                     let results = await Promise.all(userUploads['uploads'].map(async (upload) => {
-                        upload.thumbnail = await generatePreSignedGetUrl(thumbnailBucket, upload.uuid);
+                        if (upload.type === 'pdf') {
+                            upload.thumbnail = await generatePreSignedGetUrl(thumbnailBucket, upload.uuid);
+                        }
                         return upload;
                     }))
 

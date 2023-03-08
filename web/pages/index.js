@@ -5,6 +5,8 @@ import {FormControl, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import DemoPDFSummary from "../components/DemoPDFSummary";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 
 const Container = styled.div`
@@ -119,6 +121,15 @@ export default function Home() {
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
     const [isDisabled, setIsDisabled] = useState(false)
     const [joinedWaitlist, setJoinedWaitlist] = useState(false)
+    const session = useSession();
+    const router = useRouter();
+
+    useEffect(()=>{
+      if (session) {
+        router.push("/home")
+      }
+    })
+
     const submitEntry = () => {
         const emailRegex =
             /^(?=[a-z0-9@._%+-]{6,254}$)[a-z0-9._%+-]{1,64}@(?:[a-z0-9-]{1,63}\.){1,8}[a-z]{2,63}$/;
@@ -184,7 +195,7 @@ export default function Home() {
                             Join the Chimp Squad
                         </Submit>
                     </WaitingListCard>
-
+g
                 </Container>
             </Main>
         </>
