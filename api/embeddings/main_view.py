@@ -1,6 +1,7 @@
 from http import HTTPStatus
 from flask import Flask, Blueprint, jsonify, request
-from ..utils import require_api_key, get_mongo_client
+from ..utils.utils import require_api_key, get_mongo_client, send_notification_to_client
+# from api.utils import require_api_key, get_mongo_client, send_notification_to_client
 from .websiteToEmbeddings import get_documents, get_client, create_class, upload_documents
 
 embeddings_bp = Blueprint('embeddings', __name__, url_prefix='/embeddings')
@@ -8,10 +9,12 @@ embeddings_bp = Blueprint('embeddings', __name__, url_prefix='/embeddings')
 @embeddings_bp.route('/websites/', methods=['POST'])
 @require_api_key
 def main_view():
+    print("test")
     try:
         data = request.json # .data is empty
         url = data['url']
         key = data['key']
+        user_id = data['user_id']
         documents = get_documents(url)
         print('#PARSED DOCUMENTS')
         client = get_client()
@@ -25,7 +28,8 @@ def main_view():
         update_query = {"$set": {"status": "Ready", "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
-        return jsonify({"message": "Embaddings Uploaded"}), HTTPStatus.OK
+        send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+        return jsonify({"message": "Embeddings Uploaded"}), HTTPStatus.OK
     except Exception as e:
         print(e)
         raise e
