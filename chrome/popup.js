@@ -1,12 +1,11 @@
-function sendPage(token, contentHTML) {
-    console.log(contentHTML)
+function sendPage(token, content) {
     fetch('http://localhost:3000/api/chromeExtension/collectWeb', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(contentHTML)
+        body: JSON.stringify(content)
     })
         .then(response => {
             if (response.ok) {

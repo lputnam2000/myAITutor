@@ -9,8 +9,7 @@ embeddings_bp = Blueprint('embeddings', __name__, url_prefix='/embeddings')
 
 @embeddings_bp.route('/websites/', methods=['POST'])
 @require_api_key
-def web_to_embedding():
-    print("test")
+def website_to_embedding():
     try:
         data = request.json # .data is empty
         url = data['url']
