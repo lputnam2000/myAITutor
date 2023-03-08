@@ -1,4 +1,3 @@
-import Navbar from "../components/UIComponents/Navbar";
 import React, {useEffect, useState} from "react";
 import styled, {keyframes} from 'styled-components'
 import axios from "axios";
@@ -6,6 +5,7 @@ import Upload from "../components/UIComponents/Upload";
 import PDFCard from "../components/PDFCard";
 import AWS from 'aws-sdk'
 import {useRouter} from "next/router";
+import Layout from "../Layouts/basicLayout"
 
 const S3_BUCKET = 'chimppdfstore';
 const REGION = 'us-east-1';
@@ -30,41 +30,6 @@ function generatePreSignedPutUrl(fileName, fileType) {
     return result
 }
 
-const sendS3 = async (file) => {
-    if (!file) {
-        console.log("no file was found")
-        return
-    }
-
-    const requestObject = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            "fileName": file.name,
-            "fileType": file.type,
-        })
-    }
-
-    let uploadID
-
-    await fetch('/api/getUploadURL', requestObject)
-        .then(res => res.json())
-        .then(data => {
-            uploadID = data["fileName"]
-            fetch(data["signedUrl"], {
-                headers: {'content-type': file.type},
-                method: 'PUT',
-                body: file,
-            }).then((res) => {
-                return res.text()
-            }).then((txt) => {
-                console.log(txt)
-            })
-        })
-    return uploadID
-}
 
 const gradientKeyframes = keyframes`
   0% {
@@ -79,7 +44,8 @@ const gradientKeyframes = keyframes`
 `
 
 const HomeContainer = styled.div`
-  margin: 30px;
+  margin: 0 30px 30px 30px;
+  padding: 30px;
 `
 
 const Container = styled.div`
@@ -104,7 +70,7 @@ const HomeHeading = styled.h1`
 
 `
 
-export default function Home() {
+function Home() {
     const [userUploads, setUserUploads] = useState([]);
     const router = useRouter();
 
@@ -115,25 +81,29 @@ export default function Home() {
             console.log(err)
         })
     }, []);
-    useEffect(()=>{}, [userUploads])
+    useEffect(() => {
+    }, [userUploads])
+
+    const handleFileUpload = (file, type, uploadID) => {
+        if (type === 'pdf') {
+            let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready', type: type}
+            setUserUploads(oldArray => [...oldArray, newValue])
+        } else {
+            let newValue = {uuid: uploadID, title: file, status: 'Not Ready', type: type}
+            setUserUploads(oldArray => [...oldArray, newValue])
+        }
+    }
+
 
     return (
         <Container>
-            <Navbar/>
             <HomeContainer>
-                <HomeHeading>
-                    Home
-                </HomeHeading>
                 <UserFilesContainer>
-                    <Upload handleFile={(file) => {
-                        sendS3(file).then((uploadID) => {
-                            let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready'}
-                            setUserUploads(oldArray => [...oldArray, newValue] )})
-                    }}></Upload>
+                    <Upload handleFile={handleFileUpload}></Upload>
                     {
                         userUploads.map((upload) => {
                                 return (<PDFCard key={upload.uuid} uploadId={upload.uuid} title={upload.title}
-                                                 thumbnail={upload.thumbnail}/>);
+                                                 thumbnail={upload.thumbnail} type={upload.type}/>);
                             }
                         )
                     }
@@ -143,3 +113,7 @@ export default function Home() {
         </Container>
     );
 }
+
+Home.PageLayout = Layout;
+
+export default Home;

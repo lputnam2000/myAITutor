@@ -169,6 +169,33 @@ def get_summary(doc, start_page=6, end_page=8):
     print('FINISHED SUMMARISING TEXT')
     return summary
 
+def get_summary_string(content_arr:str):
+    summary = []
+    # extract the text and clean it up
+    print('STARTED FORMATTING TEXT')
+    formatted_text = format_for_gpt3(content_arr)
+    print('FINISHED EXTRACTING TEXT')
+    # generate summary 
+    idx = 0
+    context = None
+    print('STARTED SUMMARISING TEXT')
+    while idx < len(formatted_text):
+        input_text = ""
+        input_text_tokens = 0
+        while input_text_tokens < 1900:
+            input_text += formatted_text[idx][0] + ' '
+            input_text_tokens += formatted_text[idx][1]
+            idx += 1
+            if idx == len(formatted_text):
+                break
+        generated_summary = make_gpt_summary(input_text, context)
+        summary.append((-1, -1, generated_summary))
+        context = generate_context(generated_summary)
+
+    print('FINISHED SUMMARISING TEXT')
+    return summary
+
+
 if __name__ == "__main__":
     doc = fitz.open('ex2.pdf')
     s = get_summary(doc, 508, 511)
