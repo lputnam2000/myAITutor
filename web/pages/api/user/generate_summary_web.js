@@ -3,12 +3,15 @@ import {getServerSession} from "next-auth/next"
 import {authOptions} from "pages/api/auth/[...nextauth]";
 
 const requestHandler = async (req, res) => {
+    const session = await getServerSession(req, res, authOptions)
+    const user_id = session.user.id
     if (req.method === "POST") {
         const {key} = req.body
         fetch(process.env.BACKEND_URL + '/summaries/websites/', {
             method: 'POST',
             body: JSON.stringify({
                 key,
+                user_id: user_id
             }),
             headers: {
                 'X-API-Key': process.env.CB_API_SECRET,
