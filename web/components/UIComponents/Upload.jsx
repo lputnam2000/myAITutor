@@ -8,6 +8,7 @@ import {
     ModalFooter,
     ModalBody,
     useDisclosure,
+    Image,
     Button, FormControl, FormLabel, Input, FormHelperText, FormErrorMessage,
 } from '@chakra-ui/react'
 import {Select} from '@chakra-ui/react'
@@ -74,6 +75,39 @@ const WebsiteInput = ({url, setUrl}) => {
             <FormHelperText>
                 Please make sure the website you enter is publicly accessible.
             </FormHelperText>
+        </FormControl>
+    )
+}
+
+const YoutubeThumbnail = styled.div`
+`
+const YoutubeInput = ({url, setUrl}) => {
+    const [thumbnailUrl, setThumbnailUrl] = useState('')
+    const handleInputChange = (e) => {
+        setUrl(e.target.value)
+        const apiUrl = `https://noembed.com/embed?url=${encodeURIComponent(e.target.value)}`;
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                setThumbnailUrl(data.thumbnail_url);
+            })
+            .catch(error => console.error(error));
+    }
+    return (
+        <FormControl>
+            <FormLabel>YouTube Video URL</FormLabel>
+            <Input type='email' value={url} onChange={handleInputChange}/>
+            <FormHelperText>
+                Please make sure that the YouTube video URL you enter is publicly accessible.
+            </FormHelperText>
+            <br/>
+            <YoutubeThumbnail>
+                {thumbnailUrl && <Image
+                    src={thumbnailUrl}
+                    alt='Thumbnail for Youtube Video'
+                    borderRadius='lg'
+                />}
+            </YoutubeThumbnail>
         </FormControl>
     )
 }
@@ -147,7 +181,17 @@ export default function Upload({handleFile}) {
             }).catch((err) => {
                 console.error(err)
             })
-        } else {
+        } else if (fileType === 'youtube') {
+            axios.post('/api/user/add_youtube_video', {url,}).then((res) => {
+                const {key, fileName} = res.data
+                handleFile(fileName, fileType, key);
+                onClose()
+            }).catch((err) => {
+                console.error(err)
+            })
+            console.log(url)
+        }
+        else {
             onClose()
         }
 
@@ -163,6 +207,7 @@ export default function Upload({handleFile}) {
                                   placeholder='Choose information type'>
                         <option value='pdf'>Document (PDF)</option>
                         <option value='url'>Website link</option>
+                        <option value='youtube'>Youtube Video</option>
                     </StyledSelect>
                     {
                         fileType === 'pdf' && <>
@@ -184,12 +229,23 @@ export default function Upload({handleFile}) {
                             <WebsiteInput url={url} setUrl={setUrl}/>
                         </>
                     }
+                    {
+                        fileType === 'youtube' &&
+                        <>
+                            <YoutubeInput url={url} setUrl={setUrl}/>
+                        </>
+                    }
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button color={'black'} mr={3} onClick={uploadDocument}>
-                        Submit
-                    </Button>
+                    {
+                        (fileType === 'youtube' || fileType === 'url') && (
+                        <Button color={'black'} mr={3} onClick={uploadDocument}>
+                            Submit
+                        </Button>
+                        )
+                    }
+
                     <Button color={'black'} mr={3} onClick={onClose}>
                         Close
                     </Button>
