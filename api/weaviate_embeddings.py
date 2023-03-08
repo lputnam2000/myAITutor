@@ -25,9 +25,8 @@ def get_client():
     )
 
 def create_class(key:str, client):
-    key_fmtd = key.replace('-', '')
-    class_name = f'Document{key_fmtd}'
-    client.schema.delete_class(class_name)
+    key_fmtd = key.replace('-', '_')
+    class_name = f'Document_{key_fmtd}'
 
     class_obj = {
         "class": class_name,
@@ -77,7 +76,7 @@ def format_for_documents(text_list):
 def get_documents(doc):
     print('STARTED EXTRACTING TEXT')
     extracted_text = []
-    for i in range(145,1 91):
+    for i in range(0, len(doc)):
         page = doc.load_page(i)
         page_text = ''
         blocks = page.get_text('blocks')
@@ -107,24 +106,21 @@ def configure_batch(client, batch_size: int, batch_target_rate: int):
     """
 
     def callback(batch_results: dict) -> None:
-
         # you could print batch errors here
         time_took_to_create_batch = batch_size * (client.batch.creation_time/client.batch.recommended_num_objects)
         time.sleep(
             max(batch_size/batch_target_rate - time_took_to_create_batch + 1, 0)
         )
-    client.batch.batch_size = 100
+    client.batch.batch_size = batch_size
     client.batch.configure(
         batch_size=batch_size,
         timeout_retries=5,
         callback=callback,
     )
 
-
 def upload_documents(documents, client, class_name):
-    configure_batch(client, 100, 1)
+    configure_batch(client, 1000, 30)
     with client.batch as batch:
-        print(len(documents))
         # Batch import all Questions
         for i in range(len(documents)):
             properties = {
@@ -132,10 +128,8 @@ def upload_documents(documents, client, class_name):
             }
             print(i)
             client.batch.add_data_object(properties, class_name)
-            import time 
-            time.sleep(1.1)
 
-documents = get_documents(fitz.open('ex2.pdf'))
-client = get_client()
-class_name = create_class('new_class', client)
-upload_documents(documents, client, class_name)
+# documents = get_documents(fitz.open('ex2.pdf'))
+# client = get_client()
+# class_name = create_class('new_class', client)
+# upload_documents(documents, client, class_name)

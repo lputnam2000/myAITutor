@@ -7,9 +7,12 @@ import os
 import openai
 from .embeddings.main_view import embeddings_bp
 from .summary import get_summary, get_summary_string
-from .utils import require_api_key, get_mongo_client
+from .utils.utils import require_api_key, get_mongo_client, send_notification_to_client
+from .weaviate_embeddings import get_documents, upload_documents, get_client, create_class
+from .utils.aws import get_pdf
 from logging.config import dictConfig
 import nltk
+# load_dotenv()
 nltk.download('punkt')
 
 dictConfig({
@@ -71,6 +74,25 @@ def teardown_mongo_client(exception):
 def index():
     return "<p>Hello, World!</p>"
 
+@app.route("/lambda_notification", methods=["POST"])
+@require_api_key
+def generate_pdf_embeddings():
+    # get documents
+    data = request.json
+    bucket = data['bucket']
+    key = data['key']
+    user_id = data['user_id']
+    # TODO: Put this in lambda
+    send_notification_to_client(user_id, key, f'Upload complete for:{key}')
+    pdf = get_pdf(bucket, key)
+    documents = get_documents(pdf)
+    client = get_client()
+    class_name = create_class(key, client)
+    upload_documents(documents, client, class_name)
+    send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+    return jsonify({"message": "Embeddings Uploaded"}), HTTPStatus.OK
+
+
 
 @app.route('/summaries/', methods=["POST"])
 @require_api_key
@@ -80,6 +102,7 @@ def generate_summary():
     pdfKey = data['pdfKey']
     startPage = int(data['startPage'])
     endPage = int(data['endPage'])
+    user_id = data['user_id']
 
     s3 = get_s3_client()
     response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
@@ -96,6 +119,7 @@ def generate_summary():
     summaryDict['formattedSummary'] = s
     summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
     result = jsonify(s)
+    send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
     return result
 
 @app.route('/summaries/websites/', methods=["POST"])
@@ -103,6 +127,7 @@ def generate_summary():
 def generate_summary_websites():
     data = request.json #.data is empty
     key = data['key']
+    user_id = data['user_id']
     db_client = get_mongo_client()
     data_db = db_client["data"]
     websites_collection = data_db["SummaryWebsites"]
@@ -115,6 +140,7 @@ def generate_summary_websites():
     summaryDict['formattedSummary'] = s
     websites_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
     result = jsonify(s)
+    send_notification_to_client(user_id, key, f'Summary complete for:{key}')
     return result
 
 
