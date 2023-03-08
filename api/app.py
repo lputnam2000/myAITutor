@@ -70,7 +70,6 @@ def teardown_mongo_client(exception):
 
 
 @app.route("/")
-@require_api_key
 def index():
     return "<p>Hello, World!</p>"
 
