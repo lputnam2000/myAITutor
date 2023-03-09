@@ -90,8 +90,7 @@ export default async function handler(req, res) {
         if (req.method === "POST") {
             try {
                 const data = req.body['content'];
-                const title =  req.body['title']// change once extension updated
-                console.log(req.body)
+                const title =  req.body['title'];
                 const authHeader = req.headers.authorization;
                 let secret = null
                 if (authHeader && authHeader.startsWith('Bearer ')) {

@@ -173,18 +173,18 @@ class WebsiteTextExtracter:
         # return cleaned_text
     
 
-if __name__ == "__main__":
-    try:
-        url = "https://en.wikipedia.org/wiki/S"
-        key = 'url-key-3'
-        documents = get_documents(url)
-        print('#PARSED DOCUMENTS')
-        client = get_client()
-        client.schema.delete_class('Document_url_key_3')
-        class_name = create_class(key, client)
-        print(f'#CREATED CLASS {class_name}')
-        upload_documents(documents, client, class_name)
-        print("#UPLOADED DOCUMENTS")
-    except Exception as e:
-        print(e)
-        raise e
+# if __name__ == "__main__":
+#     try:
+#         url = "https://en.wikipedia.org/wiki/S"
+#         key = 'url-key-3'
+#         documents = get_documents(url)
+#         print('#PARSED DOCUMENTS')
+#         client = get_client()
+#         client.schema.delete_class('Document_url_key_3')
+#         class_name = create_class(key, client)
+#         print(f'#CREATED CLASS {class_name}')
+#         upload_documents(documents, client, class_name)
+#         print("#UPLOADED DOCUMENTS")
+#     except Exception as e:
+#         print(e)
+#         raise e
