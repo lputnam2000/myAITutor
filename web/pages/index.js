@@ -124,11 +124,7 @@ export default function Home() {
     const session = useSession();
     const router = useRouter();
 
-    useEffect(()=>{
-      if (session) {
-        router.push("/home")
-      }
-    })
+    
 
     const submitEntry = () => {
         const emailRegex =
@@ -195,7 +191,6 @@ export default function Home() {
                             Join the Chimp Squad
                         </Submit>
                     </WaitingListCard>
-g
                 </Container>
             </Main>
         </>
