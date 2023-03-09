@@ -8,7 +8,7 @@ const redirectAuth: string[] = [];
 export async function middleware(request: NextRequest) {
   const res = NextResponse.next();
   const pathname = request.nextUrl.pathname;
-  if (requireAuth.some((path) => pathname.startsWith(path))) {
+  if (requireAuth.some((path) => {return (pathname===path)})) {
     const token = await getToken({
       req: request,
       secret: process.env.AUTH_SECRET,
@@ -17,12 +17,11 @@ export async function middleware(request: NextRequest) {
     
     if (!token) {
       const redirectHref = request.nextUrl.origin + `/signin`;
-      console.log(redirectHref)
       return NextResponse.redirect(redirectHref);
     }
   }
   
-  if (redirectAuth.some((path) => pathname.startsWith(path))) {
+  if (redirectAuth.some((path) => {return (pathname===path)})) {
     const token = await getToken({
       req: request,
       secret: process.env.AUTH_SECRET,
