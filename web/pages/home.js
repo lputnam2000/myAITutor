@@ -3,32 +3,8 @@ import styled, {keyframes} from 'styled-components'
 import axios from "axios";
 import Upload from "../components/UIComponents/Upload";
 import PDFCard from "../components/PDFCard";
-import AWS from 'aws-sdk'
 import {useRouter} from "next/router";
 import Layout from "../Layouts/basicLayout"
-
-const S3_BUCKET = 'chimppdfstore';
-const REGION = 'us-east-1';
-const URL_EXPIRATION_TIME = 60; // in seconds
-AWS.config.update({signatureVersion: 'v4'})
-const myBucket = new AWS.S3({
-    accessKeyId: '',
-    secretAccessKey: '',
-    params: {Bucket: S3_BUCKET},
-    region: REGION,
-})
-
-function generatePreSignedPutUrl(fileName, fileType) {
-    let result = myBucket.getSignedUrlPromise('putObject', {
-        Key: fileName,
-        ContentType: fileType,
-        Expires: URL_EXPIRATION_TIME,
-    }).then((url) => {
-        console.log('url', url)
-        return url
-    })
-    return result
-}
 
 
 const gradientKeyframes = keyframes`
