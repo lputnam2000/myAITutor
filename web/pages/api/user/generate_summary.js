@@ -6,6 +6,7 @@ const requestHandler = async (req, res) => {
     if (req.method === "POST") {
         const {pdfKey, startPage, endPage} = req.body
         console.log(pdfKey)
+        const session = await getServerSession(req, res, authOptions)
         const user_id = session.user.id
         fetch(process.env.BACKEND_URL + '/summaries/', {
             method: 'POST',
