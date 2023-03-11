@@ -73,6 +73,10 @@ def teardown_mongo_client(exception):
 def index():
     return "<p>Hello, World!</p>"
 
+@app.route("/webook")
+def webhook_testing():
+    return "test";
+
 @app.route("/lambda_notification", methods=["POST"])
 @require_api_key
 def generate_pdf_embeddings():
