@@ -148,12 +148,35 @@ const sendS3 = async (file) => {
     return uploadID
 }
 
+const DropBox = styled.div`
+  border: 1px dashed black;
+  padding: 20px;
+`
+
+const DropText = styled.p`
+  font-weight: 600;
+  margin-bottom: 20px;
+`
+
+const FileInformation = styled.p`
+  margin-top: 5px;
+`
+
 
 export default function Upload({handleFile}) {
+    const [selectedFile, setSelectedFile] = useState(null);
     const [fileType, setFileType] = useState('');
     const {isOpen, onOpen, onClose} = useDisclosure("");
     const hiddenFileInput = React.useRef(null);
     const [url, setUrl] = useState('');
+
+
+    const closeModal = () => {
+        setUrl('')
+        setFileType('')
+        setSelectedFile(null)
+        onClose()
+    }
 
     const handleSelectFileType = (e) => {
         setFileType(e.target.value)
@@ -163,21 +186,46 @@ export default function Upload({handleFile}) {
         hiddenFileInput.current.click();
     };
 
-    const handleFileChange = async event => {
+    const handleFileChange = event => {
         const fileUploaded = event.target.files[0];
-        const uploadID = await sendS3(fileUploaded)
-        console.log(uploadID)
-        handleFile(fileUploaded, fileType, uploadID);
-        onClose();
+        if (!fileUploaded) return;
+        const fileExtension = fileUploaded.name.split('.').pop().toLowerCase();
+        if (fileExtension !== 'pdf') {
+            alert('Please select a PDF file.');
+            return;
+        }
+        setSelectedFile(fileUploaded)
     };
 
+    const handleFileDrop = event => {
+        event.preventDefault();
+        const fileUploaded = event.dataTransfer.files[0];
+        const fileExtension = fileUploaded.name.split('.').pop().toLowerCase();
+        if (fileExtension !== 'pdf') {
+            alert('Please select a PDF file.');
+            return;
+        }
+        setSelectedFile(fileUploaded)
+    };
 
-    const uploadDocument = () => {
+    const handleDragOver = event => {
+        event.preventDefault();
+    };
+
+    const renderSelectedFile = () => {
+        if (selectedFile) {
+            return <FileInformation>Selected file: {selectedFile.name}</FileInformation>;
+        } else {
+            return
+        }
+    };
+
+    const uploadDocument = async () => {
         if (fileType === 'url') {
             axios.post('/api/user/add_website_document', {url,}).then((res) => {
                 const {key, fileName} = res.data
                 handleFile(fileName, fileType, key);
-                onClose()
+                closeModal()
             }).catch((err) => {
                 console.error(err)
             })
@@ -185,14 +233,18 @@ export default function Upload({handleFile}) {
             axios.post('/api/user/add_youtube_video', {url,}).then((res) => {
                 const {key, fileName} = res.data
                 handleFile(fileName, fileType, key);
-                onClose()
+                closeModal()
             }).catch((err) => {
                 console.error(err)
             })
             console.log(url)
-        }
-        else {
-            onClose()
+        } else if (fileType === 'pdf') {
+            const uploadID = await sendS3(selectedFile);
+            console.log(uploadID);
+            handleFile(selectedFile, fileType, uploadID);
+            closeModal();
+        } else {
+            closeModal()
         }
 
     }
@@ -211,16 +263,21 @@ export default function Upload({handleFile}) {
                     </StyledSelect>
                     {
                         fileType === 'pdf' && <>
-                            <PopButton bg={'white'} onClick={handleFileButtonClick}>
-                                Select PDF
-                            </PopButton>
-                            <input
-                                type="file"
-                                ref={hiddenFileInput}
-                                onChange={handleFileChange}
-                                accept="application/pdf"
-                                style={{display: 'none'}}
-                            />
+                            <DropBox onDrop={handleFileDrop} onDragOver={handleDragOver}
+                            > <DropText>Drag and drop a PDF file here or</DropText>
+
+                                <PopButton bg={'white'} onClick={handleFileButtonClick}>
+                                    Select PDF
+                                </PopButton>
+                                <input
+                                    type="file"
+                                    ref={hiddenFileInput}
+                                    onChange={handleFileChange}
+                                    accept="application/pdf"
+                                    style={{display: 'none'}}
+                                />
+                            </DropBox>
+                            {renderSelectedFile()}
                         </>
                     }
                     {
@@ -238,15 +295,10 @@ export default function Upload({handleFile}) {
                 </ModalBody>
 
                 <ModalFooter>
-                    {
-                        (fileType === 'youtube' || fileType === 'url') && (
-                        <Button color={'black'} mr={3} onClick={uploadDocument}>
-                            Submit
-                        </Button>
-                        )
-                    }
-
-                    <Button color={'black'} mr={3} onClick={onClose}>
+                    <Button color={'black'} mr={3} onClick={uploadDocument}>
+                        Submit
+                    </Button>
+                    <Button color={'black'} mr={3} onClick={closeModal}>
                         Close
                     </Button>
                 </ModalFooter>
