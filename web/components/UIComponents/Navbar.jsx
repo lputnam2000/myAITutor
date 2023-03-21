@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import Link from "next/link";
 import {useRouter} from 'next/router';
 import {useSession, signIn, signOut} from "next-auth/react"
-import {Badge, Flex, Avatar, Box, Text} from '@chakra-ui/react'
+import {Badge, Flex, Avatar, Box, Text, IconButton} from '@chakra-ui/react'
 import styled from 'styled-components'
 
 import {
@@ -16,6 +16,7 @@ import {
     MenuOptionGroup,
     MenuDivider,
 } from '@chakra-ui/react'
+import {AiOutlineHome} from "react-icons/ai";
 
 function BadgePP({name, profilePic}) {
     const router = useRouter()
@@ -53,12 +54,12 @@ function BadgePP({name, profilePic}) {
     </div>*/
 
 const Container = styled.div`
-  height: 100px;
+  height: 50px;
   background-color: ${(props) => props.theme.colors.primary};
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: ${(props) => props.theme.colors.secondary} 5px solid;
+  border-bottom: ${(props) => props.theme.colors.secondary} 2px solid;
   @media (max-width: 600px) {
     height: 75px;
   }
@@ -68,64 +69,12 @@ const Logo = styled(Link)`
   font-family: var(--font-b);
   font-weight: 700;
   margin-left: 30px;
-  font-size: 50px;
+  font-size: 30px;
   color: ${props => props.theme.colors.secondary};
   cursor: pointer;
   padding-left: 30px;
   padding-right: 30px;
-  @media (max-width: 600px) {
-    font-size: 35px;
-    margin-left: 0;
-    padding-left: 15px;
-  }
 `;
-
-
-const WaitlistContainer = styled.div`
-  border-left: ${(props) => props.theme.colors.secondary} 5px solid;
-  font-family: var(--font-open);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  font-weight: bold;
-  height: 100%;
-  color: ${props => props.theme.colors.primary};
-  background-color: ${props => props.theme.colors.secondary};
-  padding-left: 40px;
-  padding-right: 40px;
-
-  &:hover {
-    color: ${props => props.theme.colors.secondary};
-    background-color: ${props => props.theme.colors.blue};
-  }
-
-  @media (max-width: 600px) {
-    font-size: 15px;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-  @media (max-width: 374px) {
-    font-size: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-  cursor: pointer;
-`
-
-const StyledLink = styled(Link)`
-  height: 25px;
-  font-size: 20px;
-  margin-left: 10px;
-  margin-right: 10px;
-  cursor: pointer;
-  font-weight: 500;
-
-  &:hover {
-    border-bottom: 2px black solid;
-    transition: border-bottom 0.1s ease-in-out;
-  }
-`
 
 const ButtonsContainer = styled.div`
   display: flex;
@@ -133,16 +82,11 @@ const ButtonsContainer = styled.div`
   align-items: center;
 `
 
-const ProfileContainer = styled.div`
-  position: relative;
-  display: inline-block;
-`
-
 const ProfileIcon = styled.div`
   margin-right: 10px;
   margin-left: 10px;
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: linear-gradient(to bottom right, ${props => props.color1}, ${props => props.color2});
   cursor: pointer;
@@ -164,23 +108,6 @@ function getRandomColor() {
     return color;
 }
 
-const SignOutMenu = styled.div`
-  position: absolute;
-  top: 50px;
-  right: 0;
-  width: 100px;
-  height: 30px;
-  background-color: ${props => props.theme.colors.primary};
-  border: 2px solid #000000;
-  border-radius: 2px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: ${props => (props.visible ? '1' : '0')};
-  pointer-events: ${props => (props.visible ? 'auto' : 'none')};
-  transition: opacity 0.3s ease;
-`
-
 const SignOutOption = styled.button`
   background: none;
   border: none;
@@ -197,7 +124,7 @@ const ProfileMenu = styled.div`
   display: none;
   position: absolute;
   right: 0;
-  top: 45px;
+  top: 40px;
   background-color: #f9f9f9;
   min-width: 160px;
   z-index: 1;
@@ -216,12 +143,15 @@ const ProfileDropdown = styled.div`
   &:hover ${ProfileIcon} {
     border: ${(props) => props.theme.colors.secondary} 2px solid;
     transition: border 0.1s ease-in-out;
-    transform: scale(1.2);
   }
 `;
 
 
 const IconContainer = styled.div`
+`
+
+const HomeIconButton = styled(IconButton)`
+  margin: 4px 10px 4px 10px;
 `
 
 
@@ -232,9 +162,9 @@ function Navbar(props) {
     const [username, setUsername] = useState('');
 
     useEffect(() => {
-      if (session) {
-        setUsername(session.user.name);
-      }
+        if (session) {
+            setUsername(session.user.name);
+        }
     }, [session]);
 
     useEffect(() => {
@@ -248,8 +178,15 @@ function Navbar(props) {
         router.push("/")
     };
 
+    function goToHome() {
+        router.push("/home")
+    };
+
     return (
         <Container>
+            <HomeIconButton aria-label='Go to Home' icon={<AiOutlineHome size={22}/>}
+                            variant='outline'
+                            onClick={goToHome}/>
             <Logo href={'/'}>
                 chimpbase
             </Logo>
