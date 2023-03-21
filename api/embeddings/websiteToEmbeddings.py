@@ -5,6 +5,7 @@ import re
 import tiktoken
 import weaviate
 import time
+from ..utils.utils import  get_mongo_client, send_notification_to_client
 
 ENCODER = tiktoken.get_encoding("gpt2")
 OPEN_AI_KEY = "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"
@@ -188,3 +189,50 @@ class WebsiteTextExtracter:
 #     except Exception as e:
 #         print(e)
 #         raise e
+
+def process_web_embeddings(data):
+    try:
+        url = data['url']
+        key = data['key']
+        print(f'1. PROCESSING REQ IN THREAD: {key}')
+        user_id = data['user_id']
+        documents = get_documents_from_url(url)
+        print('2. PARSED DOCUMENTS')
+        client = get_client()
+        class_name = create_class(key, client)
+        print(f'3. CREATED CLASS {class_name}')
+        upload_documents(documents, client, class_name)
+        print("4. UPLOADED DOCUMENTS")
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        websitesCollection = data_db["SummaryWebsites"]
+        update_query = {"$set": {"status": "Ready", "documents": documents}}
+        # Update the document matching the UUID with the new values
+        websitesCollection.update_one({"_id": key}, update_query)
+        send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+    except Exception as e:
+        print(e)
+
+def process_chrome_extension_embeddings(data):
+    try:
+        html = data['content']
+        user_id = data['user_id']
+        key = data['key']
+        print(f'1. PROCESSING REQ IN THREAD: {key}')
+        documents = get_documents_from_html(html)
+        print('2. PARSED DOCUMENTS')
+        client = get_client()
+        class_name = create_class(key, client)
+        print(f'3. CREATED CLASS {class_name}')
+        upload_documents(documents, client, class_name)
+        print("4. UPLOADED DOCUMENTS")
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        websitesCollection = data_db["SummaryWebsites"]
+        update_query = {"$set": {"status": "Ready", "documents": documents}}
+        # Update the document matching the UUID with the new values
+        websitesCollection.update_one({"_id": key}, update_query)
+        send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+    except Exception as e:
+        print(e)
+        raise e

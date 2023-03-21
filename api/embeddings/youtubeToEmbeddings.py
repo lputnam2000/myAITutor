@@ -1,4 +1,6 @@
 from pytube import YouTube
+from ..utils.utils import  get_mongo_client, send_notification_to_client
+from .websiteToEmbeddings import get_client, create_class, upload_documents
 import os
 import uuid
 import openai
@@ -124,3 +126,27 @@ if __name__ == "__main__":
     os.remove(videoFile)
     formatted_subtitles = srt_to_array(transcripts)
     print('#Transcripts Generated')
+
+def process_youtube_embeddings(data):
+    try:
+        url = data['url']
+        key = data['key']
+        print(f'1. PROCESSING REQ IN THREAD: {key}')
+        formatted_subtitles = get_video_transcript(url)
+        documents = get_weaviate_docs(formatted_subtitles)
+        print('2. PARSED DOCUMENTS')
+        client = get_client()
+        class_name = create_class(key, client)
+        print(f'3. CREATED CLASS {class_name}')
+        upload_documents(documents, client, class_name)
+        print("4. UPLOADED DOCUMENTS")
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        youtube_collection = data_db["SummaryYoutube"]
+        update_query = {"$set": {"status": "Ready", "transcript": formatted_subtitles}}
+        # Update the document matching the UUID with the new values
+        youtube_collection.update_one({"_id": key}, update_query)
+        # send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+    except Exception as e:
+        print(e)
+        raise e
