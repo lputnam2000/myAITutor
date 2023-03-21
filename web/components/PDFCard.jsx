@@ -1,8 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import Link from 'next/link'
+import {Button, IconButton, Menu, MenuButton, MenuItem, MenuList} from "@chakra-ui/react";
+import {HiDotsVertical} from 'react-icons/hi'
+import {useRouter} from "next/router";
+import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
+import axios from "axios";
 
-const Container = styled(Link)`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 200px;
@@ -48,6 +53,7 @@ const CenteredText = styled.div`
 const TagList = styled.div`
   background-color: #fafdd4;
   display: flex;
+  justify-content: space-between;
 `
 const Tag = styled.div`
   margin: 10px;
@@ -66,7 +72,8 @@ const typeToLabel = {
     'youtube': 'YouTube'
 }
 
-function PdfCard({title, uploadId, thumbnail, type}) {
+function PdfCard({title, uploadId, thumbnail, type, setUserUploads}) {
+    const router = useRouter()
     const [thumbnailUrl, setThumbnailUrl] = useState('')
     useEffect(() => {
         if (type === 'youtube') {
@@ -80,8 +87,37 @@ function PdfCard({title, uploadId, thumbnail, type}) {
         }
     }, [type])
 
+    const openSummary = () => {
+        router.push(`/summary?uploadId=${uploadId}&fileType=${type}`)
+        console.log('called')
+    }
+
+    const removeUpload = (e) => {
+        e.stopPropagation()
+        let params = {'key': uploadId, 'fileType': type}
+        axios.delete('/api/user/delete_upload', {params: params}).then(res => {
+            setUserUploads((userUploads) => {
+                return userUploads.filter((item) => item.uuid !== uploadId);
+            })
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+
+    const renameUpload = (e) => {
+        // let params = {'key': uploadId}
+        // axios.get('/api/user/delete_upload', {params: params}).then(res => {
+        //
+        // }).catch(err => {
+        //     console.log(err)
+        // })
+        console.log('rename upload')
+        e.stopPropagation()
+    }
+
+
     return (
-        <Container href={`/summary?uploadId=${uploadId}&fileType=${type}`}>
+        <Container onClick={openSummary}>
             {type === 'pdf' && <ImageContainer>
                 <img src={thumbnail} alt="" onerror={(e) => {
                     e.target.style.display = "none"
@@ -96,6 +132,25 @@ function PdfCard({title, uploadId, thumbnail, type}) {
                 <CenteredText fileType={type}>{title}</CenteredText></CardInformation>
             <TagList>
                 <Tag>{typeToLabel[type]}</Tag>
+                <Menu>
+                    <MenuButton
+                        as={IconButton}
+                        aria-label='Options'
+                        icon={<HiDotsVertical size={17}/>}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                        }}
+                        variant='filled'
+                    />
+                    <MenuList>
+                        <MenuItem icon={<EditIcon/>} onClick={renameUpload}>
+                            Rename
+                        </MenuItem>
+                        <MenuItem onClick={removeUpload} icon={<DeleteIcon/>}>
+                            Remove
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
             </TagList>
         </Container>
     );

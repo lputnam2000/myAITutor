@@ -79,8 +79,10 @@ function Home() {
                     <Upload handleFile={handleFileUpload}></Upload>
                     {
                         userUploads.map((upload) => {
-                                return (<PDFCard key={upload.uuid} uploadId={upload.uuid} title={upload.title}
-                                                 thumbnail={upload.thumbnail} type={upload.type}/>);
+                                return (
+                                    <PDFCard setUserUploads={setUserUploads} key={upload.uuid} uploadId={upload.uuid}
+                                             title={upload.title}
+                                             thumbnail={upload.thumbnail} type={upload.type}/>);
                             }
                         )
                     }
