@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "./pages/api/auth/[...nextauth]"
 import { getToken } from "next-auth/jwt";
 
-const requireAuth: string[] = ["/home", "/getyourapikey"];
+const requireAuth: string[] = ["/home", "/getyourapikey", "/settings"];
 const redirectAuth: string[] = [];
 
 export async function middleware(request: NextRequest) {
