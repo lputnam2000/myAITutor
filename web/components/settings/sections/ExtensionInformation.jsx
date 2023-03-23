@@ -26,7 +26,7 @@ const ChromeExtensionKey = () => {
 
     return (
         <FormControl>
-            <FormLabel>Chrome Extension Key</FormLabel>
+            <FormLabel fontWeight={300}>Chrome Extension Key</FormLabel>
             <InputGroup size='md'>
                 <Input
                     pr='4.5rem'
@@ -34,9 +34,15 @@ const ChromeExtensionKey = () => {
                     type={'password'}
                     placeholder='Chrome Extension Key'
                     isReadOnly={true}
+                    borderColor={'gray.600'}
                 />
                 <InputRightElement width='4.5rem'>
-                    <StyledButton onClick={handleCopy} h='1.75rem' size='sm'>
+                    <StyledButton onClick={handleCopy} h='1.75rem' size='sm'
+                                  color={'#fff'}
+                                  fontWeight={300}
+                                  bg="gray.600"
+                                  _hover={{bg: 'gray.500'}}
+                                  _active={{bg: 'gray.700'}}>
                         {isCopied ? 'Copied!' : 'Copy'}
                     </StyledButton>
                 </InputRightElement>
@@ -46,6 +52,7 @@ const ChromeExtensionKey = () => {
 };
 
 const Container = styled.div`
+  font-weight: 300;
 `
 
 function ExtensionInformation(props) {
