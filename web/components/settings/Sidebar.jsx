@@ -4,27 +4,42 @@ import styled from "styled-components";
 
 const SidebarContainer = styled.div`
   position: fixed;
-  width: 200px;
+  width: 300px;
   height: 100%;
-  background-color: #f8f8f8;
-  padding: 1rem;
+  padding: 20px 1rem 1rem 1rem;
 `;
 
 const SidebarItem = styled.button`
   background: none;
   border: none;
-  padding: 0.5rem;
-  text-align: left;
+  padding: 10px 10px 0px 0px;
+  text-align: right;
+  font-size: 16px;
+
+  &:hover {
+    color: #f69876;
+  }
+
+  font-weight: 300;
   width: 100%;
   cursor: pointer;
-  &:hover {
-    background-color: #e0e0e0;
-  }
+`;
+const SidebarHeading = styled.h3`
+  background: none;
+  border: none;
+  text-align: right;
+  font-weight: 600;
+  font-size: 26px;
+  cursor: default;
+  color: #48fdce;
+  width: 100%;
+  padding-right: 10px;
 `;
 
-const Sidebar = ({ onUserInfoClick, onExtensionKeyClick }) => {
+const Sidebar = ({onUserInfoClick, onExtensionKeyClick}) => {
     return (
         <SidebarContainer>
+            <SidebarHeading>Settings</SidebarHeading>
             <SidebarItem onClick={onUserInfoClick}>User Information</SidebarItem>
             <SidebarItem onClick={onExtensionKeyClick}>Extension Key</SidebarItem>
         </SidebarContainer>

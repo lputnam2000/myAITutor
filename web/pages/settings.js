@@ -3,17 +3,18 @@ import Layout from "../Layouts/basicLayout"
 import styled from 'styled-components'
 import Sidebar from "../components/settings/Sidebar";
 import Section from "../components/settings/Section";
+import UserInformation from "../components/settings/sections/UserInformation";
+import ExtensionInformation from "../components/settings/sections/ExtensionInformation";
 
 const Container = styled.div`
   display: flex;
-  height: 100%;
+  min-height: 94.4vh;
 `;
 
 const Content = styled.div`
-  margin-left: 200px;
+  margin-left: 300px;
   flex: 1;
-  padding: 2rem;
-  overflow-y: scroll;
+  padding: 20px 1rem 1rem 1rem;
 `;
 
 const Settings = () => {
@@ -21,7 +22,7 @@ const Settings = () => {
     const extensionKeyRef = useRef(null);
 
     const scrollToSection = (ref) => {
-        ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        ref.current.scrollIntoView({behavior: "smooth", block: "start"});
     };
 
     return (
@@ -34,13 +35,14 @@ const Settings = () => {
                 <Section
                     ref={userInfoRef}
                     title="User Information"
-                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent rhoncus commodo neque, non ultricies velit ullamcorper non."
-                />
+                ><UserInformation/></Section>
                 <Section
                     ref={extensionKeyRef}
                     title="Extension Key"
                     content="Phasellus et libero vel enim tincidunt imperdiet. Vivamus et ante facilisis, commodo ligula id, semper nisl."
-                />
+                >
+                    <ExtensionInformation/>
+                </Section>
             </Content>
         </Container>
     );
