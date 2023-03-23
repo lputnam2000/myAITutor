@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
     Box,
     Button,
@@ -9,6 +9,7 @@ import {
     FormLabel,
 } from '@chakra-ui/react';
 import styled from 'styled-components'
+import {SettingsContext} from "../context";
 
 const StyledButton = styled(Button)`
   color: black;
@@ -16,10 +17,11 @@ const StyledButton = styled(Button)`
 `
 
 const ChromeExtensionKey = () => {
-    const [apiKey, setApiKey] = useState('12345678901234567890');
+    const {chromeExtensionKey} = useContext(SettingsContext);
+
     const [isCopied, setIsCopied] = useState(false);
     const handleCopy = () => {
-        navigator.clipboard.writeText(apiKey);
+        navigator.clipboard.writeText(chromeExtensionKey);
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 3000);
     };
@@ -30,7 +32,7 @@ const ChromeExtensionKey = () => {
             <InputGroup size='md'>
                 <Input
                     pr='4.5rem'
-                    value={apiKey}
+                    value={chromeExtensionKey}
                     type={'password'}
                     placeholder='Chrome Extension Key'
                     isReadOnly={true}

@@ -5,6 +5,7 @@ import Sidebar from "../components/settings/Sidebar";
 import Section from "../components/settings/Section";
 import UserInformation from "../components/settings/sections/UserInformation";
 import ExtensionInformation from "../components/settings/sections/ExtensionInformation";
+import SettingsContextProvider from "../components/settings/context";
 
 const Container = styled.div`
   display: flex;
@@ -27,23 +28,25 @@ const Settings = () => {
 
     return (
         <Container>
-            <Sidebar
-                onUserInfoClick={() => scrollToSection(userInfoRef)}
-                onExtensionKeyClick={() => scrollToSection(extensionKeyRef)}
-            />
-            <Content>
-                <Section
-                    ref={userInfoRef}
-                    title="User Information"
-                ><UserInformation/></Section>
-                <Section
-                    ref={extensionKeyRef}
-                    title="Extension Key"
-                    content="Phasellus et libero vel enim tincidunt imperdiet. Vivamus et ante facilisis, commodo ligula id, semper nisl."
-                >
-                    <ExtensionInformation/>
-                </Section>
-            </Content>
+            <SettingsContextProvider>
+                <Sidebar
+                    onUserInfoClick={() => scrollToSection(userInfoRef)}
+                    onExtensionKeyClick={() => scrollToSection(extensionKeyRef)}
+                />
+                <Content>
+                    <Section
+                        ref={userInfoRef}
+                        title="User Information"
+                    ><UserInformation/></Section>
+                    <Section
+                        ref={extensionKeyRef}
+                        title="Extension Key"
+                        content="Phasellus et libero vel enim tincidunt imperdiet. Vivamus et ante facilisis, commodo ligula id, semper nisl."
+                    >
+                        <ExtensionInformation/>
+                    </Section>
+                </Content>
+            </SettingsContextProvider>
         </Container>
     );
 };

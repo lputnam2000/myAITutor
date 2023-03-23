@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     Box,
     FormControl,
@@ -10,6 +10,8 @@ import {
 } from '@chakra-ui/react';
 import {EditIcon, CheckIcon, CloseIcon} from '@chakra-ui/icons';
 import styled from 'styled-components'
+import {SettingsContext} from "../context";
+import axios from "axios";
 
 const Container = styled.div`
   font-weight: 300;
@@ -20,17 +22,33 @@ const EditIconsContainer = styled.div`
 `
 
 const UserInformation = () => {
-    const [fullName, setFullName] = useState('John Doe');
+    const {name, setName} = useContext(SettingsContext);
     const [editMode, setEditMode] = useState(false);
-    const [tempFullName, setTempFullName] = useState(fullName);
+    const [tempFullName, setTempFullName] = useState('');
+
+    useEffect(() => {
+        setTempFullName(name)
+    }, [name]);
+
 
     const handleEdit = () => {
         setEditMode(true);
-        setTempFullName(fullName);
+        setTempFullName(name);
     };
 
     const handleSave = () => {
-        setFullName(tempFullName);
+        let params = {
+            'newName': tempFullName
+        }
+        axios
+            .patch("/api/user/settings/name", {}, {params: params})
+            .then((res) => {
+
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        setName(tempFullName);
         setEditMode(false);
     };
 
@@ -45,8 +63,9 @@ const UserInformation = () => {
                 <InputGroup>
                     <Input
                         borderColor={'gray.600'}
+                        placeholder={'Enter your name'}
                         type="text"
-                        value={editMode ? tempFullName : fullName}
+                        value={editMode ? tempFullName : name}
                         readOnly={!editMode}
                         onChange={(e) => setTempFullName(e.target.value)}
                     />
