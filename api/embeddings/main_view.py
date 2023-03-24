@@ -1,8 +1,9 @@
 from http import HTTPStatus
 from flask import Flask, Blueprint, jsonify, request
 from ..utils.utils import require_api_key, get_mongo_client, send_notification_to_client
-from .websiteToEmbeddings import get_documents_from_url, get_documents_from_html, get_client, create_class, upload_documents
+from .websiteToEmbeddings import get_documents_from_url, get_documents_from_html, get_client, create_class
 from .youtubeToEmbeddings import get_video_transcript, get_weaviate_docs
+from ..weaviate_embeddings import upload_documents_website, upload_documents_youtube
 from uuid import uuid4
 
 embeddings_bp = Blueprint('embeddings', __name__, url_prefix='/embeddings')
@@ -20,7 +21,7 @@ def website_to_embedding():
         client = get_client()
         class_name = create_class(key, client)
         print(f'#CREATED CLASS {class_name}')
-        upload_documents(documents, client, class_name)
+        upload_documents_website(documents, client, class_name)
         print("#UPLOADED DOCUMENTS")
         db_client = get_mongo_client()
         data_db = db_client["data"]
@@ -48,7 +49,7 @@ def extension_to_embedding():
         client = get_client()
         class_name = create_class(key, client)
         print(f'#CREATED CLASS {class_name}')
-        upload_documents(documents, client, class_name)
+        upload_documents_website(documents, client, class_name)
         print("#UPLOADED DOCUMENTS")
         db_client = get_mongo_client()
         data_db = db_client["data"]
@@ -81,7 +82,7 @@ def video_to_embedding():
         client = get_client()
         class_name = create_class(key, client)
         print(f'#CREATED CLASS {class_name}')
-        upload_documents(documents, client, class_name)
+        upload_documents_youtube(documents, client, class_name)
         print("#UPLOADED DOCUMENTS")
         return jsonify({"message": "Embaddings Uploaded"}), HTTPStatus.OK
         """

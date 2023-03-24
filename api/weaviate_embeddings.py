@@ -57,7 +57,9 @@ def create_class(key:str, client):
     return class_name
 
 
-def format_for_documents(text_list):
+def format_for_documents(extracted_text):
+    text_list = extracted_text['text']
+    page_number = extracted_text['page_number']
     encodings = ENCODER.encode_batch(text_list)
     to_return = []
 
@@ -68,7 +70,7 @@ def format_for_documents(text_list):
             i += 1
             doc_length += len(encodings[i]) 
             doc_text += ' ' + text_list[i]
-        to_return.append(doc_text)
+        to_return.append({'text':doc_text,'page_number':page_number[i]})
     return to_return
 
 
@@ -86,8 +88,11 @@ def get_documents(doc):
                 text = text.replace('\n', " ")
                 page_text += text        
         text_split = tokenize.sent_tokenize(page_text)
-        extracted_text.extend(text_split)
+        for sentence in text_split:
+            extracted_text.append({'text': sentence, 'page_number': i+1})
+        # extracted_text.extend(text_split)
     formatted_documents = format_for_documents(extracted_text)
+    print(formatted_documents)
     print('FINISHED EXTRACTING TEXT')
     return formatted_documents
 
@@ -118,13 +123,39 @@ def configure_batch(client, batch_size: int, batch_target_rate: int):
         callback=callback,
     )
 
-def upload_documents(documents, client, class_name):
+def upload_documents_pdf(documents, client, class_name):
+    configure_batch(client, 1000, 30)
+    with client.batch as batch:
+        # Batch import all Questions
+        for i in range(len(documents)):
+            properties = {
+                # "text": documents[i]
+                'text':documents[i]['text'],
+                'page_number': documents[i]['page_number'],
+            }
+            print(i)
+            client.batch.add_data_object(properties, class_name)
+
+def upload_documents_website(documents, client, class_name):
     configure_batch(client, 1000, 30)
     with client.batch as batch:
         # Batch import all Questions
         for i in range(len(documents)):
             properties = {
                 "text": documents[i]
+            }
+            print(i)
+            client.batch.add_data_object(properties, class_name)
+
+def upload_documents_youtube(documents, client, class_name):
+    configure_batch(client, 1000, 30)
+    with client.batch as batch:
+        # Batch import all Questions
+        for i in range(len(documents)):
+            properties = {
+                "text": documents[i]['doc_text'],
+                "start": documents[i]['start_time'],
+                "end": documents[i]['end_time']
             }
             print(i)
             client.batch.add_data_object(properties, class_name)
