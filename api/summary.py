@@ -75,31 +75,35 @@ def format_for_gpt3(text_list):
     
 
 def make_gpt_summary(text, context=None):
-    if context == None:
-        prompt = PROMPT_WITHOUT_CONTEXT.format(text=text)
-        num_tokens = len(ENCODER.encode(prompt))
-        response = openai.ChatCompletion.create(
-            model='gpt-3.5-turbo',
-            messages=[
-                {"role": "system", "content":"You are an AI assistant that is the best at creating study guides because you possess an exceptional ability to synthesize complex information into easily understandable and actionable steps, which makes your study guides incredibly effective and valuable for learners. Your attention to detail and commitment to providing comprehensive and accurate information also make you stand out as the best study guide creator."},
-                {"role": "user", "content":prompt}
-            ]
-        )
-        textResp = '[' + response.choices[0]['message']['content']
-        return json.loads(textResp)
-    else:
-        prompt = PROMPT_WITH_CONTEXT.format(text=text, context=context)
-        num_tokens = len(ENCODER.encode(prompt))
-        response = openai.ChatCompletion.create(
-            model='gpt-3.5-turbo',
-            messages=[
-                {"role": "system", "content":"You are an AI assistant that is the best at creating study guides because you possess an exceptional ability to synthesize complex information into easily understandable and actionable steps, which makes your study guides incredibly effective and valuable for learners. Your attention to detail and commitment to providing comprehensive and accurate information also make you stand out as the best study guide creator."},
-                {"role": "user", "content":prompt}
-            ]
-        )
-        textResp = '[' + response.choices[0]['message']['content']
-        jsonResp = json.loads(textResp)
-        return json.loads(textResp)
+    print('called')
+    try:
+        if context == None:
+            prompt = PROMPT_WITHOUT_CONTEXT.format(text=text)
+            num_tokens = len(ENCODER.encode(prompt))
+            response = openai.ChatCompletion.create(
+                model='gpt-3.5-turbo',
+                messages=[
+                    {"role": "system", "content":"You are an AI assistant that is the best at creating study guides because you possess an exceptional ability to synthesize complex information into easily understandable and actionable steps, which makes your study guides incredibly effective and valuable for learners. Your attention to detail and commitment to providing comprehensive and accurate information also make you stand out as the best study guide creator."},
+                    {"role": "user", "content":prompt}
+                ]
+            )
+            textResp = '[' + response.choices[0]['message']['content']
+            return json.loads(textResp)
+        else:
+            prompt = PROMPT_WITH_CONTEXT.format(text=text, context=context)
+            num_tokens = len(ENCODER.encode(prompt))
+            response = openai.ChatCompletion.create(
+                model='gpt-3.5-turbo',
+                messages=[
+                    {"role": "system", "content":"You are an AI assistant that is the best at creating study guides because you possess an exceptional ability to synthesize complex information into easily understandable and actionable steps, which makes your study guides incredibly effective and valuable for learners. Your attention to detail and commitment to providing comprehensive and accurate information also make you stand out as the best study guide creator."},
+                    {"role": "user", "content":prompt}
+                ]
+            )
+            textResp = '[' + response.choices[0]['message']['content']
+            jsonResp = json.loads(textResp)
+            return json.loads(textResp)
+    except e:
+        return make_gpt_summary(text, context)
 
 
 def extract_text(page):
@@ -161,6 +165,7 @@ def get_summary(doc, start_page=6, end_page=8):
                 else:
                     page_blocks = extracted_text[cur_page]
         summary_end_page = cur_page-1 if cur_page==end_page else cur_page
+        print(f'{start}-{summary_end_page}')
         generated_summary = make_gpt_summary(input_text, context)
         summary.append((start, summary_end_page, generated_summary))
         context = generate_context(generated_summary)

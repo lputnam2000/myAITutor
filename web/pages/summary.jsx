@@ -23,7 +23,7 @@ const gradientKeyframes = keyframes`
 const Container = styled.div`
   height: auto;
   min-height: 100vh;
-  background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0);
+  //background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0);
   background-size: 400% 400%;
   animation: ${gradientKeyframes} 300s ease infinite;
   width: 100vw;

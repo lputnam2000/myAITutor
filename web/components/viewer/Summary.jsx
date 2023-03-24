@@ -15,7 +15,7 @@ const Container = styled.div`
   border: 2px black solid;
   border-radius: 15px 3px 3px 3px;
   height: 750px;
-  background-color: whitesmoke;
+  background-color: #4a5568;
 
   &:hover {
     box-shadow: 5px 5px 0px #000000;
