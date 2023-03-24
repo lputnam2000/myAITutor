@@ -11,8 +11,9 @@ from api.utils.utils import require_api_key, get_mongo_client, send_notification
 from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_pdf_class
 from api.utils.aws import get_pdf
 from logging.config import dictConfig
+import threading
 import nltk
-# load_dotenv()
+load_dotenv()
 nltk.download('punkt')
 
 dictConfig({
@@ -101,29 +102,41 @@ def generate_pdf_embeddings():
 @require_api_key
 def generate_summary():
     print('here')
-    data = request.json# .data is empty
-    pdfKey = data['pdfKey']
-    startPage = int(data['startPage'])
-    endPage = int(data['endPage'])
-    user_id = data['user_id']
+    try:
+        data = request.json
+        thread = threading.Thread(target=process_pdf_embeddings, args=(data,))
+        thread.start()
+        return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+    except Exception as e:
+        print(e)
+        raise e
 
-    s3 = get_s3_client()
-    response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
-    pdf_bytes = response['Body'].read()
-    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    s = get_summary(doc,startPage, endPage)
-    print(s)
-    db_client = get_mongo_client()
-    data_db = db_client["data"]
-    summariesCollection = data_db["SummaryDocuments"]
-    summaryDict = {}
-    summaryDict['startPage'] = startPage
-    summaryDict['endPage'] = endPage
-    summaryDict['formattedSummary'] = s
-    summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
-    result = jsonify(s)
-    send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
-    return result
+def process_pdf_embeddings(data):
+    try:
+        pdfKey = data['pdfKey']
+        startPage = int(data['startPage'])
+        endPage = int(data['endPage'])
+        user_id = data['user_id']
+
+        s3 = get_s3_client()
+        response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
+        pdf_bytes = response['Body'].read()
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+        s = get_summary(doc,startPage, endPage)
+        print(s)
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        summariesCollection = data_db["SummaryDocuments"]
+        summaryDict = {}
+        summaryDict['startPage'] = startPage
+        summaryDict['endPage'] = endPage
+        summaryDict['formattedSummary'] = s
+        summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
+        # result = jsonify(s)
+        send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
+        # return result
+    except Exception as e:
+        print(e)
 
 @app.route('/summaries/websites/', methods=["POST"])
 @require_api_key
