@@ -24,7 +24,39 @@ def get_client():
     }
     )
 
-def create_class(key:str, client):
+# def create_class(key:str, client):
+#     key_fmtd = key.replace('-', '_')
+#     class_name = f'Document_{key_fmtd}'
+
+#     class_obj = {
+#         "class": class_name,
+#         "description": f'Document Embeddings class for {key}',
+#         "vectorizer": "text2vec-openai",
+#         "moduleConfig": {
+#             "text2vec-openai": {
+#             "model": "ada",
+#             "modelVersion": "002",
+#             "type": "text"
+#             }
+#         },
+#         "properties": [
+#         {
+#             "dataType": "text",
+#             "description": "The text for the document",
+#             "name": "text",
+#             "moduleConfig": {
+#                 "text2vec-openai": {
+#                 "skip": False,
+#                 "vectorizePropertyName": False
+#                 }
+#             },
+#         },
+#         ]
+#     }
+#     client.schema.create_class(class_obj)
+#     return class_name
+
+def create_website_class(key:str, client):
     key_fmtd = key.replace('-', '_')
     class_name = f'Document_{key_fmtd}'
 
@@ -56,8 +88,103 @@ def create_class(key:str, client):
     client.schema.create_class(class_obj)
     return class_name
 
+def create_pdf_class(key:str, client):
+    key_fmtd = key.replace('-', '_')
+    class_name = f'Document_{key_fmtd}'
 
-def format_for_documents(text_list):
+    class_obj = {
+        "class": class_name,
+        "description": f'Document Embeddings class for {key}',
+        "vectorizer": "text2vec-openai",
+        "moduleConfig": {
+            "text2vec-openai": {
+            "model": "ada",
+            "modelVersion": "002",
+            "type": "text"
+            }
+        },
+        "properties": [
+        {
+            "dataType": ["text"],
+            "description": "The text for the document",
+            "name": "text",
+            "moduleConfig": {
+                "text2vec-openai": {
+                "skip": False,
+                "vectorizePropertyName": False
+                }
+            },
+        },
+        {
+            "dataType": ["int"],
+            "description": "The page number for the text",
+            "name": "page_number",
+            "moduleConfig": {
+                "text2vec-openai": {
+                "skip": True
+                }
+            },
+        }
+        ]
+    }
+    client.schema.create_class(class_obj)
+    return class_name
+
+def create_youtube_class(key:str, client):
+    key_fmtd = key.replace('-', '_')
+    class_name = f'Document_{key_fmtd}'
+
+    class_obj = {
+        "class": class_name,
+        "description": f'Document Embeddings class for {key}',
+        "vectorizer": "text2vec-openai",
+        "moduleConfig": {
+            "text2vec-openai": {
+            "model": "ada",
+            "modelVersion": "002",
+            "type": "text"
+            }
+        },
+        "properties": [
+        {
+            "dataType": ["text"],
+            "description": "The text for the document",
+            "name": "text",
+            "moduleConfig": {
+                "text2vec-openai": {
+                "skip": False,
+                "vectorizePropertyName": False
+                }
+            },
+        },
+        {
+            "dataType": ["int"],
+            "description": "The start time for the text",
+            "name": "start_time",
+            "moduleConfig": {
+                "text2vec-openai": {
+                "skip": True
+                }
+            },
+        },
+        {
+            "dataType": ["int"],
+            "description": "The end time for the text",
+            "name": "end_time",
+            "moduleConfig": {
+                "text2vec-openai": {
+                "skip": True
+                }
+            },
+        }
+        ]
+    }
+    client.schema.create_class(class_obj)
+    return class_name
+
+def format_for_documents(extracted_text):
+    text_list = extracted_text['text']
+    page_number = extracted_text['page_number']
     encodings = ENCODER.encode_batch(text_list)
     to_return = []
 
@@ -68,7 +195,7 @@ def format_for_documents(text_list):
             i += 1
             doc_length += len(encodings[i]) 
             doc_text += ' ' + text_list[i]
-        to_return.append(doc_text)
+        to_return.append({'text':doc_text,'page_number':page_number[i]})
     return to_return
 
 
@@ -86,8 +213,11 @@ def get_documents(doc):
                 text = text.replace('\n', " ")
                 page_text += text        
         text_split = tokenize.sent_tokenize(page_text)
-        extracted_text.extend(text_split)
+        for sentence in text_split:
+            extracted_text.append({'text': sentence, 'page_number': i+1})
+        # extracted_text.extend(text_split)
     formatted_documents = format_for_documents(extracted_text)
+    print(formatted_documents)
     print('FINISHED EXTRACTING TEXT')
     return formatted_documents
 
@@ -118,13 +248,43 @@ def configure_batch(client, batch_size: int, batch_target_rate: int):
         callback=callback,
     )
 
-def upload_documents(documents, client, class_name):
+def upload_documents_pdf(documents, client, class_name):
     configure_batch(client, 1000, 30)
     with client.batch as batch:
         # Batch import all Questions
         for i in range(len(documents)):
             properties = {
+                # "text": documents[i]
+                'text':documents[i]['text'],
+                'page_number': documents[i]['page_number'],
+            }
+            print(i)
+            client.batch.add_data_object(properties, class_name)
+
+def upload_documents_website(documents, client, class_name):
+    configure_batch(client, 1000, 30)
+    print("WTFFF")
+    with client.batch as batch:
+        # Batch import all Questions
+        for i in range(len(documents)):
+            print(documents[i])
+            properties = {
+                
                 "text": documents[i]
+            }
+            print(i)
+            client.batch.add_data_object(properties, class_name)
+
+def upload_documents_youtube(documents, client, class_name):
+    configure_batch(client, 1000, 30)
+    with client.batch as batch:
+        # Batch import all Questions
+        for i in range(len(documents)):
+            print(documents[i])
+            properties = {
+                "text": documents[i]['text'],
+                "start": documents[i]['start'],
+                "end": documents[i]['end']
             }
             print(i)
             client.batch.add_data_object(properties, class_name)
