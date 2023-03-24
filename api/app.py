@@ -96,14 +96,14 @@ def generate_summary():
     print('here')
     try:
         data = request.json
-        thread = threading.Thread(target=process_summary, args=(data,))
+        thread = threading.Thread(target=process_summary_pdf, args=(data,))
         thread.start()
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
     except Exception as e:
         print(e)
         raise e
 
-def process_summary(data):
+def process_summary_pdf(data):
     try:
         pdfKey = data['pdfKey']
         startPage = int(data['startPage'])
@@ -161,44 +161,70 @@ def process_pdf_embeddings(data):
 @app.route('/summaries/websites/', methods=["POST"])
 @require_api_key
 def generate_summary_websites():
-    data = request.json #.data is empty
-    key = data['key']
-    user_id = data['user_id']
-    db_client = get_mongo_client()
-    data_db = db_client["data"]
-    websites_collection = data_db["SummaryWebsites"]
-    website_doc = websites_collection.find_one({'_id': key})
-    website_text = website_doc['documents']
-    s = get_summary_string(website_text)
-    summaryDict = {}
-    summaryDict['startPage'] = -1
-    summaryDict['endPage'] = -1
-    summaryDict['formattedSummary'] = s
-    websites_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
-    result = jsonify(s)
-    send_notification_to_client(user_id, key, f'Summary complete for:{key}')
-    return result
+    try:
+        data = request.json
+        thread = threading.Thread(target=process_summary_websites, args=(data,))
+        thread.start()
+        return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+    except Exception as e:
+        print(e)
+        raise e
+
+def process_summary_websites(data):
+    try:
+        key = data['key']
+        user_id = data['user_id']
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        websites_collection = data_db["SummaryWebsites"]
+        website_doc = websites_collection.find_one({'_id': key})
+        website_text = website_doc['documents']
+        s = get_summary_string(website_text)
+        summaryDict = {}
+        summaryDict['startPage'] = -1
+        summaryDict['endPage'] = -1
+        summaryDict['formattedSummary'] = s
+        websites_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
+        # result = jsonify(s)
+        send_notification_to_client(user_id, key, f'Summary complete for:{key}')
+        # return result
+    except Exception as e:
+        print(e)
+        raise e
 
 @app.route('/summaries/youtube/', methods=["POST"])
 @require_api_key
 def generate_summary_youtube():
-    data = request.json #.data is empty
-    key = data['key']
-    user_id = data['user_id']
-    db_client = get_mongo_client()
-    data_db = db_client["data"]
-    video_collection = data_db["SummaryYoutube"]
-    video_doc = video_collection.find_one({'_id': key})
-    video_text = [t["text"] for t in video_doc['transcript']]
-    s = get_summary_string(video_text)
-    summaryDict = {}
-    summaryDict['startPage'] = -1
-    summaryDict['endPage'] = -1
-    summaryDict['formattedSummary'] = s
-    video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
-    result = jsonify(s)
-    send_notification_to_client(user_id, key, f'Summary complete for:{key}')
-    return result
+    try:
+        data = request.json
+        thread = threading.Thread(target=process_summary_youtube, args=(data,))
+        thread.start()
+        return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+    except Exception as e:
+        print(e)
+        raise e
+
+def process_summary_youtube(data):
+    try:
+        key = data['key']
+        user_id = data['user_id']
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        video_collection = data_db["SummaryYoutube"]
+        video_doc = video_collection.find_one({'_id': key})
+        video_text = [t["text"] for t in video_doc['transcript']]
+        s = get_summary_string(video_text)
+        summaryDict = {}
+        summaryDict['startPage'] = -1
+        summaryDict['endPage'] = -1
+        summaryDict['formattedSummary'] = s
+        video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
+        # result = jsonify(s)
+        send_notification_to_client(user_id, key, f'Summary complete for:{key}')
+        # return result
+    except Exception as e:
+        print(e)
+        raise e
 
 
 if __name__ =="__main__":
