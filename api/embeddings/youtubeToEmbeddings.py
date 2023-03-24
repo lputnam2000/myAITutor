@@ -1,6 +1,7 @@
 from pytube import YouTube
 from ..utils.utils import  get_mongo_client, send_notification_to_client
 from .websiteToEmbeddings import get_client, create_class, upload_documents
+from ..weaviate_embeddings import create_youtube_class, upload_documents_youtube
 import os
 import uuid
 import openai
@@ -149,9 +150,9 @@ def process_youtube_embeddings(data):
         documents = get_weaviate_docs(formatted_subtitles)
         print('2. PARSED DOCUMENTS')
         client = get_client()
-        class_name = create_class(key, client)
+        class_name = create_youtube_class(key, client)
         print(f'3. CREATED CLASS {class_name}')
-        upload_documents(documents, client, class_name)
+        upload_documents_youtube(documents, client, class_name)
         print("4. UPLOADED DOCUMENTS")
         db_client = get_mongo_client()
         data_db = db_client["data"]
