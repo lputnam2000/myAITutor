@@ -28,14 +28,26 @@ def get_weaviate_docs(transcripts):
     encodings = ENCODER.encode_batch(tracripts_string)
     to_return = []
 
-    for i in range(len(encodings)):
+    i = 0
+    while i < len(encodings):
         doc_length = len(encodings[i])
-        doc_text = ""
+        doc_text = tracripts_string[i]
+        start_time = transcripts[i]["start"]
+        
         while doc_length < 300 and i+1 < len(encodings):
             i += 1
             doc_length += len(encodings[i]) 
             doc_text += ' ' + tracripts_string[i]
-        to_return.append(doc_text)
+        
+        end_time = transcripts[i]["end"]
+        i += 1
+
+        to_return.append({
+            "text": doc_text,
+            "start": start_time,
+            "end": end_time
+        })
+
     return to_return
 
 def srt_to_array(srt_text):
@@ -124,3 +136,6 @@ if __name__ == "__main__":
     os.remove(videoFile)
     formatted_subtitles = srt_to_array(transcripts)
     print('#Transcripts Generated')
+    documents = get_weaviate_docs(formatted_subtitles)
+    print('#Documents Generated')
+    print(documents[0])
