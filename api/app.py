@@ -81,27 +81,6 @@ def webhook_testing():
 @app.route("/lambda_notification", methods=["POST"])
 @require_api_key
 def generate_pdf_embeddings():
-    print("working")
-    # get documents
-    data = request.json
-    bucket = data['bucket']
-    key = data['key']
-    user_id = data['user_id']
-    send_notification_to_client(user_id, key, f'Upload complete for:{key}')
-    pdf = get_pdf(bucket, key)
-    documents = get_documents(pdf)
-    client = get_client()
-    class_name = create_pdf_class(key, client)
-    upload_documents_pdf(documents, client, class_name)
-    send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
-    return jsonify({"message": "Embeddings Uploaded"}), HTTPStatus.OK
-
-
-
-@app.route('/summaries/', methods=["POST"])
-@require_api_key
-def generate_summary():
-    print('here')
     try:
         data = request.json
         thread = threading.Thread(target=process_pdf_embeddings, args=(data,))
@@ -110,6 +89,36 @@ def generate_summary():
     except Exception as e:
         print(e)
         raise e
+
+
+
+@app.route('/summaries/', methods=["POST"])
+@require_api_key
+def generate_summary():
+    print('here')
+    data = request.json# .data is empty
+    pdfKey = data['pdfKey']
+    startPage = int(data['startPage'])
+    endPage = int(data['endPage'])
+    user_id = data['user_id']
+
+    s3 = get_s3_client()
+    response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
+    pdf_bytes = response['Body'].read()
+    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    s = get_summary(doc,startPage, endPage)
+    print(s)
+    db_client = get_mongo_client()
+    data_db = db_client["data"]
+    summariesCollection = data_db["SummaryDocuments"]
+    summaryDict = {}
+    summaryDict['startPage'] = startPage
+    summaryDict['endPage'] = endPage
+    summaryDict['formattedSummary'] = s
+    summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
+    result = jsonify(s)
+    send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
+    return result
 
 def process_pdf_embeddings(data):
     try:
