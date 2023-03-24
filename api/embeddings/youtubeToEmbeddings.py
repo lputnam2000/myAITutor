@@ -127,15 +127,15 @@ def upload_to_weaviate(formatted_transcripts):
     return formatted_subtitles
 
 
-if __name__ == "__main__":
-    url = "https://www.youtube.com/watch?v=XALBGkjkUPQ"        
-    print('# Downloading Video')
-    videoFile = download_video(url)
-    print('#Video Downloaded')
-    transcripts = transcribe_file(WHISPER_MODEL_NAME, videoFile)
-    os.remove(videoFile)
-    formatted_subtitles = srt_to_array(transcripts)
-    print('#Transcripts Generated')
-    documents = get_weaviate_docs(formatted_subtitles)
-    print('#Documents Generated')
-    print(documents[0])
+# if __name__ == "__main__":
+#     url = "https://www.youtube.com/watch?v=XALBGkjkUPQ"        
+#     print('# Downloading Video')
+#     videoFile = download_video(url)
+#     print('#Video Downloaded')
+#     transcripts = transcribe_file(WHISPER_MODEL_NAME, videoFile)
+#     os.remove(videoFile)
+#     formatted_subtitles = srt_to_array(transcripts)
+#     print('#Transcripts Generated')
+#     documents = get_weaviate_docs(formatted_subtitles)
+#     print('#Documents Generated')
+#     print(documents[0])
