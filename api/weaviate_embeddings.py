@@ -263,11 +263,9 @@ def upload_documents_pdf(documents, client, class_name):
 
 def upload_documents_website(documents, client, class_name):
     configure_batch(client, 1000, 30)
-    print("WTFFF")
     with client.batch as batch:
         # Batch import all Questions
         for i in range(len(documents)):
-            print(documents[i])
             properties = {
                 
                 "text": documents[i]
