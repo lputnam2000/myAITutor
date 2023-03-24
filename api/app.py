@@ -105,56 +105,58 @@ def generate_summary():
 
 def process_summary_pdf(data):
     try:
-        pdfKey = data['pdfKey']
-        startPage = int(data['startPage'])
-        endPage = int(data['endPage'])
-        user_id = data['user_id']
+        with app.app_context():
+            pdfKey = data['pdfKey']
+            startPage = int(data['startPage'])
+            endPage = int(data['endPage'])
+            user_id = data['user_id']
 
-        s3 = get_s3_client()
-        response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
-        pdf_bytes = response['Body'].read()
-        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-        s = get_summary(doc,startPage, endPage)
-        print(s)
-        db_client = get_mongo_client()
-        data_db = db_client["data"]
-        summariesCollection = data_db["SummaryDocuments"]
-        summaryDict = {}
-        summaryDict['startPage'] = startPage
-        summaryDict['endPage'] = endPage
-        summaryDict['formattedSummary'] = s
-        summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
-        # result = jsonify(s)
-        send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
-        # return result
+            s3 = get_s3_client()
+            response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
+            pdf_bytes = response['Body'].read()
+            doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+            s = get_summary(doc,startPage, endPage)
+            print(s)
+            db_client = get_mongo_client()
+            data_db = db_client["data"]
+            summariesCollection = data_db["SummaryDocuments"]
+            summaryDict = {}
+            summaryDict['startPage'] = startPage
+            summaryDict['endPage'] = endPage
+            summaryDict['formattedSummary'] = s
+            summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
+            # result = jsonify(s)
+            send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
+            # return result
     except Exception as e:
         print(e)
         raise e
 
 def process_pdf_embeddings(data):
     try:
-        pdfKey = data['pdfKey']
-        startPage = int(data['startPage'])
-        endPage = int(data['endPage'])
-        user_id = data['user_id']
+        with app.app_context():
+            pdfKey = data['pdfKey']
+            startPage = int(data['startPage'])
+            endPage = int(data['endPage'])
+            user_id = data['user_id']
 
-        s3 = get_s3_client()
-        response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
-        pdf_bytes = response['Body'].read()
-        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-        s = get_summary(doc,startPage, endPage)
-        print(s)
-        db_client = get_mongo_client()
-        data_db = db_client["data"]
-        summariesCollection = data_db["SummaryDocuments"]
-        summaryDict = {}
-        summaryDict['startPage'] = startPage
-        summaryDict['endPage'] = endPage
-        summaryDict['formattedSummary'] = s
-        summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
-        # result = jsonify(s)
-        send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
-        # return result
+            s3 = get_s3_client()
+            response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
+            pdf_bytes = response['Body'].read()
+            doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+            s = get_summary(doc,startPage, endPage)
+            print(s)
+            db_client = get_mongo_client()
+            data_db = db_client["data"]
+            summariesCollection = data_db["SummaryDocuments"]
+            summaryDict = {}
+            summaryDict['startPage'] = startPage
+            summaryDict['endPage'] = endPage
+            summaryDict['formattedSummary'] = s
+            summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
+            # result = jsonify(s)
+            send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
+            # return result
     except Exception as e:
         print(e)
 
@@ -172,22 +174,23 @@ def generate_summary_websites():
 
 def process_summary_websites(data):
     try:
-        key = data['key']
-        user_id = data['user_id']
-        db_client = get_mongo_client()
-        data_db = db_client["data"]
-        websites_collection = data_db["SummaryWebsites"]
-        website_doc = websites_collection.find_one({'_id': key})
-        website_text = website_doc['documents']
-        s = get_summary_string(website_text)
-        summaryDict = {}
-        summaryDict['startPage'] = -1
-        summaryDict['endPage'] = -1
-        summaryDict['formattedSummary'] = s
-        websites_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
-        # result = jsonify(s)
-        send_notification_to_client(user_id, key, f'Summary complete for:{key}')
-        # return result
+        with app.app_context():
+            key = data['key']
+            user_id = data['user_id']
+            db_client = get_mongo_client()
+            data_db = db_client["data"]
+            websites_collection = data_db["SummaryWebsites"]
+            website_doc = websites_collection.find_one({'_id': key})
+            website_text = website_doc['content']
+            s = get_summary_string(website_text)
+            summaryDict = {}
+            summaryDict['startPage'] = -1
+            summaryDict['endPage'] = -1
+            summaryDict['formattedSummary'] = s
+            websites_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
+            # result = jsonify(s)
+            send_notification_to_client(user_id, key, f'Summary complete for:{key}')
+            # return result
     except Exception as e:
         print(e)
         raise e
@@ -206,22 +209,23 @@ def generate_summary_youtube():
 
 def process_summary_youtube(data):
     try:
-        key = data['key']
-        user_id = data['user_id']
-        db_client = get_mongo_client()
-        data_db = db_client["data"]
-        video_collection = data_db["SummaryYoutube"]
-        video_doc = video_collection.find_one({'_id': key})
-        video_text = [t["text"] for t in video_doc['transcript']]
-        s = get_summary_string(video_text)
-        summaryDict = {}
-        summaryDict['startPage'] = -1
-        summaryDict['endPage'] = -1
-        summaryDict['formattedSummary'] = s
-        video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
-        # result = jsonify(s)
-        send_notification_to_client(user_id, key, f'Summary complete for:{key}')
-        # return result
+        with app.app_context():
+            key = data['key']
+            user_id = data['user_id']
+            db_client = get_mongo_client()
+            data_db = db_client["data"]
+            video_collection = data_db["SummaryYoutube"]
+            video_doc = video_collection.find_one({'_id': key})
+            video_text = [t["text"] for t in video_doc['transcript']]
+            s = get_summary_string(video_text)
+            summaryDict = {}
+            summaryDict['startPage'] = -1
+            summaryDict['endPage'] = -1
+            summaryDict['formattedSummary'] = s
+            video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
+            # result = jsonify(s)
+            send_notification_to_client(user_id, key, f'Summary complete for:{key}')
+            # return result
     except Exception as e:
         print(e)
         raise e
