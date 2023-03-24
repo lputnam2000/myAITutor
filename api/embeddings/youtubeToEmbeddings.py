@@ -111,6 +111,7 @@ def get_video_transcript(url):
     videoFile = download_video(url)
     print('#Video Downloaded')
     transcripts = transcribe_file(WHISPER_MODEL_NAME, videoFile)
+    os.remove(videoFile)
     formatted_subtitles = srt_to_array(transcripts)
     print('#Transcripts Generated')
     return formatted_subtitles
