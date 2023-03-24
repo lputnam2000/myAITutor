@@ -5,6 +5,7 @@ import re
 import tiktoken
 import weaviate
 import time
+from flask import app
 from ..utils.utils import  get_mongo_client, send_notification_to_client
 from ..weaviate_embeddings import upload_documents_website, create_website_class
 
@@ -57,6 +58,15 @@ def create_class(key:str, client):
     client.schema.create_class(class_obj)
     return class_name
 
+def get_text_from_url(url):
+    textExtractor = WebsiteTextExtracter()
+    extracted_text = textExtractor.extract_formatted_text_from_url(url)
+    return extracted_text
+
+def get_text_from_html(html):
+    textExtractor = WebsiteTextExtracter()
+    extracted_text = textExtractor.extract_formatted_text_from_html(html)
+    return extracted_text
 
 
 def get_documents_from_url(url:str):
@@ -146,8 +156,11 @@ class WebsiteTextExtracter:
         return len(text.split(' '))
     
     def text_from_document(self, document):
+        # First try to get doc.summary because of better formatting
+        # Otherwise get content. 
+        #TODO: figure out why this is fucked
         text = self.htmlParser.handle(document.summary())
-        if self.num_tokens(text) < 100:
+        if self.num_tokens(text) < self.summary_content_cutoff:
             text = self.htmlParser.handle(document.content())
         cleaned_text = self.remove_garbage_text(text)
 
@@ -160,19 +173,9 @@ class WebsiteTextExtracter:
 
 
     def extract_formatted_text_from_url(self, url):
-        # site_content = self.get_site_content(url)
         document = self.get_site_content(url)
-
-        # First try to get doc.summary because of better formatting
-        # Otherwise get content. 
-        #TODO: figure out why this is fucked
         return self.text_from_document(document)
-        # text = self.htmlParser.handle(site_content.summary())
-        # if self.num_tokens(text) < 100:
-        #     text = self.htmlParser.handle(site_content.content())
-        # cleaned_text = self.remove_garbage_text(text)
 
-        # return cleaned_text
     
 
 # if __name__ == "__main__":
@@ -190,6 +193,21 @@ class WebsiteTextExtracter:
 #     except Exception as e:
 #         print(e)
 #         raise e
+
+def process_web_text(data):
+    try:
+        print("ADDING WEBSITE TEXT TO MONGO")
+        url = data['url']
+        website_text = get_text_from_url(url)
+        # print(website_text)
+        key = data['key']
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        websites_collection = data_db["SummaryWebsites"]
+        websites_collection.update_one({"_id": key}, {"$set": {"content": website_text}})
+        print("WEBSITE ADDED TEXT TO MONGO")
+    except Exception as e:
+        print(e)   
 
 def process_web_embeddings(data):
     try:
