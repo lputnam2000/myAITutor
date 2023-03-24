@@ -86,7 +86,6 @@ def generate_pdf_embeddings():
     bucket = data['bucket']
     key = data['key']
     user_id = data['user_id']
-    # TODO: Put this in lambda
     send_notification_to_client(user_id, key, f'Upload complete for:{key}')
     pdf = get_pdf(bucket, key)
     documents = get_documents(pdf)
