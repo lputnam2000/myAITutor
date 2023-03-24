@@ -6,6 +6,7 @@ import tiktoken
 import weaviate
 import time
 from ..utils.utils import  get_mongo_client, send_notification_to_client
+from ..weaviate_embeddings import upload_documents_website, create_website_class
 
 ENCODER = tiktoken.get_encoding("gpt2")
 OPEN_AI_KEY = "''"
@@ -199,9 +200,9 @@ def process_web_embeddings(data):
         documents = get_documents_from_url(url)
         print('2. PARSED DOCUMENTS')
         client = get_client()
-        class_name = create_class(key, client)
+        class_name = create_website_class(key, client)
         print(f'3. CREATED CLASS {class_name}')
-        upload_documents(documents, client, class_name)
+        upload_documents_website(documents, client, class_name)
         print("4. UPLOADED DOCUMENTS")
         db_client = get_mongo_client()
         data_db = db_client["data"]
@@ -222,9 +223,9 @@ def process_chrome_extension_embeddings(data):
         documents = get_documents_from_html(html)
         print('2. PARSED DOCUMENTS')
         client = get_client()
-        class_name = create_class(key, client)
+        class_name = create_website_class(key, client)
         print(f'3. CREATED CLASS {class_name}')
-        upload_documents(documents, client, class_name)
+        upload_documents_website(documents, client, class_name)
         print("4. UPLOADED DOCUMENTS")
         db_client = get_mongo_client()
         data_db = db_client["data"]

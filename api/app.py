@@ -11,8 +11,9 @@ from api.utils.utils import require_api_key, get_mongo_client, send_notification
 from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_pdf_class
 from api.utils.aws import get_pdf
 from logging.config import dictConfig
+import threading
 import nltk
-# load_dotenv()
+load_dotenv()
 nltk.download('punkt')
 
 dictConfig({
@@ -80,93 +81,150 @@ def webhook_testing():
 @app.route("/lambda_notification", methods=["POST"])
 @require_api_key
 def generate_pdf_embeddings():
-    print("working")
-    # get documents
-    data = request.json
-    bucket = data['bucket']
-    key = data['key']
-    user_id = data['user_id']
-    # TODO: Put this in lambda
-    send_notification_to_client(user_id, key, f'Upload complete for:{key}')
-    pdf = get_pdf(bucket, key)
-    documents = get_documents(pdf)
-    client = get_client()
-    class_name = create_pdf_class(key, client)
-    upload_documents_pdf(documents, client, class_name)
-    send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
-    return jsonify({"message": "Embeddings Uploaded"}), HTTPStatus.OK
-
-
+    try:
+        data = request.json
+        thread = threading.Thread(target=process_pdf_embeddings, args=(data,))
+        thread.start()
+        return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+    except Exception as e:
+        print(e)
+        raise e
 
 @app.route('/summaries/', methods=["POST"])
 @require_api_key
 def generate_summary():
     print('here')
-    data = request.json# .data is empty
-    pdfKey = data['pdfKey']
-    startPage = int(data['startPage'])
-    endPage = int(data['endPage'])
-    user_id = data['user_id']
+    try:
+        data = request.json
+        thread = threading.Thread(target=process_summary_pdf, args=(data,))
+        thread.start()
+        return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+    except Exception as e:
+        print(e)
+        raise e
 
-    s3 = get_s3_client()
-    response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
-    pdf_bytes = response['Body'].read()
-    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    s = get_summary(doc,startPage, endPage)
-    print(s)
-    db_client = get_mongo_client()
-    data_db = db_client["data"]
-    summariesCollection = data_db["SummaryDocuments"]
-    summaryDict = {}
-    summaryDict['startPage'] = startPage
-    summaryDict['endPage'] = endPage
-    summaryDict['formattedSummary'] = s
-    summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
-    result = jsonify(s)
-    send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
-    return result
+def process_summary_pdf(data):
+    try:
+        pdfKey = data['pdfKey']
+        startPage = int(data['startPage'])
+        endPage = int(data['endPage'])
+        user_id = data['user_id']
+
+        s3 = get_s3_client()
+        response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
+        pdf_bytes = response['Body'].read()
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+        s = get_summary(doc,startPage, endPage)
+        print(s)
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        summariesCollection = data_db["SummaryDocuments"]
+        summaryDict = {}
+        summaryDict['startPage'] = startPage
+        summaryDict['endPage'] = endPage
+        summaryDict['formattedSummary'] = s
+        summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
+        # result = jsonify(s)
+        send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
+        # return result
+    except Exception as e:
+        print(e)
+        raise e
+
+def process_pdf_embeddings(data):
+    try:
+        pdfKey = data['pdfKey']
+        startPage = int(data['startPage'])
+        endPage = int(data['endPage'])
+        user_id = data['user_id']
+
+        s3 = get_s3_client()
+        response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
+        pdf_bytes = response['Body'].read()
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+        s = get_summary(doc,startPage, endPage)
+        print(s)
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        summariesCollection = data_db["SummaryDocuments"]
+        summaryDict = {}
+        summaryDict['startPage'] = startPage
+        summaryDict['endPage'] = endPage
+        summaryDict['formattedSummary'] = s
+        summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
+        # result = jsonify(s)
+        send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
+        # return result
+    except Exception as e:
+        print(e)
 
 @app.route('/summaries/websites/', methods=["POST"])
 @require_api_key
 def generate_summary_websites():
-    data = request.json #.data is empty
-    key = data['key']
-    user_id = data['user_id']
-    db_client = get_mongo_client()
-    data_db = db_client["data"]
-    websites_collection = data_db["SummaryWebsites"]
-    website_doc = websites_collection.find_one({'_id': key})
-    website_text = website_doc['documents']
-    s = get_summary_string(website_text)
-    summaryDict = {}
-    summaryDict['startPage'] = -1
-    summaryDict['endPage'] = -1
-    summaryDict['formattedSummary'] = s
-    websites_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
-    result = jsonify(s)
-    send_notification_to_client(user_id, key, f'Summary complete for:{key}')
-    return result
+    try:
+        data = request.json
+        thread = threading.Thread(target=process_summary_websites, args=(data,))
+        thread.start()
+        return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+    except Exception as e:
+        print(e)
+        raise e
+
+def process_summary_websites(data):
+    try:
+        key = data['key']
+        user_id = data['user_id']
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        websites_collection = data_db["SummaryWebsites"]
+        website_doc = websites_collection.find_one({'_id': key})
+        website_text = website_doc['documents']
+        s = get_summary_string(website_text)
+        summaryDict = {}
+        summaryDict['startPage'] = -1
+        summaryDict['endPage'] = -1
+        summaryDict['formattedSummary'] = s
+        websites_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
+        # result = jsonify(s)
+        send_notification_to_client(user_id, key, f'Summary complete for:{key}')
+        # return result
+    except Exception as e:
+        print(e)
+        raise e
 
 @app.route('/summaries/youtube/', methods=["POST"])
 @require_api_key
 def generate_summary_youtube():
-    data = request.json #.data is empty
-    key = data['key']
-    user_id = data['user_id']
-    db_client = get_mongo_client()
-    data_db = db_client["data"]
-    video_collection = data_db["SummaryYoutube"]
-    video_doc = video_collection.find_one({'_id': key})
-    video_text = [t["text"] for t in video_doc['transcript']]
-    s = get_summary_string(video_text)
-    summaryDict = {}
-    summaryDict['startPage'] = -1
-    summaryDict['endPage'] = -1
-    summaryDict['formattedSummary'] = s
-    video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
-    result = jsonify(s)
-    send_notification_to_client(user_id, key, f'Summary complete for:{key}')
-    return result
+    try:
+        data = request.json
+        thread = threading.Thread(target=process_summary_youtube, args=(data,))
+        thread.start()
+        return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+    except Exception as e:
+        print(e)
+        raise e
+
+def process_summary_youtube(data):
+    try:
+        key = data['key']
+        user_id = data['user_id']
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        video_collection = data_db["SummaryYoutube"]
+        video_doc = video_collection.find_one({'_id': key})
+        video_text = [t["text"] for t in video_doc['transcript']]
+        s = get_summary_string(video_text)
+        summaryDict = {}
+        summaryDict['startPage'] = -1
+        summaryDict['endPage'] = -1
+        summaryDict['formattedSummary'] = s
+        video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
+        # result = jsonify(s)
+        send_notification_to_client(user_id, key, f'Summary complete for:{key}')
+        # return result
+    except Exception as e:
+        print(e)
+        raise e
 
 
 if __name__ =="__main__":
