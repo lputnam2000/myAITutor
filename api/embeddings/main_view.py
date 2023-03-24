@@ -1,9 +1,9 @@
 from http import HTTPStatus
 from flask import Flask, Blueprint, jsonify, request
 from ..utils.utils import require_api_key, get_mongo_client, send_notification_to_client
-from .websiteToEmbeddings import get_documents_from_url, get_documents_from_html, get_client, create_class
+from .websiteToEmbeddings import get_documents_from_url, get_documents_from_html, get_client
 from .youtubeToEmbeddings import get_video_transcript, get_weaviate_docs
-from ..weaviate_embeddings import upload_documents_website, upload_documents_youtube
+from ..weaviate_embeddings import upload_documents_website, upload_documents_youtube, create_website_class, create_youtube_class
 from uuid import uuid4
 
 embeddings_bp = Blueprint('embeddings', __name__, url_prefix='/embeddings')
@@ -19,7 +19,7 @@ def website_to_embedding():
         documents = get_documents_from_url(url)
         print('#PARSED DOCUMENTS')
         client = get_client()
-        class_name = create_class(key, client)
+        class_name = create_website_class(key, client)
         print(f'#CREATED CLASS {class_name}')
         upload_documents_website(documents, client, class_name)
         print("#UPLOADED DOCUMENTS")
@@ -47,7 +47,7 @@ def extension_to_embedding():
         documents = get_documents_from_html(html)
         print('#PARSED DOCUMENTS')
         client = get_client()
-        class_name = create_class(key, client)
+        class_name = create_website_class(key, client)
         print(f'#CREATED CLASS {class_name}')
         upload_documents_website(documents, client, class_name)
         print("#UPLOADED DOCUMENTS")
@@ -80,7 +80,7 @@ def video_to_embedding():
         documents = get_weaviate_docs(formatted_subtitles)
         print('#PARSED DOCUMENTS')
         client = get_client()
-        class_name = create_class(key, client)
+        class_name = create_youtube_class(key, client)
         print(f'#CREATED CLASS {class_name}')
         upload_documents_youtube(documents, client, class_name)
         print("#UPLOADED DOCUMENTS")

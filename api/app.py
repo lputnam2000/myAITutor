@@ -8,7 +8,7 @@ import openai
 from api.embeddings.main_view import embeddings_bp
 from api.summary import get_summary, get_summary_string
 from api.utils.utils import require_api_key, get_mongo_client, send_notification_to_client
-from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_class
+from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_pdf_class
 from api.utils.aws import get_pdf
 from logging.config import dictConfig
 import nltk
@@ -91,7 +91,7 @@ def generate_pdf_embeddings():
     pdf = get_pdf(bucket, key)
     documents = get_documents(pdf)
     client = get_client()
-    class_name = create_class(key, client)
+    class_name = create_pdf_class(key, client)
     upload_documents_pdf(documents, client, class_name)
     send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
     return jsonify({"message": "Embeddings Uploaded"}), HTTPStatus.OK
