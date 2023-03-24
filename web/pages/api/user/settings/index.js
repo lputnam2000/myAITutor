@@ -1,4 +1,4 @@
-import clientPromise from "../../../lib/mongodb";
+import clientPromise from "../../../../lib/mongodb";
 import {getServerSession} from "next-auth/next"
 import {authOptions} from "pages/api/auth/[...nextauth]";
 import {v4 as uuidv4} from 'uuid';
@@ -14,18 +14,23 @@ const requestHandler = async (req, res) => {
                 const db = client.db("admin");
                 const usersCollection = db.collection("users");
                 const userIDObject = new ObjectId(session.user.id);
-                console.log(userIDObject)
                 const userRecord = await usersCollection.findOne({"_id": userIDObject});
                 if (userRecord !== null) {
-                    let apikey = uuidv4();
-
-                    console.log(await usersCollection.updateOne(
-                        {"_id": userIDObject},
-                        {$set: {"apikey": apikey}}
-                    ))
-                    res.status(200).json({"apikey": apikey})
+                    let apiKey = userRecord.apiKey
+                    if (userRecord.apiKey === undefined) {
+                        apiKey = uuidv4();
+                        console.log(await usersCollection.updateOne(
+                            {"_id": userIDObject},
+                            {$set: {"apiKey": apiKey}}
+                        ))
+                    }
+                    let userName = userRecord.name === undefined ? '' : userRecord.name
+                    res.status(200).json({
+                        'apiKey': apiKey,
+                        'name': userName,
+                    })
                 } else {
-                    res.status(400).json({"apikey": "no account found"})
+                    res.status(200).json({"message": "user not found"})
                 }
             } catch (e) {
                 res.status(500).json({error: e})

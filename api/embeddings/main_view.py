@@ -28,6 +28,7 @@ def extension_to_embedding():
         thread = threading.Thread(target=process_chrome_extension_embeddings, args=(data,))
         thread.start()
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+
     except Exception as e:
         print(e)
         raise e
@@ -40,6 +41,7 @@ def video_to_embedding():
         thread = threading.Thread(target=process_youtube_embeddings, args=(data,))
         thread.start()
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+
     except Exception as e:
         print(e)
         raise e
