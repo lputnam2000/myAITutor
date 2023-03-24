@@ -27,21 +27,23 @@ const Container = styled.div`
   height: 225px;
   border-radius: 4px;
   cursor: pointer;
-  border: 1px solid black;
+  padding: 5px;
+  //border: 3px solid #515757;
   overflow: hidden;
   transition: box-shadow ease-in-out .1s;
+  background-color: #4a5568;
 
   &:hover {
     box-shadow: 4px 4px 0px ${props => props.theme.colors.secondary};
     transform: translate(-1px, -1px)
   }
-
-  background-color: ${props => props.theme.colors.primary};
 `;
 const ImageContainer = styled.div`
   width: 100%;
   height: 150px;
   overflow: hidden;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
 `
 
 const CardInformation = styled.div`
@@ -50,9 +52,7 @@ const CardInformation = styled.div`
   text-overflow: ellipsis;
   padding: 15px 10px;
   overflow: hidden;
-  background-color: #fafdd4;
   border-top: solid 1px;
-
 `
 
 const CenteredText = styled.div`
@@ -64,7 +64,6 @@ const CenteredText = styled.div`
 `
 
 const TagList = styled.div`
-  background-color: #fafdd4;
   display: flex;
   justify-content: space-between;
 `

@@ -26,7 +26,7 @@ const HomeContainer = styled.div`
 `
 
 const Container = styled.div`
-  background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0);
+  //background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0);
   background-size: 400% 400%;
   animation: ${gradientKeyframes} 300s ease infinite;
   min-height: 100vh;
