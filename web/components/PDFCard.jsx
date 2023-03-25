@@ -194,13 +194,15 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename}) {
         }
         <Modal isOpen={isRenameModalOpen} onClose={closeRenameModal}>
             <ModalOverlay/>
-            <ModalContent>
-                <ModalHeader>Rename Title</ModalHeader>
+            <ModalContent backgroundColor='#242933'>
+                <ModalHeader color={'#fff'}>Rename Title</ModalHeader>
                 <ModalCloseButton/>
                 <ModalBody>
                     <FormControl>
-                        <FormLabel>New Title</FormLabel>
+                        <FormLabel color={'#fff'}>New Title</FormLabel>
                         <Input
+                            borderColor={'#57657e'}
+                            color={'#fff'}
                             value={newTitle}
                             onChange={(e) => setNewTitle(e.target.value)}
                         />

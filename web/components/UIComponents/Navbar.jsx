@@ -125,23 +125,25 @@ const ProfileMenu = styled.div`
   position: absolute;
   right: 0;
   top: 40px;
-  background-color: #f9f9f9;
+  background-color: #4a5568;
   min-width: 160px;
   z-index: 1;
-  border: 2px solid black;
+  border: 2px solid #1c2025;
   border-radius: 2px;
 `;
 
 const ProfileDropdown = styled.div`
   position: relative;
   display: inline-block;
+  padding-left: 30px;
+  color: white;
 
   &:hover ${ProfileMenu} {
     display: block;
   }
 
   &:hover ${ProfileIcon} {
-    border: ${(props) => props.theme.colors.secondary} 2px solid;
+    border: ${(props) => props.theme.colors.secondary} 2px #57657e;
     transition: border 0.1s ease-in-out;
   }
 `;
