@@ -32,11 +32,10 @@ const Container = styled.div`
   overflow: hidden;
   transition: box-shadow ease-in-out .1s;
   background-color: #242933;
-  color: #37f162;
+  color: #ef59e8;
 
   &:hover {
-    box-shadow: 4px 4px 0px #37f162;
-    transform: translate(-1px, -1px)
+    box-shadow: 4px 4px 0px #ef59e8;
   }
 `;
 const ImageContainer = styled.div`
@@ -73,9 +72,8 @@ const Tag = styled.div`
   font-size: 13px;
   padding: 3px 8px;
   border-radius: 10px;
-  background-color: #ef59e8;
-  color: white;
-
+  background-color: #ce49fa;
+  color: #242933;
 `
 
 
@@ -180,11 +178,11 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename}) {
                                 }}
                                 variant='filled'
                             />
-                            <MenuList>
-                                <MenuItem icon={<EditIcon/>} onClick={openRenameModal}>
+                            <MenuList borderColor={'#57657e'} bg='#1c2025'>
+                                <MenuItem bg='#1c2025' icon={<EditIcon/>} onClick={openRenameModal}>
                                     Rename
                                 </MenuItem>
-                                <MenuItem onClick={removeUpload} icon={<DeleteIcon/>}>
+                                <MenuItem bg='#1c2025' onClick={removeUpload} icon={<DeleteIcon/>}>
                                     Remove
                                 </MenuItem>
                             </MenuList>
