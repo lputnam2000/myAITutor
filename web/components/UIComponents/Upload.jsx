@@ -16,7 +16,6 @@ import axios from "axios";
 
 
 const Directions = styled.div`
-  color: ${props => props.theme.colors.secondary};
   font-weight: 500;
   font-size: 20px;
   width: 100%;
@@ -26,7 +25,7 @@ const Directions = styled.div`
 const Container = styled.div`
   width: 200px;
   height: 225px;
-  border: solid 2px;
+  border: #57657e solid 2px;
   border-radius: 4px;
   padding: .5rem;
   transition: box-shadow ease-in-out .2s;
@@ -36,10 +35,12 @@ const Container = styled.div`
   justify-content: center;
   transition: border-radius ease-in-out .25s;
   transition: background-color ease-in-out .25s;
+  color: ${props => props.theme.colors.primary};
 
   &:hover {
     border-radius: 20px;
-    background-color: #fafdd4;
+    background-color: #2ef162;
+    color: ${props => props.theme.colors.secondary};
   }
 `;
 

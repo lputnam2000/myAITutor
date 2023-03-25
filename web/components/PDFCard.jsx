@@ -31,10 +31,11 @@ const Container = styled.div`
   //border: 3px solid #515757;
   overflow: hidden;
   transition: box-shadow ease-in-out .1s;
-  background-color: #4a5568;
+  background-color: #242933;
+  color: #37f162;
 
   &:hover {
-    box-shadow: 4px 4px 0px ${props => props.theme.colors.secondary};
+    box-shadow: 4px 4px 0px #37f162;
     transform: translate(-1px, -1px)
   }
 `;

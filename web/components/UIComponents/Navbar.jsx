@@ -55,11 +55,11 @@ function BadgePP({name, profilePic}) {
 
 const Container = styled.div`
   height: 50px;
-  background-color: ${(props) => props.theme.colors.primary};
+  background-color: #242933;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: ${(props) => props.theme.colors.secondary} 2px solid;
+  border-bottom: #57657e 2px solid;
   @media (max-width: 600px) {
     height: 75px;
   }
@@ -70,7 +70,7 @@ const Logo = styled(Link)`
   font-weight: 700;
   margin-left: 30px;
   font-size: 30px;
-  color: ${props => props.theme.colors.secondary};
+  color: ${props => props.theme.colors.primary};
   cursor: pointer;
   padding-left: 30px;
   padding-right: 30px;
@@ -184,9 +184,12 @@ function Navbar(props) {
 
     return (
         <Container>
-            <HomeIconButton aria-label='Go to Home' icon={<AiOutlineHome size={22}/>}
+            <HomeIconButton aria-label='Go to Home' icon={<AiOutlineHome size={22} color='#fff'/>}
                             variant='outline'
-                            onClick={goToHome}/>
+                            borderColor='#57657e'
+                            onClick={goToHome}
+
+            />
             <Logo href={'/'}>
                 chimpbase
             </Logo>
