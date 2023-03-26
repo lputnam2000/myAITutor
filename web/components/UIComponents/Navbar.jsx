@@ -55,11 +55,11 @@ function BadgePP({name, profilePic}) {
 
 const Container = styled.div`
   height: 50px;
-  background-color: ${(props) => props.theme.colors.primary};
+  background-color: #242933;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: ${(props) => props.theme.colors.secondary} 2px solid;
+  border-bottom: #57657e 2px solid;
   @media (max-width: 600px) {
     height: 75px;
   }
@@ -70,7 +70,7 @@ const Logo = styled(Link)`
   font-weight: 700;
   margin-left: 30px;
   font-size: 30px;
-  color: ${props => props.theme.colors.secondary};
+  color: ${props => props.theme.colors.primary};
   cursor: pointer;
   padding-left: 30px;
   padding-right: 30px;
@@ -125,23 +125,25 @@ const ProfileMenu = styled.div`
   position: absolute;
   right: 0;
   top: 40px;
-  background-color: #f9f9f9;
+  background-color: #4a5568;
   min-width: 160px;
   z-index: 1;
-  border: 2px solid black;
+  border: 2px solid #1c2025;
   border-radius: 2px;
 `;
 
 const ProfileDropdown = styled.div`
   position: relative;
   display: inline-block;
+  padding-left: 30px;
+  color: white;
 
   &:hover ${ProfileMenu} {
     display: block;
   }
 
   &:hover ${ProfileIcon} {
-    border: ${(props) => props.theme.colors.secondary} 2px solid;
+    border: ${(props) => props.theme.colors.secondary} 2px #57657e;
     transition: border 0.1s ease-in-out;
   }
 `;
@@ -184,9 +186,12 @@ function Navbar(props) {
 
     return (
         <Container>
-            <HomeIconButton aria-label='Go to Home' icon={<AiOutlineHome size={22}/>}
+            <HomeIconButton aria-label='Go to Home' icon={<AiOutlineHome size={22} color='#fff'/>}
                             variant='outline'
-                            onClick={goToHome}/>
+                            borderColor='#57657e'
+                            onClick={goToHome}
+
+            />
             <Logo href={'/'}>
                 chimpbase
             </Logo>

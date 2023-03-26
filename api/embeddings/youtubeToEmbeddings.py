@@ -47,8 +47,8 @@ def get_weaviate_docs(transcripts):
 
         to_return.append({
             "text": doc_text,
-            "start": start_time,
-            "end": end_time
+            "start_time": start_time,
+            "end_time": end_time
         })
 
     return to_return
