@@ -53,6 +53,7 @@ const PopButton = styled.button`
   background-color: ${props => props.theme.colors.blue};
   transition: box-shadow ease-in-out .1s;
   font-weight: 500;
+  color: black;
 
   &:hover {
     box-shadow: 3px 3px 0px #000000;
@@ -72,8 +73,8 @@ const WebsiteInput = ({url, setUrl}) => {
     return (
         <FormControl>
             <FormLabel>Website URL</FormLabel>
-            <Input type='email' value={url} onChange={handleInputChange}/>
-            <FormHelperText>
+            <Input type='url' value={url} onChange={handleInputChange}/>
+            <FormHelperText color={'#f4fdf9'}>
                 Please make sure the website you enter is publicly accessible.
             </FormHelperText>
         </FormControl>
@@ -97,8 +98,8 @@ const YoutubeInput = ({url, setUrl}) => {
     return (
         <FormControl>
             <FormLabel>YouTube Video URL</FormLabel>
-            <Input type='email' value={url} onChange={handleInputChange}/>
-            <FormHelperText>
+            <Input type='url' value={url} onChange={handleInputChange}/>
+            <FormHelperText color={'#f4fdf9'}>
                 Please make sure that the YouTube video URL you enter is publicly accessible.
             </FormHelperText>
             <br/>
@@ -150,7 +151,7 @@ const sendS3 = async (file) => {
 }
 
 const DropBox = styled.div`
-  border: 1px dashed black;
+  border: 1px dashed #57657e;
   padding: 20px;
 `
 
@@ -162,7 +163,15 @@ const DropText = styled.p`
 const FileInformation = styled.p`
   margin-top: 5px;
 `
+const StyledOption = styled.option`
 
+  background-color: #242933;
+  color: #000;
+
+  &:hover {
+    background-color: #2D3542; // Custom hover background color
+  }
+`
 
 export default function Upload({handleFile}) {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -253,14 +262,16 @@ export default function Upload({handleFile}) {
     return (<>
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay/>
-            <ModalContent bg={'white'} sx={{'border': 'solid', 'borderWidth': '2px'}}>
-                <ModalHeader color={'black'}>Upload To Summarize</ModalHeader>
+            <ModalContent color={'white'} bg={'#242933'}
+                          sx={{'border': 'solid', 'borderWidth': '2px', 'borderColor': '#57657e'}}>
+                <ModalHeader>Upload To Summarize</ModalHeader>
                 <ModalBody>
                     <StyledSelect value={fileType} onChange={handleSelectFileType}
+                                  sx={{borderColor: '#57657e', backgroundColor: '#242933'}}
                                   placeholder='Choose information type'>
-                        <option value='pdf'>Document (PDF)</option>
-                        <option value='url'>Website link</option>
-                        <option value='youtube'>Youtube Video</option>
+                        <StyledOption value='pdf'>Document (PDF)</StyledOption>
+                        <StyledOption value='url'>Website link</StyledOption>
+                        <StyledOption value='youtube'>Youtube Video</StyledOption>
                     </StyledSelect>
                     {
                         fileType === 'pdf' && <>
@@ -296,10 +307,10 @@ export default function Upload({handleFile}) {
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button color={'black'} mr={3} onClick={uploadDocument}>
+                    <Button colorScheme={'blue'} mr={3} onClick={uploadDocument}>
                         Submit
                     </Button>
-                    <Button color={'black'} mr={3} onClick={closeModal}>
+                    <Button colorScheme={'red'} mr={3} onClick={closeModal}>
                         Close
                     </Button>
                 </ModalFooter>

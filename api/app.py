@@ -135,28 +135,19 @@ def process_summary_pdf(data):
 def process_pdf_embeddings(data):
     try:
         with app.app_context():
-            pdfKey = data['pdfKey']
-            startPage = int(data['startPage'])
-            endPage = int(data['endPage'])
+            bucket = data['bucket']
+            key = data['key']
+            print(f'Started EMBEDDINGS for - {key}')
             user_id = data['user_id']
-
-            s3 = get_s3_client()
-            response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
-            pdf_bytes = response['Body'].read()
-            doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-            s = get_summary(doc,startPage, endPage)
-            print(s)
-            db_client = get_mongo_client()
-            data_db = db_client["data"]
-            summariesCollection = data_db["SummaryDocuments"]
-            summaryDict = {}
-            summaryDict['startPage'] = startPage
-            summaryDict['endPage'] = endPage
-            summaryDict['formattedSummary'] = s
-            summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
-            # result = jsonify(s)
-            send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
-            # return result
+            send_notification_to_client(user_id, key, f'Upload complete for:{key}')
+            pdf = get_pdf(bucket, key)            
+            documents = get_documents(pdf)
+            client = get_client()
+            class_name = create_pdf_class(key, client)
+            upload_documents_pdf(documents, client, class_name)
+            print('UPLOADED DOCUMENTS')
+            send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+            print(f'FINISHED EMBEDDINGS for - {key}')
     except Exception as e:
         print(e)
 

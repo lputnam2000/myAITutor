@@ -24,37 +24,6 @@ def get_client():
     }
     )
 
-# def create_class(key:str, client):
-#     key_fmtd = key.replace('-', '_')
-#     class_name = f'Document_{key_fmtd}'
-
-#     class_obj = {
-#         "class": class_name,
-#         "description": f'Document Embeddings class for {key}',
-#         "vectorizer": "text2vec-openai",
-#         "moduleConfig": {
-#             "text2vec-openai": {
-#             "model": "ada",
-#             "modelVersion": "002",
-#             "type": "text"
-#             }
-#         },
-#         "properties": [
-#         {
-#             "dataType": "text",
-#             "description": "The text for the document",
-#             "name": "text",
-#             "moduleConfig": {
-#                 "text2vec-openai": {
-#                 "skip": False,
-#                 "vectorizePropertyName": False
-#                 }
-#             },
-#         },
-#         ]
-#     }
-#     client.schema.create_class(class_obj)
-#     return class_name
 
 def create_website_class(key:str, client):
     key_fmtd = key.replace('-', '_')
@@ -117,8 +86,18 @@ def create_pdf_class(key:str, client):
         },
         {
             "dataType": ["int"],
-            "description": "The page number for the text",
-            "name": "page_number",
+            "description": "The start time for the text",
+            "name": "start_page",
+            "moduleConfig": {
+                "text2vec-openai": {
+                "skip": True
+                }
+            },
+        },
+        {
+            "dataType": ["int"],
+            "description": "The end time for the text",
+            "name": "end_page",
             "moduleConfig": {
                 "text2vec-openai": {
                 "skip": True
@@ -183,19 +162,21 @@ def create_youtube_class(key:str, client):
     return class_name
 
 def format_for_documents(extracted_text):
-    text_list = extracted_text['text']
-    page_number = extracted_text['page_number']
+    text_list = [t["text"] for t in extracted_text]
+    page_number = [t["page_number"] for t in extracted_text]
     encodings = ENCODER.encode_batch(text_list)
     to_return = []
 
     for i in range(len(encodings)):
         doc_length = len(encodings[i])
-        doc_text = ""
+        doc_text = text_list[i]
+        start_page = page_number[i]
         while doc_length < 500 and i+1 < len(encodings):
             i += 1
             doc_length += len(encodings[i]) 
             doc_text += ' ' + text_list[i]
-        to_return.append({'text':doc_text,'page_number':page_number[i]})
+        end_page = page_number[i]
+        to_return.append({'text':doc_text,'start_page':start_page, 'end_page': end_page})
     return to_return
 
 
@@ -253,11 +234,7 @@ def upload_documents_pdf(documents, client, class_name):
     with client.batch as batch:
         # Batch import all Questions
         for i in range(len(documents)):
-            properties = {
-                # "text": documents[i]
-                'text':documents[i]['text'],
-                'page_number': documents[i]['page_number'],
-            }
+            properties = documents[i]
             print(i)
             client.batch.add_data_object(properties, class_name)
 
@@ -279,11 +256,7 @@ def upload_documents_youtube(documents, client, class_name):
         # Batch import all Questions
         for i in range(len(documents)):
             print(documents[i])
-            properties = {
-                "text": documents[i]['text'],
-                "start": documents[i]['start'],
-                "end": documents[i]['end']
-            }
+            properties = documents[i]
             print(i)
             client.batch.add_data_object(properties, class_name)
 

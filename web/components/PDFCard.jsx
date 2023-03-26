@@ -42,8 +42,7 @@ const ImageContainer = styled.div`
   width: 100%;
   height: 150px;
   overflow: hidden;
-  border-top-right-radius: 3px;
-  border-top-left-radius: 3px;
+  border-radius: 3px;
 `
 
 const CardInformation = styled.div`
@@ -52,7 +51,6 @@ const CardInformation = styled.div`
   text-overflow: ellipsis;
   padding: 15px 10px;
   overflow: hidden;
-  border-top: solid 1px;
 `
 
 const CenteredText = styled.div`
