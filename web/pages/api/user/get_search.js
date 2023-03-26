@@ -32,10 +32,11 @@ async function getChatGPTAnswer(prompt) {
                 messages: [
                     {
                         "role": "system",
-                        "content": "You are an AI assistant that is designed to quickly find answers given context, making you incredibly helpful at answering questions."
+                        "content": "You are an Al assistant that is designed to quickly find answers given context and cite the context in your answers, making you incredibly helpful at answering questions."
                     },
                     {"role": "user", "content": prompt}
-                ]
+                ],
+                temperature: 0.3
             }
         )
         console.log(response)
@@ -72,9 +73,9 @@ const requestHandler = async (req, res) => {
             .withLimit(2)
             .do()
         const matchingText = weaviateRes.data.Get[className]
-        let prompt = "Answer the question using the provided context, and if the answer is not contained use your own mind but tell the user that you are doing so.'\n\nContext:\n"
+        let prompt = "Answer the question using the provided chunks of context. Each chunk of context comes with a number in brackets before it. If you use a particular chunk to compose a particular part of your answer, finish that part of your answer by indicating the chunk used. Do this by including the chunks bracketed number. So if you want to indicate you used chunk 1, do [1]. Any answer you provide must have indicators of which chunks you used.\n\nContext:\n"
         for (let i = 0; i < matchingText.length; i++) {
-            prompt += '\n' + matchingText[i].text + '\n'
+            prompt += '\n[' + (i + 1) + '] ' + matchingText[i].text + '\n';
         }
         console.log(prompt)
 
