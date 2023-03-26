@@ -31,19 +31,18 @@ const Container = styled.div`
   //border: 3px solid #515757;
   overflow: hidden;
   transition: box-shadow ease-in-out .1s;
-  background-color: #4a5568;
+  background-color: #242933;
+  color: #ef59e8;
 
   &:hover {
-    box-shadow: 4px 4px 0px ${props => props.theme.colors.secondary};
-    transform: translate(-1px, -1px)
+    box-shadow: 4px 4px 0px #ef59e8;
   }
 `;
 const ImageContainer = styled.div`
   width: 100%;
   height: 150px;
   overflow: hidden;
-  border-top-right-radius: 3px;
-  border-top-left-radius: 3px;
+  border-radius: 3px;
 `
 
 const CardInformation = styled.div`
@@ -52,7 +51,6 @@ const CardInformation = styled.div`
   text-overflow: ellipsis;
   padding: 15px 10px;
   overflow: hidden;
-  border-top: solid 1px;
 `
 
 const CenteredText = styled.div`
@@ -72,9 +70,8 @@ const Tag = styled.div`
   font-size: 13px;
   padding: 3px 8px;
   border-radius: 10px;
-  background-color: #ef59e8;
-  color: white;
-
+  background-color: #ce49fa;
+  color: #242933;
 `
 
 
@@ -179,11 +176,11 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename}) {
                                 }}
                                 variant='filled'
                             />
-                            <MenuList>
-                                <MenuItem icon={<EditIcon/>} onClick={openRenameModal}>
+                            <MenuList borderColor={'#57657e'} bg='#1c2025'>
+                                <MenuItem bg='#1c2025' icon={<EditIcon/>} onClick={openRenameModal}>
                                     Rename
                                 </MenuItem>
-                                <MenuItem onClick={removeUpload} icon={<DeleteIcon/>}>
+                                <MenuItem bg='#1c2025' onClick={removeUpload} icon={<DeleteIcon/>}>
                                     Remove
                                 </MenuItem>
                             </MenuList>
@@ -195,13 +192,15 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename}) {
         }
         <Modal isOpen={isRenameModalOpen} onClose={closeRenameModal}>
             <ModalOverlay/>
-            <ModalContent>
-                <ModalHeader>Rename Title</ModalHeader>
+            <ModalContent backgroundColor='#242933'>
+                <ModalHeader color={'#fff'}>Rename Title</ModalHeader>
                 <ModalCloseButton/>
                 <ModalBody>
                     <FormControl>
-                        <FormLabel>New Title</FormLabel>
+                        <FormLabel color={'#fff'}>New Title</FormLabel>
                         <Input
+                            borderColor={'#57657e'}
+                            color={'#fff'}
                             value={newTitle}
                             onChange={(e) => setNewTitle(e.target.value)}
                         />

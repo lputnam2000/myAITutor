@@ -8,6 +8,7 @@ const Container = styled.div`
   padding: 5px;
   display: grid;
   grid-template-columns: min-content 1fr;
+  color: #ececf1;
 `
 
 const Heading = styled.div`
@@ -88,7 +89,15 @@ function CollapsibleSummary({summaryJson, isOpen, fileType}) {
 
     return (
         <Container>
-            <StyledIconButton aria-label='Expand Summary' onClick={() => setOpen(!open)}
+            <StyledIconButton backgroundColor={'#242933'} variant='outline'
+                              _focus={{
+                                  boxShadow: "0 0 0 3px rgba(36, 41, 51, 0.6)", // Custom focus ring color
+                              }}
+                              _hover={{
+                                  backgroundColor: "#2D3542", // Custom hover background color
+                                  borderColor: "#2D3542", // Custom hover border color
+                                  color: "#FFF", // Custom hover text/icon color
+                              }} aria-label='Expand Summary' onClick={() => setOpen(!open)}
                               icon={
                                   open ?
                                       <ChevronDownIcon boxSize={6}/>
