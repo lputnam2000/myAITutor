@@ -66,7 +66,14 @@ const SignInContainer = styled.div`
   border: 2px solid #fff;
   border-radius: 4px;
   padding: 20px;
-  min-width: 350px;
+  width: 300px;
+  @media (max-width: 300px) {
+    width: 250px;
+  }
+  @media (min-width: 420px) {
+    width: 350px;
+  }
+
 `
 
 const Button = styled.button`
@@ -83,6 +90,9 @@ const Button = styled.button`
   font-size: 1rem;
   cursor: pointer;
   width: 100%;
+  @media (max-width: 300px) {
+    font-size: .75rem;
+  }
 `
 
 const EmailContainer = styled.div`
@@ -160,7 +170,7 @@ export default function SignIn({csrfToken, providers}) {
                 {svg}
                 <SignInContainer>
                     <TOSAgreement>
-                        By signing {isSignIn ? 'In' : 'Up'}, you accept our &nbsp;
+                        By Signing {isSignIn ? 'In' : 'Up'}, you accept our &nbsp;
                         <TOSLink href={'/tos'}>
                             Terms of Service.
                         </TOSLink>
