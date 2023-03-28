@@ -49,18 +49,7 @@ const MarkdownWrapper = styled.div`
 `;
 
 function WebsiteViewer() {
-    const [markdown, setMarkdown] = useState(`
-# Hello World!
-
-Some text here with an [example link](https://example.com).
-
-![Placeholder image](images/placeholder-150.png)
-
-| Header 1    | Header 2    |
-| ----------- | ----------- |
-| Row 1, Cell 1 | Row 1, Cell 2 |
-| Row 2, Cell 1 | Row 2, Cell 2 |
-`);
+    const [markdown, setMarkdown] = useState('');
     const {setSummary, setTitle, setFileType, pdfKey} = useContext(ViewerContext);
 
     const getDocumentDetails = (pdfKey) => {
