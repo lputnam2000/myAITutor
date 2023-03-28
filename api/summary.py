@@ -102,8 +102,9 @@ def make_gpt_summary(text, context=None):
             textResp = '[' + response.choices[0]['message']['content']
             jsonResp = json.loads(textResp)
             return json.loads(textResp)
-    except e:
-        return make_gpt_summary(text, context)
+    except Exception as e:
+        print(e)
+        make_gpt_summary(text,context)
 
 
 def extract_text(page):
