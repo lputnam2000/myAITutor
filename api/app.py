@@ -43,15 +43,6 @@ def create_app():
     app.register_blueprint(embeddings_bp)
     return app
 
-def init_logging_handlers():
-    app.logger.setLevel(logging.INFO)
-
-    handler1 = CloudWatchLogHandler(log_group_name='test2',log_stream_name='summaries_pdf')
-    handler2 = CloudWatchLogHandler(log_group_name='test2', log_stream_name='summaries_website')
-
-    app.logger.addHandler(handler1)
-    app.logger.addHandler(handler2)
-
 app = create_app()
 logger = logging.getLogger('myapp')
 # logger.setLevel(logging.INFO)
@@ -117,14 +108,11 @@ def generate_summary():
         pdfKey = data['pdfKey']
         thread = threading.Thread(target=process_summary_pdf, args=(data,))
         thread.start()
-        # app.logger.info(f'Processing PDF Summary for {pdfKey}', extra={'log_stream_name': 'summaries_pdf'})
 
         stream_name = f'stream-name-pdf-summary-{str(uuid4())}'
-        new_handler = CloudWatchLogHandler(log_group='your-log-group-ashank', stream_name=stream_name)
+        new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
         new_handler.setFormatter(formatter)
         logger.addHandler(new_handler)
-
-        # Log a message to the new stream
         logger.info(f'Processing PDF embeddings for {pdfKey}')
         logger.removeHandler(new_handler)
 
@@ -189,14 +177,11 @@ def generate_summary_websites():
         key = data['key']
         thread = threading.Thread(target=process_summary_websites, args=(data,))
         thread.start()
-        # app.logger.info(f'Processing Website Summary for {key}', extra={'log_stream_name': 'summaries_website'})
 
         stream_name = f'stream-name-website-summary-{str(uuid4())}'
-        new_handler = CloudWatchLogHandler(log_group='your-log-group-ashank', stream_name=stream_name)
+        new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
         new_handler.setFormatter(formatter)
         logger.addHandler(new_handler)
-
-        # Log a message to the new stream
         logger.info(f'Processing website embeddings for {key}')
         logger.removeHandler(new_handler)
 
@@ -233,8 +218,17 @@ def process_summary_websites(data):
 def generate_summary_youtube():
     try:
         data = request.json
+        key = data['key']
         thread = threading.Thread(target=process_summary_youtube, args=(data,))
         thread.start()
+
+        stream_name = f'stream-name-website-summary-{str(uuid4())}'
+        new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+        new_handler.setFormatter(formatter)
+        logger.addHandler(new_handler)
+        logger.info(f'Processing website embeddings for {key}')
+        logger.removeHandler(new_handler)
+
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
     except Exception as e:
         print(e)
