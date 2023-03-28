@@ -22,8 +22,8 @@ export default function Home() {
                 Last Updated: 3/26/2023
                 <br/>
 
-                Welcome to Chimpbase! This is an agreement between you ("you" or "user") and Chimpbase, LLC
-                ("Chimpbase," "we," or "us") regarding your use of the website, chimpbase.vercel.app (the "Site").
+                Welcome to Chimpbase! This is an agreement between you (&quotyou&quot or &quotuser&quot) and Chimpbase, LLC
+                (&quotChimpbase,&quot &quotwe,&quot or &quotus&quot) regarding your use of the website, chimpbase.vercel.app (the &quotSite&quot).
 
                 <br/>
 
@@ -71,8 +71,8 @@ export default function Home() {
 
                 Disclaimer of Warranties <br/>
 
-                The Site and all content, materials, and features available on the Site are provided "as is" and "as
-                available" without any warranties, express or implied. Chimpbase disclaims all warranties of any kind,
+                The Site and all content, materials, and features available on the Site are provided &quotas is&quot and &quotas
+                available&quot without any warranties, express or implied. Chimpbase disclaims all warranties of any kind,
                 whether express or implied, including but not limited to the implied warranties of merchantability,
                 fitness for a particular purpose, and non-infringement.
                 <br/>
