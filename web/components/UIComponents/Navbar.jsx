@@ -63,6 +63,9 @@ const Container = styled.div`
   @media (max-width: 600px) {
     height: 75px;
   }
+  @media (max-width: 400px) {
+    height: 60px;
+  }
 `
 
 const Logo = styled(Link)`
@@ -74,6 +77,11 @@ const Logo = styled(Link)`
   cursor: pointer;
   padding-left: 30px;
   padding-right: 30px;
+  @media (max-width: 400px) {
+    padding-left: 0px;
+    padding-right: 0px;
+    font-size: 24px;
+  }
 `;
 
 const ButtonsContainer = styled.div`
@@ -184,6 +192,9 @@ function Navbar(props) {
         router.push("/home")
     };
 
+    function goToSettings() {
+        router.push("/settings")
+    };
     return (
         <Container>
             <HomeIconButton aria-label='Go to Home' icon={<AiOutlineHome size={22} color='#fff'/>}
@@ -206,7 +217,7 @@ function Navbar(props) {
                         />
                     </IconContainer>
                     <ProfileMenu>
-                        <SignOutOption>{username}</SignOutOption>
+                        <SignOutOption onClick={goToSettings}>Settings</SignOutOption>
                         <SignOutOption onClick={signOutClick}>Sign Out</SignOutOption>
                     </ProfileMenu>
                 </ProfileDropdown>
