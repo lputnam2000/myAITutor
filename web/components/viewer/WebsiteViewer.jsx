@@ -78,7 +78,7 @@ function WebsiteViewer() {
     }, [pdfKey])
     return (
         <MarkdownWrapper>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>markdown</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
         </MarkdownWrapper>
     );
 }
