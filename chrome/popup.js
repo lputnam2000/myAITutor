@@ -1,7 +1,8 @@
 function sendPage(token, content) {
     document.getElementById("submit-button").disabled = true;
-    document.getElementById("submit-button").className = "loading-button";
+    document.getElementById("submit-button").className = "sm-btn loading-button";
     document.getElementById("status-update").innerHTML = "Loading"
+    document.getElementById("submit-button").innerHTML = ""
 
     fetch('http://localhost:3000/api/chromeExtension/collectWeb', {
         method: 'POST',
@@ -26,7 +27,7 @@ function sendPage(token, content) {
             console.error('Fetch Error:', error);
         });
         document.getElementById("submit-button").disabled = false;
-        document.getElementById("submit-button").className = "";
+        setTimeout(()=>{document.getElementById("submit-button").className = "sm-btn"; document.getElementById("submit-button").innerHTML = "Bookmark"}, 1000);
 }
 
 document.addEventListener('DOMContentLoaded', function () {

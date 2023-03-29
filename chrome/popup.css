@@ -76,7 +76,7 @@ a {
     font-size: larger;
 }
 
-#submit-button {
+.sm-btn {
     margin: 10px auto 10px auto;
     display: block;
     padding: 4px 8px;
@@ -90,7 +90,7 @@ a {
     transition: all 0.3s ease-in-out;
 }
 
-#submit-button:hover {
+.sm-btn:hover {
     background-color: #55318F;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
