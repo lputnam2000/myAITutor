@@ -2,6 +2,9 @@ from pytube import YouTube
 from ..utils.utils import  get_mongo_client, send_notification_to_client
 from .websiteToEmbeddings import get_client, create_class, upload_documents
 from ..weaviate_embeddings import create_youtube_class, upload_documents_youtube
+from flask import current_app
+import logging
+from watchtower import CloudWatchLogHandler
 import os
 import uuid
 import openai
@@ -18,6 +21,7 @@ from nltk import tokenize
 5. Generate Embeddings
 """
 
+FORMATTER = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 ENCODER = tiktoken.get_encoding("gpt2")
 OPEN_AI_KEY = "''"
 openai.api_key = OPEN_AI_KEY
@@ -141,19 +145,26 @@ if __name__ == "__main__":
     formatted_subtitles = srt_to_array(transcripts)
     print('#Transcripts Generated')
 
-def process_youtube_embeddings(data):
+def process_youtube_embeddings(data,stream_name):
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(FORMATTER)
+    current_app.logger.addHandler(new_handler)
     try:
         url = data['url']
         key = data['key']
         print(f'1. PROCESSING REQ IN THREAD: {key}')
+        current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
         formatted_subtitles = get_video_transcript(url)
         documents = get_weaviate_docs(formatted_subtitles)
         print('2. PARSED DOCUMENTS')
+        current_app.logger.info('2. PARSED DOCUMENTS')
         client = get_client()
         class_name = create_youtube_class(key, client)
         print(f'3. CREATED CLASS {class_name}')
+        current_app.logger.info(f'3. CREATED CLASS {class_name}')
         upload_documents_youtube(documents, client, class_name)
         print("4. UPLOADED DOCUMENTS")
+        current_app.logger.info("4. UPLOADED DOCUMENTS")
         db_client = get_mongo_client()
         data_db = db_client["data"]
         youtube_collection = data_db["SummaryYoutube"]
@@ -161,6 +172,9 @@ def process_youtube_embeddings(data):
         # Update the document matching the UUID with the new values
         youtube_collection.update_one({"_id": key}, update_query)
         # send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+        current_app.logger.removeHandler(new_handler)
     except Exception as e:
         print(e)
+        current_app.logger.info(f'Error:{e}')
+        current_app.logger.removeHandler(new_handler)
         raise e

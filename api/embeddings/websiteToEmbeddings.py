@@ -5,10 +5,13 @@ import re
 import tiktoken
 import weaviate
 import time
-from flask import app
+from flask import app, current_app
+from watchtower import CloudWatchLogHandler
+import logging
 from ..utils.utils import  get_mongo_client, send_notification_to_client
 from ..weaviate_embeddings import upload_documents_website, create_website_class
 
+FORMATTER = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 ENCODER = tiktoken.get_encoding("gpt2")
 OPEN_AI_KEY = "''"
 
@@ -194,9 +197,13 @@ class WebsiteTextExtracter:
 #         print(e)
 #         raise e
 
-def process_web_text(data):
+def process_web_text(data,stream_name):
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(FORMATTER)
+    current_app.logger.addHandler(new_handler)
     try:
         print("ADDING WEBSITE TEXT TO MONGO")
+        current_app.logger.info('ADDING WEBSITE TEXT TO MONGO')
         url = data['url']
         website_text = get_text_from_url(url)
         # print(website_text)
@@ -206,52 +213,76 @@ def process_web_text(data):
         websites_collection = data_db["SummaryWebsites"]
         websites_collection.update_one({"_id": key}, {"$set": {"content": website_text}})
         print("WEBSITE ADDED TEXT TO MONGO")
+        current_app.logger.info('WEBSITE ADDED TEXT TO MONGO')
+        current_app.logger.removeHandler(new_handler)
     except Exception as e:
+        current_app.logger.info(f'Error:{e}')
+        current_app.logger.removeHandler(new_handler)
         print(e)   
 
-def process_web_embeddings(data):
+def process_web_embeddings(data,stream_name):
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(FORMATTER)
+    current_app.logger.addHandler(new_handler)
     try:
         url = data['url']
         key = data['key']
         print(f'1. PROCESSING REQ IN THREAD: {key}')
+        current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
         user_id = data['user_id']
         documents = get_documents_from_url(url)
         print('2. PARSED DOCUMENTS')
+        current_app.logger.info('2. PARSED DOCUMENTS')
         client = get_client()
         class_name = create_website_class(key, client)
         print(f'3. CREATED CLASS {class_name}')
+        current_app.logger.info(f'3. CREATED CLASS {class_name}')
         upload_documents_website(documents, client, class_name)
         print("4. UPLOADED DOCUMENTS")
+        current_app.logger.info("4. UPLOADED DOCUMENTS")
         db_client = get_mongo_client()
         data_db = db_client["data"]
         websitesCollection = data_db["SummaryWebsites"]
         update_query = {"$set": {"status": "Ready", "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
+        current_app.logger.removeHandler(new_handler)
         send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
     except Exception as e:
+        current_app.logger.info(f'Error:{e}')
+        current_app.logger.removeHandler(new_handler)
         print(e)
 
-def process_chrome_extension_embeddings(data):
+def process_chrome_extension_embeddings(data,stream_name):
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(FORMATTER)
+    current_app.logger.addHandler(new_handler)
     try:
         html = data['content']
         user_id = data['user_id']
         key = data['key']
         print(f'1. PROCESSING REQ IN THREAD: {key}')
+        current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
         documents = get_documents_from_html(html)
         print('2. PARSED DOCUMENTS')
+        current_app.logger.info('2. PARSED DOCUMENTS')
         client = get_client()
         class_name = create_website_class(key, client)
         print(f'3. CREATED CLASS {class_name}')
+        current_app.logger.info(f'3. CREATED CLASS {class_name}')
         upload_documents_website(documents, client, class_name)
         print("4. UPLOADED DOCUMENTS")
+        current_app.logger.info("4. UPLOADED DOCUMENTS")
         db_client = get_mongo_client()
         data_db = db_client["data"]
         websitesCollection = data_db["SummaryWebsites"]
         update_query = {"$set": {"status": "Ready", "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
+        current_app.logger.removeHandler(new_handler)
         send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
     except Exception as e:
         print(e)
+        current_app.logger.info(f'Error:{e}')
+        current_app.logger.removeHandler(new_handler)
         raise e
