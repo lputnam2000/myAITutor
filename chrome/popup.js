@@ -1,5 +1,10 @@
 function sendPage(token, content) {
-    fetch('http://localhost:3000/api/chromeExtension/collectWeb', {
+    document.getElementById("submit-button").disabled = true;
+    document.getElementById("submit-button").className = "sm-btn loading-button";
+    document.getElementById("status-update").innerHTML = "Loading"
+    document.getElementById("submit-button").innerHTML = ""
+
+    fetch('https://www.chimpbase.com/api/chromeExtension/collectWeb', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -10,14 +15,19 @@ function sendPage(token, content) {
         .then(response => {
             if (response.ok) {
                 // Handle successful response
+                document.getElementById("status-update").innerHTML = "Success!"
             } else {
-                throw new Error('Network response was not ok');
+                response.json().then(data => {
+                    document.getElementById("status-update").innerHTML = "Failed to send: " + data.error;
+                });
             }
         })
         .catch(error => {
             // Handle fetch error
             console.error('Fetch Error:', error);
         });
+        document.getElementById("submit-button").disabled = false;
+        setTimeout(()=>{document.getElementById("submit-button").className = "sm-btn"; document.getElementById("submit-button").innerHTML = "Bookmark"}, 1000);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
