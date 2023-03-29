@@ -4,7 +4,7 @@ function sendPage(token, content) {
     document.getElementById("status-update").innerHTML = "Loading"
     document.getElementById("submit-button").innerHTML = ""
 
-    fetch('http://localhost:3000/api/chromeExtension/collectWeb', {
+    fetch('https://www.chimpbase.com/api/chromeExtension/collectWeb', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
