@@ -1,15 +1,21 @@
 {
     "name": "Chimpbase Page Collector",
     "manifest_version": 3,
-    "version": "1.0.0",
+    "version": "0.0.0.1",
     "description": "Collects webpages to be processed using Chimpbase",
+    "icons": {
+      "16": "icon16.png",
+      "19": "icon19.png",
+      "38": "icon38.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    },
     "permissions": [
         "webRequest",
         "scripting",
         "activeTab",
         "tabs",
-        "cookies",
-        "storage"
+        "cookies"
     ],
     "host_permissions": [
         "https://api.chimpbase.com/*"

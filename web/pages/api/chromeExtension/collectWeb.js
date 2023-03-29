@@ -97,6 +97,9 @@ export default async function handler(req, res) {
                     secret = authHeader.substring(7);
                 }
                 const user_id_from_secret = await secretToUser(secret)
+                if (!user_id_from_secret) {
+                    return res.status(401).json({error: "invalid credentials"}).end()
+                }
                 let fullyQualifiedName = await generateRecord(user_id_from_secret, data, title)
                 fetch(process.env.BACKEND_URL + '/embeddings/extension/', {
                     method: 'POST',
@@ -117,7 +120,7 @@ export default async function handler(req, res) {
                 return res.status(400).json({ 'error': e }).end()
             }
         } else {
-            return res.status(404).json({ message: "Invalid method for endpoint" });
+            return res.status(404).json({ message: "Invalid method for endpoint" }).end();
         }
     });
 

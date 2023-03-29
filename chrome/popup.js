@@ -1,4 +1,8 @@
 function sendPage(token, content) {
+    document.getElementById("submit-button").disabled = true;
+    document.getElementById("submit-button").className = "loading-button";
+    document.getElementById("status-update").innerHTML = "Loading"
+
     fetch('http://localhost:3000/api/chromeExtension/collectWeb', {
         method: 'POST',
         headers: {
@@ -10,14 +14,19 @@ function sendPage(token, content) {
         .then(response => {
             if (response.ok) {
                 // Handle successful response
+                document.getElementById("status-update").innerHTML = "Success!"
             } else {
-                throw new Error('Network response was not ok');
+                response.json().then(data => {
+                    document.getElementById("status-update").innerHTML = "Failed to send: " + data.error;
+                });
             }
         })
         .catch(error => {
             // Handle fetch error
             console.error('Fetch Error:', error);
         });
+        document.getElementById("submit-button").disabled = false;
+        document.getElementById("submit-button").className = "";
 }
 
 document.addEventListener('DOMContentLoaded', function () {
