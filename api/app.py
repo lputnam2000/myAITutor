@@ -45,12 +45,7 @@ def create_app():
 
 app = create_app()
 logger = logging.getLogger('myapp')
-# logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-# handler = CloudWatchLogHandler(log_group='your-log-group-name')
-# handler.setFormatter(formatter)
-# logger.addHandler(handler)
-# init_logging_handlers()
 
 def get_s3_client():
     s3 = getattr(g, 's3', None)
@@ -103,25 +98,30 @@ def generate_pdf_embeddings():
 @require_api_key
 def generate_summary():
     print('here')
+    stream_name = f'stream-name-pdf-summary-{str(uuid4())}'
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(formatter)
+    logger.addHandler(new_handler)
     try:
         data = request.json
         pdfKey = data['pdfKey']
-        thread = threading.Thread(target=process_summary_pdf, args=(data,))
+        thread = threading.Thread(target=process_summary_pdf, args=(data,stream_name))
         thread.start()
 
-        stream_name = f'stream-name-pdf-summary-{str(uuid4())}'
-        new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
-        new_handler.setFormatter(formatter)
-        logger.addHandler(new_handler)
-        logger.info(f'Processing PDF embeddings for {pdfKey}')
+        logger.info(f'Processing PDF summaries for {pdfKey}')
         logger.removeHandler(new_handler)
 
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
     except Exception as e:
         print(e)
+        logger.info(f'Error:{e}')
+        logger.removeHandler(new_handler)
         raise e
 
-def process_summary_pdf(data):
+def process_summary_pdf(data,stream_name):
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(formatter)
+    logger.addHandler(new_handler)
     try:
         with app.app_context():
             pdfKey = data['pdfKey']
@@ -144,10 +144,15 @@ def process_summary_pdf(data):
             summaryDict['formattedSummary'] = s
             summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary": summaryDict}})
             # result = jsonify(s)
+
+            logger.info(f'FINISHED Processing PDF summaries for {pdfKey}')
+            logger.removeHandler(new_handler)
             send_notification_to_client(user_id, pdfKey, f'Summary complete for:{pdfKey}')
             # return result
     except Exception as e:
         print(e)
+        logger.info(f'Error:{e}')
+        logger.removeHandler(new_handler)
         raise e
 
 def process_pdf_embeddings(data):
@@ -172,25 +177,31 @@ def process_pdf_embeddings(data):
 @app.route('/summaries/websites/', methods=["POST"])
 @require_api_key
 def generate_summary_websites():
+    stream_name = f'stream-name-website-summary-{str(uuid4())}'
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(formatter)
+    logger.addHandler(new_handler)
     try:
         data = request.json
         key = data['key']
-        thread = threading.Thread(target=process_summary_websites, args=(data,))
+        thread = threading.Thread(target=process_summary_websites, args=(data,stream_name))
         thread.start()
 
-        stream_name = f'stream-name-website-summary-{str(uuid4())}'
-        new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
-        new_handler.setFormatter(formatter)
-        logger.addHandler(new_handler)
-        logger.info(f'Processing website embeddings for {key}')
+
+        logger.info(f'Processing website summary for {key}')
         logger.removeHandler(new_handler)
 
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
     except Exception as e:
         print(e)
+        logger.info(f'Error:{e}')
+        logger.removeHandler(new_handler)
         raise e
 
-def process_summary_websites(data):
+def process_summary_websites(data,stream_name):
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(formatter)
+    logger.addHandler(new_handler)
     try:
         with app.app_context():
             key = data['key']
@@ -208,33 +219,42 @@ def process_summary_websites(data):
             websites_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
             # result = jsonify(s)
             send_notification_to_client(user_id, key, f'Summary complete for:{key}')
+            logger.info(f'FINISHED Processing website summaries for {key}')
+            logger.removeHandler(new_handler)
             # return result
     except Exception as e:
         print(e)
+        logger.info(f'Error:{e}')
+        logger.removeHandler(new_handler)
         raise e
 
 @app.route('/summaries/youtube/', methods=["POST"])
 @require_api_key
 def generate_summary_youtube():
+    stream_name = f'stream-name-youtube-summary-{str(uuid4())}'
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(formatter)
+    logger.addHandler(new_handler)
     try:
         data = request.json
         key = data['key']
-        thread = threading.Thread(target=process_summary_youtube, args=(data,))
+        thread = threading.Thread(target=process_summary_youtube, args=(data,stream_name))
         thread.start()
 
-        stream_name = f'stream-name-website-summary-{str(uuid4())}'
-        new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
-        new_handler.setFormatter(formatter)
-        logger.addHandler(new_handler)
-        logger.info(f'Processing website embeddings for {key}')
+        logger.info(f'Processing youtube summary for {key}')
         logger.removeHandler(new_handler)
 
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
     except Exception as e:
         print(e)
+        logger.info(f'Error:{e}')
+        logger.removeHandler(new_handler)
         raise e
 
-def process_summary_youtube(data):
+def process_summary_youtube(data,stream_name):
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(formatter)
+    logger.addHandler(new_handler)
     try:
         with app.app_context():
             key = data['key']
@@ -252,9 +272,12 @@ def process_summary_youtube(data):
             video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
             # result = jsonify(s)
             send_notification_to_client(user_id, key, f'Summary complete for:{key}')
+            logger.info(f'FINISHED Processing video summaries for {key}')
             # return result
     except Exception as e:
         print(e)
+        logger.info(f'Error:{e}')
+        logger.removeHandler(new_handler)
         raise e
 
 
