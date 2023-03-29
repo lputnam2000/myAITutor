@@ -5,6 +5,12 @@ import styled from "styled-components";
 const SectionContainer = styled.div`
   margin-bottom: 30px;
   margin-right: 30vw;
+  @media (max-width: 1100px) {
+    margin-right: 15vw;
+  }
+  @media (max-width: 761px) {
+    margin-right: 0;
+  }
 `;
 
 const SectionTitle = styled.h2`
