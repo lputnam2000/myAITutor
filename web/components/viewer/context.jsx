@@ -14,7 +14,7 @@ function ViewerContextProvider({children}) {
     const [summary, setSummary] = useState([])
     const [title, setTitle] = useState('');
     const [fileType, setFileType] = useState('');
-    const [isReady, setIsReady] = useState(false);
+    const [isReady, setIsReady] = useState(true);
 
     const {socket} = useContext(WebsocketContext);
 

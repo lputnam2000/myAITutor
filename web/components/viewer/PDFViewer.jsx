@@ -53,7 +53,7 @@ function PdfViewer() {
         let params = {'key': pdfKey}
         axios.get('/api/user/get_pdf', {params: params}).then(res => {
             setSummary(res.data.documentDetails.summary)
-            setIsReady(res.data.documentDetails.status === 'Ready')
+            // setIsReady(res.data.documentDetails.status === 'Ready')
 
         }).catch(err => {
             console.log(err)
