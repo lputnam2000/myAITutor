@@ -3,9 +3,8 @@ import styled, {keyframes} from 'styled-components'
 import axios from "axios";
 import Upload from "../components/UIComponents/Upload";
 import PDFCard from "../components/PDFCard";
-import {useRouter} from "next/router";
 import Layout from "../Layouts/basicLayout"
-import {AnimatePresence} from "framer-motion";
+import WebsocketContextProvider from "../components/WebsocketContext";
 
 
 const gradientKeyframes = keyframes`
@@ -110,23 +109,24 @@ function Home() {
 
     return (
         <Container>
-            <HomeContainer>
-                <UserFilesContainer>
-                    <Upload handleFile={handleFileUpload}></Upload>
-                    {
-                        userUploads.map((upload, i) => {
-                                return (
-                                    <PDFCard key={`${upload.uuid}-${i}`} uploadId={upload.uuid}
-                                             title={upload.title}
-                                             thumbnail={upload.thumbnail} type={upload.type} onRename={renameTitle}
-                                             onRemove={removeUpload}
-                                    />);
-                            }
-                        )
-                    }
-                </UserFilesContainer>
-            </HomeContainer>
-
+            <WebsocketContextProvider>
+                <HomeContainer>
+                    <UserFilesContainer>
+                        <Upload handleFile={handleFileUpload}></Upload>
+                        {
+                            userUploads.map((upload, i) => {
+                                    return (
+                                        <PDFCard key={`${upload.uuid}-${i}`} uploadId={upload.uuid}
+                                                 title={upload.title}
+                                                 thumbnail={upload.thumbnail} type={upload.type} onRename={renameTitle}
+                                                 onRemove={removeUpload}
+                                        />);
+                                }
+                            )
+                        }
+                    </UserFilesContainer>
+                </HomeContainer>
+            </WebsocketContextProvider>
         </Container>
     );
 }

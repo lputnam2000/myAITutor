@@ -8,6 +8,7 @@ import time
 from flask import app
 from ..utils.utils import  get_mongo_client, send_notification_to_client
 from ..weaviate_embeddings import upload_documents_website, create_website_class
+from ..socket_helper import send_update
 
 ENCODER = tiktoken.get_encoding("gpt2")
 OPEN_AI_KEY = "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"
@@ -209,7 +210,7 @@ def process_web_text(data):
     except Exception as e:
         print(e)   
 
-def process_web_embeddings(data):
+def process_web_embeddings(data, socketio_instance):
     try:
         url = data['url']
         key = data['key']
@@ -228,7 +229,8 @@ def process_web_embeddings(data):
         update_query = {"$set": {"status": "Ready", "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
-        send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+        send_update(socketio_instance, user_id, key, 'Ready')
+        
     except Exception as e:
         print(e)
 

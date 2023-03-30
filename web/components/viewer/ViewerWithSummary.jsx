@@ -34,12 +34,14 @@ const Title = styled.h1`
   margin-bottom: 10px;
   white-space: nowrap;
   overflow: hidden;
+  color: #fbfbff;
 `
 
 const ViewerContainer = styled.div`
   flex: 1;
   height: 100%;
   width: 100%;
+  
 `
 const SummaryContainer = styled.div`
   width: 95%;

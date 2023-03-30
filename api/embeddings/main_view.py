@@ -5,6 +5,7 @@ from .websiteToEmbeddings import process_web_embeddings, process_chrome_extensio
 from .youtubeToEmbeddings import process_youtube_embeddings
 from uuid import uuid4
 import threading
+from ..socket_helper import socketio
 
 embeddings_bp = Blueprint('embeddings', __name__, url_prefix='/embeddings')
 
@@ -14,11 +15,11 @@ def website_to_embedding():
     try:
         data = request.json
         @copy_current_request_context
-        def run_in_context(data, function):
+        def run_in_context(data, function, socketio_instance=None):
             print("test")
-            function(data)
+            function(data, socketio_instance)
 
-        thread_embeddings = threading.Thread(target=run_in_context, args=(data,process_web_embeddings))
+        thread_embeddings = threading.Thread(target=run_in_context, args=(data,process_web_embeddings, socketio))
         thread_embeddings.start()
 
         thread_text = threading.Thread(target=run_in_context, args=(data,process_web_text))

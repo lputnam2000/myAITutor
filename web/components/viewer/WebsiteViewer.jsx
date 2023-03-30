@@ -11,10 +11,12 @@ const MarkdownWrapper = styled.div`
   color: #ffffff;
   padding: 20px;
   max-width: 100%;
-  margin: 0 auto;
+  margin: 5px 10px 10px 10px;
   overflow: auto;
   height: 80vh;
   font-weight: 400;
+  border: 2px solid black;
+  border-radius: 4px;
 
   h1, h2, h3 {
     font-size: 24px;
@@ -50,12 +52,14 @@ const MarkdownWrapper = styled.div`
 
 function WebsiteViewer() {
     const [markdown, setMarkdown] = useState('');
-    const {setSummary, setTitle, setFileType, pdfKey} = useContext(ViewerContext);
+    const {setSummary, setTitle, setFileType, pdfKey, setIsReady} = useContext(ViewerContext);
 
     const getDocumentDetails = (pdfKey) => {
         let params = {'key': pdfKey}
         axios.get('/api/user/get_url_document', {params: params}).then(res => {
             setSummary(res.data.documentDetails.summary)
+            setIsReady(res.data.documentDetails.status === 'Ready')
+
         }).catch(err => {
             console.log(err)
         })

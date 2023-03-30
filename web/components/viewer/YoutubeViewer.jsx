@@ -14,17 +14,19 @@ const Container = styled.div`
     box-shadow: 5px 5px 0px #000000;
     transition: box-shadow 0.1s ease-in-out;
   }
+
   margin-bottom: 10px;
 `
 
 function WebsiteViewer() {
     const [url, setUrl] = useState('');
-    const {setSummary, setTitle, setFileType, pdfKey} = useContext(ViewerContext);
+    const {setSummary, setTitle, setFileType, pdfKey, setIsReady} = useContext(ViewerContext);
 
     const getDocumentDetails = (pdfKey) => {
         let params = {'key': pdfKey}
         axios.get('/api/user/get_url_document', {params: params}).then(res => {
             setSummary(res.data.documentDetails.summary)
+            setIsReady(res.data.documentDetails.status === 'Ready')
         }).catch(err => {
             console.log(err)
         })
@@ -49,9 +51,9 @@ function WebsiteViewer() {
         console.log(url)
     }, [pdfKey])
     return (
-       <Container>
-           {url && <ReactPlayer width={'100%'} height={'100%'} controls={true}  url={url}/>}
-       </Container>
+        <Container>
+            {url && <ReactPlayer width={'100%'} height={'100%'} controls={true} url={url}/>}
+        </Container>
     );
 }
 
