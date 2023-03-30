@@ -5,6 +5,7 @@ from langchain import PromptTemplate
 import os
 import openai
 import json
+from api.utils.ocr import ocr_the_page
 
 
 
@@ -117,6 +118,15 @@ def extract_text(page):
             final_text.append(text)
     return format_for_gpt3(final_text)
 
+def extract_text_ocr(blocks):
+    final_text = []
+    for block in blocks:
+        if block[6] == 0:
+            text = block[4]
+            text = text.replace('\n', " ")
+            final_text.append(text)
+    print(final_text)
+    return format_for_gpt3(final_text)
 
 def generate_context(summary):
     last_el = summary[len(summary)-1]
@@ -132,6 +142,12 @@ def generate_context(summary):
         i -= 1
     return final_context
 
+def needs_ocr(extracted_text):
+    total_tokens = 0
+    for _, tuples_list in extracted_text.items():
+        for tup in tuples_list:
+            total_tokens += tup[1]
+    return total_tokens < 100
 
 def get_summary(doc, start_page=6, end_page=8):
     summary = []
@@ -143,8 +159,14 @@ def get_summary(doc, start_page=6, end_page=8):
         page = doc.load_page(i)
         extracted_text[i] = extract_text(page)
     print('FINISHED EXTRACTING TEXT')
-    
-    # generate summary 
+
+    if needs_ocr(extracted_text):
+        print('OCRing PDF')
+        for i in range(start_page-1, end_page):
+            page = doc.load_page(i)
+            extracted_text[i] = extract_text_ocr(ocr_the_page(page))
+        print('FINISHED OCR EXTRACTION')
+
     cur_page = start_page-1
     start = cur_page
     cur_block = 0
