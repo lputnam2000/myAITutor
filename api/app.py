@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify, g
+from api.socket_helper import socketio
+from flask_socketio import SocketIO, join_room, leave_room
 from http import HTTPStatus
 from dotenv import load_dotenv
 import fitz
@@ -10,11 +12,14 @@ from api.summary import get_summary, get_summary_string
 from api.utils.utils import require_api_key, get_mongo_client, send_notification_to_client
 from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_pdf_class
 from api.utils.aws import get_pdf
+from api.socket_helper import send_update
 from logging.config import dictConfig
 import threading
 import nltk
 load_dotenv()
 nltk.download('punkt')
+
+
 
 dictConfig({
     'version': 1,
@@ -41,7 +46,7 @@ def create_app():
     return app
 
 app = create_app()
-
+socketio.init_app(app, cors_allowed_origins="*")
 
 def get_s3_client():
     s3 = getattr(g, 's3', None)
@@ -222,5 +227,33 @@ def process_summary_youtube(data):
         raise e
 
 
+
 if __name__ =="__main__":
-    app.run(host='0.0.0.0', debug=True)
+    socketio.run(app, host='0.0.0.0', debug=True)
+
+
+
+def join_user_room(user_id):
+    room = user_id
+    join_room(room)
+    print(f"Joined room: {room}")  # Add this print statement
+    return room
+
+def leave_user_room(user_id):
+    room = user_id
+    leave_room(room)
+    return room
+
+# Use the token or user_id you receive from the Next.js frontend
+@socketio.on('join')
+def on_join(data):
+    user_id = data['userId']
+    print(f'New Connection: {user_id}')
+    join_user_room(user_id)
+    send_update(socketio, user_id, 'user_update', 'This Works')
+
+@socketio.on('leave')
+def on_leave(data):
+    user_id = data['userId']
+    print(f'Closing Connection: {user_id}')
+    leave_user_room(user_id)

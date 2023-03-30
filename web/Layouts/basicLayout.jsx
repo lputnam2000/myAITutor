@@ -16,10 +16,10 @@ export default function BasicLayout({children}) {
     return (
         <>
             <Navbar/>
-            <Main>{children}
+            <Main>
+                {children}
                 <FeedbackOverlay/>
             </Main>
-
         </>
     )
 }
