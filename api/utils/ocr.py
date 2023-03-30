@@ -22,5 +22,4 @@ def ocr_the_page(page):
 
     # return ocr_pdf[0] this causes an error. idk why
     blocks = ocr_pdf[0].get_text('blocks')  # ...and extract text from the page
-    print(blocks)
     return blocks
