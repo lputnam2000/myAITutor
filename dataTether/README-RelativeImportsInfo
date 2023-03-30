@@ -1,0 +1,3 @@
+To get relative imports to work, you must run this while in the directory before dataTether:
+
+set PYTHONPATH=%CD% 
