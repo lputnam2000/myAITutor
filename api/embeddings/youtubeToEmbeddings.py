@@ -9,6 +9,8 @@ import requests
 from datetime import datetime, timedelta
 import tiktoken
 from nltk import tokenize
+from ..socket_helper import send_update
+
 
 """
 1. Download the Video, check availability
@@ -141,9 +143,10 @@ if __name__ == "__main__":
     formatted_subtitles = srt_to_array(transcripts)
     print('#Transcripts Generated')
 
-def process_youtube_embeddings(data):
+def process_youtube_embeddings(data, socketio_instance):
     try:
         url = data['url']
+        user_id = data['user_id']
         key = data['key']
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         formatted_subtitles = get_video_transcript(url)
@@ -160,7 +163,8 @@ def process_youtube_embeddings(data):
         update_query = {"$set": {"status": "Ready", "transcript": formatted_subtitles}}
         # Update the document matching the UUID with the new values
         youtube_collection.update_one({"_id": key}, update_query)
-        # send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+        send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
+
     except Exception as e:
         print(e)
         raise e

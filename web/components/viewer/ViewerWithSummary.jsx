@@ -30,18 +30,18 @@ const InnerContainer = styled.div`
 const Title = styled.h1`
   font-size: 40px;
   margin-left: 30px;
-  font-family: var(--font-b);
   margin-bottom: 10px;
+  text-decoration: underline;
   white-space: nowrap;
   overflow: hidden;
-  color: #fbfbff;
+  color: #48fdce;
 `
 
 const ViewerContainer = styled.div`
   flex: 1;
   height: 100%;
   width: 100%;
-  
+
 `
 const SummaryContainer = styled.div`
   width: 95%;

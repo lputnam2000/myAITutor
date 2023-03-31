@@ -88,7 +88,7 @@ def webhook_testing():
 def generate_pdf_embeddings():
     try:
         data = request.json
-        thread = threading.Thread(target=process_pdf_embeddings, args=(data,))
+        thread = threading.Thread(target=process_pdf_embeddings, args=(data, socketio))
         thread.start()
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
     except Exception as e:
@@ -137,7 +137,7 @@ def process_summary_pdf(data):
         print(e)
         raise e
 
-def process_pdf_embeddings(data):
+def process_pdf_embeddings(data, socketio_instance):
     try:
         with app.app_context():
             bucket = data['bucket']
@@ -151,7 +151,7 @@ def process_pdf_embeddings(data):
             class_name = create_pdf_class(key, client)
             upload_documents_pdf(documents, client, class_name)
             print('UPLOADED DOCUMENTS')
-            send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+            send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
             print(f'FINISHED EMBEDDINGS for - {key}')
     except Exception as e:
         print(e)
@@ -250,7 +250,7 @@ def on_join(data):
     user_id = data['userId']
     print(f'New Connection: {user_id}')
     join_user_room(user_id)
-    send_update(socketio, user_id, 'user_update', 'This Works')
+    send_update(socketio, user_id, 'user_update', {'msg': 'This Works'})
 
 @socketio.on('leave')
 def on_leave(data):

@@ -195,17 +195,19 @@ class WebsiteTextExtracter:
 #         print(e)
 #         raise e
 
-def process_web_text(data):
+def process_web_text(data, socketio_instance):
     try:
         print("ADDING WEBSITE TEXT TO MONGO")
         url = data['url']
         website_text = get_text_from_url(url)
-        # print(website_text)
+        user_id = data['user_id']
         key = data['key']
         db_client = get_mongo_client()
         data_db = db_client["data"]
         websites_collection = data_db["SummaryWebsites"]
-        websites_collection.update_one({"_id": key}, {"$set": {"content": website_text}})
+        websites_collection.update_one({"_id": key}, {"$set": {"content": website_text, "isWebsiteReady": True}})
+        send_update(socketio_instance, user_id, key,  {'key': 'isWebsiteReady', 'value': True})
+
         print("WEBSITE ADDED TEXT TO MONGO")
     except Exception as e:
         print(e)   
@@ -229,12 +231,12 @@ def process_web_embeddings(data, socketio_instance):
         update_query = {"$set": {"status": "Ready", "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
-        send_update(socketio_instance, user_id, key, 'Ready')
+        send_update(socketio_instance, user_id, key, {'key': 'isReady', 'value': True})
         
     except Exception as e:
         print(e)
 
-def process_chrome_extension_embeddings(data):
+def process_chrome_extension_embeddings(data, socketio_instance):
     try:
         html = data['content']
         user_id = data['user_id']
@@ -253,7 +255,8 @@ def process_chrome_extension_embeddings(data):
         update_query = {"$set": {"status": "Ready", "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
-        send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+        send_update(socketio_instance, user_id, key, {'key': 'isReady', 'value': True})
+
     except Exception as e:
         print(e)
         raise e

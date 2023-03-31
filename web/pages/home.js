@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styled from 'styled-components'
 import axios from "axios";
 import Upload from "../components/UIComponents/Upload";
@@ -23,8 +23,45 @@ const UserFilesContainer = styled.div`
   justify-content: center;
 `
 
+const EmptyCard = styled.div`
+  visibility: hidden;
+  width: 200px;
+  height: 225px;
+`;
+
 function Home() {
     const [userUploads, setUserUploads] = useState([]);
+
+    const [cardsPerRow, setCardsPerRow] = useState(8);
+    const filesContainerRef = useRef(null);
+
+    useEffect(() => {
+        const calculateCardsPerRow = () => {
+            const cardWidth = 200; // The width of your cards
+            const gapWidth = 10; // The gap between cards
+            const containerWidth = filesContainerRef.current.clientWidth;
+
+            return Math.floor((containerWidth + gapWidth) / (cardWidth + gapWidth)) - 1;
+        };
+        const handleResize = () => {
+            if (filesContainerRef.current) {
+                let numCards = calculateCardsPerRow()
+                if (numCards <= 0 || numCards < userUploads.length) {
+                    setCardsPerRow(0)
+                } else {
+                    setCardsPerRow(calculateCardsPerRow());
+                }
+                console.log(numCards)
+            }
+        };
+        handleResize()
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, [filesContainerRef, userUploads]);
+
 
     const renameTitle = (uploadId, type, newTitle) => {
         let params = {key: uploadId, fileType: type, newTitle: newTitle};
@@ -88,7 +125,7 @@ function Home() {
         <Container>
             <WebsocketContextProvider>
                 <HomeContainer>
-                    <UserFilesContainer>
+                    <UserFilesContainer ref={filesContainerRef}>
                         <Upload handleFile={handleFileUpload}></Upload>
                         {
                             userUploads.map((upload, i) => {
@@ -100,6 +137,10 @@ function Home() {
                                         />);
                                 }
                             )
+                        }
+                        {Array(cardsPerRow)
+                            .fill(0)
+                            .map((_, i) => <EmptyCard key={`empty-${i}`}/>)
                         }
                     </UserFilesContainer>
                 </HomeContainer>

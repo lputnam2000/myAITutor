@@ -18,13 +18,13 @@ const Container = styled.div`
   margin-bottom: 10px;
 `
 
-function WebsiteViewer() {
+function YoutubeViewer() {
     const [url, setUrl] = useState('');
     const {setSummary, setTitle, setFileType, pdfKey, setIsReady} = useContext(ViewerContext);
 
     const getDocumentDetails = (pdfKey) => {
         let params = {'key': pdfKey}
-        axios.get('/api/user/get_url_document', {params: params}).then(res => {
+        axios.get('/api/user/get_youtube_video', {params: params}).then(res => {
             setSummary(res.data.documentDetails.summary)
             setIsReady(res.data.documentDetails.status === 'Ready')
         }).catch(err => {
@@ -32,15 +32,14 @@ function WebsiteViewer() {
         })
     }
     useEffect(() => {
-        console.log('called', pdfKey)
         if (!pdfKey) return
         let params = {'key': pdfKey}
         axios.get('/api/user/get_youtube_video', {params: params}).then(res => {
-            console.log(res.data)
             setUrl(res.data.documentDetails.url)
             setSummary(res.data.documentDetails.summary)
             setTitle(res.data.documentDetails.title)
             setFileType(res.data.documentDetails.type)
+            setIsReady(res.data.documentDetails.status === 'Ready')
         }).catch(err => {
             console.log(err)
         })
@@ -48,7 +47,6 @@ function WebsiteViewer() {
         return () => {
             timer = null
         }
-        console.log(url)
     }, [pdfKey])
     return (
         <Container>
@@ -57,4 +55,4 @@ function WebsiteViewer() {
     );
 }
 
-export default WebsiteViewer;
+export default YoutubeViewer;

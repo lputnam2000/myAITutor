@@ -1,9 +1,8 @@
-import React, {useContext, useMemo} from 'react';
-import styled, {keyframes} from "styled-components";
-import {Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
+import React, {useContext, useEffect, useMemo, useState} from 'react';
+import styled, {keyframes, css} from "styled-components";
+import {Spinner, Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
 import SemanticSearch from "./SemanticSearch";
 import CollapsibleSummary from "./CollapsibleSummary";
-import {SmallAddIcon} from "@chakra-ui/icons";
 import GenerateSummary from "./GenerateSummary";
 import {ViewerContext} from "./context";
 
@@ -33,40 +32,85 @@ const fadeIn = keyframes`
   }
 `;
 
-const LoadingOverlay = styled.div`
+
+const LoadingDiv = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
-  justify-content: center;
   align-items: center;
-  flex-direction: column;
-  z-index: 999;
-
+  justify-content: center;
+  width: 100%;
+  height: 100%;
   animation: ${fadeIn} 1s ease-in-out;
-
-  & > p {
-    font-size: 1.5rem;
-    color: #fbfbff;
-    margin-top: 1rem;
-    text-align: center;
-  }
+`;
+const LoadingText = styled.div`
+  padding-left: 10px;
+  font-size: 1.2rem;
+  color: #48fdce;
+  margin-left: 10px;
+  margin-right: 10px;
 `;
 
 
-const SubHeading = styled.div`
-  font-weight: bold;
-  font-size: 1.5rem;
-  margin-top: 5px;
-`
-const SummaryText = styled.div`
-`
 const SummaryContainer = styled.div`
 `
 
+const Joke = styled.div`
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  color: #20ee5f;
+  ${(props) =>
+          props.fade &&
+          css`
+            opacity: 1;
+          `}
+`
+const SpinnerWrapper = styled.div`
+  width: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
+`
+
+function LoadingContainer({}) {
+    const [jokeNumber, setJokeNumber] = useState(0);
+    const [fade, setFade] = useState(true);
+
+    const loadingTexts = [
+        'Why does it take a while for our chimp to preprocess your document? It\'s got its paws full juggling all those pages!',
+        'Chimps might be great at climbing trees, but they\'re not the fastest learners. Hang tight while we process your document!',
+        'Hang in there while we process your document. It might be taking a while, but trust us, we are not monkeying around!',
+        'Our chimp\'s are making there way through your data, one banana break at a time! Thanks for your patience.',
+        'Patience is key when you\'re a chimp dealing with important information. Stick around while we swing our way through your content!'
+    ]
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setFade(false);
+            setTimeout(() => {
+                setJokeNumber(Math.floor(Math.random() * loadingTexts.length));
+                setFade(true);
+            }, 1000);
+        }, 30000);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (<LoadingDiv>
+            <SpinnerWrapper>
+                <Spinner
+                    thickness='4px'
+                    speed='0.6s'
+                    emptyColor='gray.200'
+                    color='#48fdce'
+                    size='xl'
+                />
+            </SpinnerWrapper>
+
+            <LoadingText>Chewing through the info jungle, hang tight! 🌿🦍 &nbsp;
+                <Joke fade={fade}>{loadingTexts[jokeNumber]}</Joke></LoadingText>
+        </LoadingDiv>
+    )
+}
 
 function Summary({}) {
     const {summary, pdfKey, fileType, isReady} = useContext(ViewerContext)
@@ -74,36 +118,34 @@ function Summary({}) {
 
     return (
         <Container>
-            {!isReady && (
-                <LoadingOverlay>
-                    <p>The document is being processed.</p>
-                    <p>Please wait for some time for it to be ready.</p>
-                </LoadingOverlay>
-            )}
+            {!isReady ? (
+                    <LoadingContainer/>
+                ) :
 
-            <Tabs height={'100%'} variant='enclosed' isFitted>
-                <TabList height={'5%'}>
-                    <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
-                    <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Search</Tab>
-                </TabList>
+                <Tabs height={'100%'} variant='enclosed' isFitted>
+                    <TabList height={'5%'}>
+                        <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
+                        <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Search</Tab>
+                    </TabList>
 
-                <TabPanels height={'94%'}>
-                    <TabPanel style={{height: '100%', padding: '0px'}}>
-                        <SummaryContainer>
-                            <GenerateSummary/>
-                            {
-                                summary.map((s, idx) => <CollapsibleSummary fileType={fileType} isOpen={idx === 0}
-                                                                            key={idx}
-                                                                            summaryJson={s}/>)
-                            }
-                            {/*{SummaryPanel}*/}
-                        </SummaryContainer>
-                    </TabPanel>
-                    <TabPanel style={{height: '100%'}}>
-                        <SemanticSearch uploadId={pdfKey}/>
-                    </TabPanel>
-                </TabPanels>
-            </Tabs>
+                    <TabPanels height={'94%'}>
+                        <TabPanel style={{height: '100%', padding: '0px', marginRight: '10px'}}>
+                            <SummaryContainer>
+                                <GenerateSummary/>
+                                {
+                                    summary.map((s, idx) => <CollapsibleSummary fileType={fileType} isOpen={idx === 0}
+                                                                                key={idx}
+                                                                                summaryJson={s}/>)
+                                }
+                                {/*{SummaryPanel}*/}
+                            </SummaryContainer>
+                        </TabPanel>
+                        <TabPanel style={{height: '100%'}}>
+                            <SemanticSearch uploadId={pdfKey}/>
+                        </TabPanel>
+                    </TabPanels>
+                </Tabs>
+            }
         </Container>
     );
 }

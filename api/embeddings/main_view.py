@@ -16,13 +16,12 @@ def website_to_embedding():
         data = request.json
         @copy_current_request_context
         def run_in_context(data, function, socketio_instance=None):
-            print("test")
             function(data, socketio_instance)
 
-        thread_embeddings = threading.Thread(target=run_in_context, args=(data,process_web_embeddings, socketio))
+        thread_embeddings = threading.Thread(target=run_in_context, args=(data, process_web_embeddings, socketio))
         thread_embeddings.start()
-
-        thread_text = threading.Thread(target=run_in_context, args=(data,process_web_text))
+        print('processing thread')
+        thread_text = threading.Thread(target=run_in_context, args=(data, process_web_text, socketio))
         thread_text.start()
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
     except Exception as e:
@@ -34,12 +33,12 @@ def website_to_embedding():
 def extension_to_embedding():
     try:
         data = request.json
-        @copy_current_request_context
-        def run_in_context(data, function):
-            print("test")
-            function(data)
 
-        thread = threading.Thread(target=run_in_context, args=(data,process_chrome_extension_embeddings))
+        @copy_current_request_context
+        def run_in_context(data, function, socketio_instance=None):
+            function(data, socketio_instance)
+
+        thread = threading.Thread(target=run_in_context, args=(data,process_chrome_extension_embeddings, socketio))
         thread.start()
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
 
@@ -52,11 +51,12 @@ def extension_to_embedding():
 def video_to_embedding():
     try:
         data = request.json
+        
         @copy_current_request_context
-        def run_in_context(data, function):
-            print("test")
-            function(data)
-        thread = threading.Thread(target=run_in_context, args=(data,process_youtube_embeddings))
+        def run_in_context(data, function, socketio_instance=None):
+            function(data, socketio_instance)
+
+        thread = threading.Thread(target=run_in_context, args=(data,process_youtube_embeddings, socketio))
         thread.start()
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
 

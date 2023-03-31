@@ -1,11 +1,10 @@
-import {createContext, createRef, useContext, useEffect, useRef, useState} from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
 export const ViewerContext = createContext();
 
 import React from 'react';
 import {WebsocketContext} from "../WebsocketContext";
-import io from "socket.io-client";
 
 function ViewerContextProvider({children}) {
     const router = useRouter()
@@ -14,8 +13,8 @@ function ViewerContextProvider({children}) {
     const [summary, setSummary] = useState([])
     const [title, setTitle] = useState('');
     const [fileType, setFileType] = useState('');
-    const [isReady, setIsReady] = useState(true);
-
+    const [isReady, setIsReady] = useState(false);
+    const [isWebsiteReady, setIsWebsiteReady] = useState(false);
     const {socket} = useContext(WebsocketContext);
 
     useEffect(() => {
@@ -30,17 +29,20 @@ function ViewerContextProvider({children}) {
 
         // Listen for specific messages
         const handleMessage = (data) => {
-            if (data === 'Ready') {
-                setIsReady(true)
+            let jsonData = JSON.parse(data)
+            if (jsonData['key'] === 'isReady') {
+                setIsReady(jsonData['value'])
+            } else if (jsonData['key'] === 'isWebsiteReady') {
+                setIsWebsiteReady(jsonData['value'])
             }
             console.log('Message received:', data);
         };
 
-        socket.on(`${pdfKey}`, handleMessage);
+        socket.on(pdfKey, handleMessage);
 
         // Clean up the listener when the component is unmounted
         return () => {
-            socket.off(`${pdfKey}`, handleMessage);
+            socket.off(pdfKey, handleMessage);
         };
     }, [socket, pdfKey]);
 
@@ -58,7 +60,9 @@ function ViewerContextProvider({children}) {
             fileType,
             setFileType,
             isReady,
-            setIsReady
+            setIsReady,
+            isWebsiteReady,
+            setIsWebsiteReady
         }}>
             {children}
         </ViewerContext.Provider>
