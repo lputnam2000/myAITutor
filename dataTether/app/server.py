@@ -7,6 +7,7 @@ from flask_cors import CORS
 from dataTether.config import Config
 import eventlet
 import signal
+import json
 
 eventlet.monkey_patch()
 
@@ -14,42 +15,64 @@ app = Flask(__name__)
 app.config.from_object(Config)
 CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, async_mode='threading', ping_timeout=30, ping_interval=60, cors_allowed_origins='*')
-redis_store = redis.StrictRedis(
+
+pool = redis.ConnectionPool(
     host=app.config['REDIS_HOST'],
     port=app.config['REDIS_PORT'],
     db=app.config['REDIS_DB'],
-    password=app.config['REDIS_PASSWORD']
+    password=app.config['REDIS_PASSWORD'],
+    retry_on_timeout=True,
+    max_connections=10,  # maximum number of connections in the pool
+    socket_timeout=30,    # timeout for socket operations
+    socket_keepalive=True,
+    health_check_interval=30  # interval to check the health of the connections
 )
-pubsub = redis_store.pubsub()
+redis_store = redis.Redis(connection_pool=pool)
+
+pubsub = None
 worker = None
 
 def start_worker():
-    global worker
+    global worker, pubsub
+    pubsub = redis_store.pubsub()
     worker = threading.Thread(target=listen_for_updates)
     worker.start()
 
 def listen_for_updates():
-    pubsub.psubscribe('__keyspace@0__:user:*')
-    for message in pubsub.listen():
-        print(message)
-        if message['type'] == 'pmessage':
-            broken_up_key = message['channel'].decode('utf-8').split(':')
-            if broken_up_key[1] == 'user':
-                user_id = broken_up_key[2] # Assumes key is 'user:<user_id>'
-                value = redis_store.get('user:'+str(user_id))
-                if value is not None:
-                    socketio.emit('redis_update', str(value), room=user_id)
-                    print("emmitting: ", value)
-        print("handled")
+    global pubsub, redis_store
+    while True:
+        try:
+            if pubsub == None:
+                pubsub = redis_store.pubsub()
+            pubsub.psubscribe('__keyspace@0__:user:*')
+            pubsub.subscribe('push_to_user')
+            for message in pubsub.listen():
+                if message['type'] == 'message':
+                    if message['channel'].decode('utf-8') == "push_to_user":
+                        data = json.loads(message['data'])
+                        user_id = data['userid']
+                        content = data['content']
+                        if user_id:
+                            socketio.emit('embeddings_processing', str(content), room=user_id)
+                if message['type'] == 'pmessage':
+                    broken_up_key = message['channel'].decode('utf-8').split(':')
+                    if broken_up_key[1] == 'user':
+                        user_id = broken_up_key[2] # Assumes key is 'user:<user_id>'
+                        value = redis_store.get('user:'+str(user_id))
+                        if value is not None:
+                            socketio.emit('redis_update', str(value), room=user_id)
+        except (redis.exceptions.TimeoutError, redis.exceptions.ConnectionError):
+            print("Redis connection error, reconnecting...")
+            redis_store.connection_pool.disconnect()
+            redis_store = redis.Redis(connection_pool=pool)
+            pubsub = redis_store.pubsub()
 
 @socketio.on('connect')
 def handle_connect():
     print("connection being made!")
     token = request.args.get('token')
-    print("token: ", token)
     try:
         payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-        print("payload: ",payload)
         user_id = payload.get('sub')
         print("user_id: ", user_id)
         join_room(user_id)
