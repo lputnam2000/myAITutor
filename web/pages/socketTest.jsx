@@ -18,7 +18,7 @@ function TestPage() {
   return (
     <div>
       <h1>Test Page</h1>
-      <p>Variable State: {variableState}</p>
+      <p>Variable State: <span>{variableState}</span></p>
       <input type="text" value={inputData} onChange={handleInputDataChange} />
       <button onClick={handleSendData}>Send Data</button>
     </div>

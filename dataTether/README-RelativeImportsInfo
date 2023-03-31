@@ -1,3 +1,10 @@
 To get relative imports to work, you must run this while in the directory before dataTether:
 
 set PYTHONPATH=%CD% 
+
+or for a more comprehensive command from the root dir of this repo:
+
+`set PYTHONPATH=%CD% && python ./dataTether/app/server.py`
+
+NOTE: You must enable keyspace events on the redis db:
+`CONFIG SET notify-keyspace-events KEA`

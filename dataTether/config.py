@@ -1,5 +1,6 @@
 class Config:
-    SECRET_KEY = 'your-secret-key-here'
-    REDIS_HOST = 'localhost'
-    REDIS_PORT = 6379
+    SECRET_KEY = 'testkey'
+    REDIS_HOST = 'redis-18322.c8.us-east-1-2.ec2.cloud.redislabs.com'
+    REDIS_PORT = 18322
     REDIS_DB = 0
+    REDIS_PASSWORD= "Pq31scfJnfOzfmoJwnOx0tFpUdli98jM"

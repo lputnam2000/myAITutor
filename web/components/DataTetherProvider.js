@@ -21,8 +21,10 @@ const DataTetherProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('/api/user/getDataTetherJWT');
-        setAuthToken(response.data.token);
+        if (!authToken) {
+            const response = await axios.get('/api/user/getDataTetherJWT');
+            setAuthToken(response.data.token);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -42,7 +44,8 @@ const DataTetherProvider = ({ children }) => {
       });
 
       newSocket.on('redis_update', (data) => {
-        setVariableState(data);
+        console.log("redis_update: ", data);
+        setVariableState(data.toString());
       });
 
       setSocket(newSocket);
@@ -50,6 +53,7 @@ const DataTetherProvider = ({ children }) => {
 
     return () => {
       if (socket) {
+        console.log("shutting down data tether socket")
         socket.disconnect();
       }
     };
