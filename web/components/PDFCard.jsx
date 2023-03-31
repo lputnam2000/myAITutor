@@ -17,7 +17,6 @@ import {
 import {HiDotsVertical} from 'react-icons/hi'
 import {useRouter} from "next/router";
 import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
-import axios from "axios";
 import {AnimatePresence, motion,} from 'framer-motion';
 
 const Container = styled.div`
@@ -32,10 +31,10 @@ const Container = styled.div`
   overflow: hidden;
   transition: box-shadow ease-in-out .1s;
   background-color: #242933;
-  color: #ef59e8;
+  color: #3fd9b1;
 
   &:hover {
-    box-shadow: 4px 4px 0px #ef59e8;
+    box-shadow: 4px 4px 0px #48fdce;
   }
 `;
 const ImageContainer = styled.div`
@@ -70,7 +69,7 @@ const Tag = styled.div`
   font-size: 13px;
   padding: 3px 8px;
   border-radius: 10px;
-  background-color: #ce49fa;
+  background-color: #48fdce;
   color: #242933;
 `
 
@@ -127,7 +126,7 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename}) {
                 })
                 .catch(error => console.error(error));
         }
-    }, [type])
+    }, [type, uploadId])
 
     const openSummary = () => {
         router.push(`/summary?uploadId=${uploadId}&fileType=${type}`)

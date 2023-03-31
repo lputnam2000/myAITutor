@@ -13,20 +13,21 @@ import {defaultLayoutPlugin} from "@react-pdf-viewer/default-layout";
 
 
 const Container = styled.div`
+
   border: 2px black solid;
   height: 500px;
   background-color: #292929;
   border-radius: 3px;
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-left: 10px;
+  margin-right: 10px;
   padding-bottom: 32px;
 
   @media (min-width: 750px) {
-    margin-left: 30px;
-    margin-right: 30px;
+    margin-left: auto;
+    margin-right: auto;
     border: 2px black solid;
     height: 750px;
-    width: 80%;
+    width: 95%;
     padding-bottom: 32px;
     border-radius: 3px;
 
@@ -46,12 +47,13 @@ function PdfViewer() {
     const readingIndicatorPluginInstance = readingIndicatorPlugin();
     const {ReadingIndicator} = readingIndicatorPluginInstance;
     const [pdfFile, setPdfFile] = useState('');
-    const {pdfKey, setSummary, setTitle, setFileType} = useContext(ViewerContext);
+    const {pdfKey, setSummary, setTitle, setFileType, setIsReady} = useContext(ViewerContext);
 
     const getDocumentDetails = (pdfKey) => {
         let params = {'key': pdfKey}
         axios.get('/api/user/get_pdf', {params: params}).then(res => {
             setSummary(res.data.documentDetails.summary)
+            setIsReady(res.data.documentDetails.status === 'Ready')
         }).catch(err => {
             console.log(err)
         })
@@ -65,6 +67,7 @@ function PdfViewer() {
             setSummary(res.data.documentDetails.summary)
             setTitle(res.data.documentDetails.title)
             setFileType(res.data.documentDetails.type)
+            setIsReady(res.data.documentDetails.status === 'Ready')
         }).catch(err => {
             console.log(err)
         })

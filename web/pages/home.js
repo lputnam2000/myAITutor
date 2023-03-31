@@ -1,35 +1,17 @@
-import React, {useEffect, useState} from "react";
-import styled, {keyframes} from 'styled-components'
+import React, {useEffect, useRef, useState} from "react";
+import styled from 'styled-components'
 import axios from "axios";
 import Upload from "../components/UIComponents/Upload";
 import PDFCard from "../components/PDFCard";
-import {useRouter} from "next/router";
 import Layout from "../Layouts/basicLayout"
-import {AnimatePresence} from "framer-motion";
-
-
-const gradientKeyframes = keyframes`
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-`
+import WebsocketContextProvider from "../components/WebsocketContext";
 
 const HomeContainer = styled.div`
-  margin: 0 30px 30px 30px;
   padding: 30px;
 `
 
 const Container = styled.div`
-  //background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0);
-  background-size: 400% 400%;
-  animation: ${gradientKeyframes} 300s ease infinite;
-  min-height: 100vh;
+  height: 100%;
 `
 
 
@@ -38,17 +20,48 @@ const UserFilesContainer = styled.div`
   grid-template-columns: repeat(auto-fit, 200px);
   grid-auto-flow: dense;
   gap: 10px;
+  justify-content: center;
 `
 
-const HomeHeading = styled.h1`
-  font-size: 30px;
-  margin-bottom: 10px;
-  cursor: default;
-
-`
+const EmptyCard = styled.div`
+  visibility: hidden;
+  width: 200px;
+  height: 225px;
+`;
 
 function Home() {
     const [userUploads, setUserUploads] = useState([]);
+
+    const [cardsPerRow, setCardsPerRow] = useState(8);
+    const filesContainerRef = useRef(null);
+
+    useEffect(() => {
+        const calculateCardsPerRow = () => {
+            const cardWidth = 200; // The width of your cards
+            const gapWidth = 10; // The gap between cards
+            const containerWidth = filesContainerRef.current.clientWidth;
+
+            return Math.floor((containerWidth + gapWidth) / (cardWidth + gapWidth)) - 1;
+        };
+        const handleResize = () => {
+            if (filesContainerRef.current) {
+                let numCards = calculateCardsPerRow()
+                if (numCards <= 0 || numCards < userUploads.length) {
+                    setCardsPerRow(0)
+                } else {
+                    setCardsPerRow(calculateCardsPerRow());
+                }
+                console.log(numCards)
+            }
+        };
+        handleResize()
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, [filesContainerRef, userUploads]);
+
 
     const renameTitle = (uploadId, type, newTitle) => {
         let params = {key: uploadId, fileType: type, newTitle: newTitle};
@@ -110,23 +123,28 @@ function Home() {
 
     return (
         <Container>
-            <HomeContainer>
-                <UserFilesContainer>
-                    <Upload handleFile={handleFileUpload}></Upload>
-                    {
-                        userUploads.map((upload, i) => {
-                                return (
-                                    <PDFCard key={`${upload.uuid}-${i}`} uploadId={upload.uuid}
-                                             title={upload.title}
-                                             thumbnail={upload.thumbnail} type={upload.type} onRename={renameTitle}
-                                             onRemove={removeUpload}
-                                    />);
-                            }
-                        )
-                    }
-                </UserFilesContainer>
-            </HomeContainer>
-
+            <WebsocketContextProvider>
+                <HomeContainer>
+                    <UserFilesContainer ref={filesContainerRef}>
+                        <Upload handleFile={handleFileUpload}></Upload>
+                        {
+                            userUploads.map((upload, i) => {
+                                    return (
+                                        <PDFCard key={`${upload.uuid}-${i}`} uploadId={upload.uuid}
+                                                 title={upload.title}
+                                                 thumbnail={upload.thumbnail} type={upload.type} onRename={renameTitle}
+                                                 onRemove={removeUpload}
+                                        />);
+                                }
+                            )
+                        }
+                        {Array(cardsPerRow)
+                            .fill(0)
+                            .map((_, i) => <EmptyCard key={`empty-${i}`}/>)
+                        }
+                    </UserFilesContainer>
+                </HomeContainer>
+            </WebsocketContextProvider>
         </Container>
     );
 }
