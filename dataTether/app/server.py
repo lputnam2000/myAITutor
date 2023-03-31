@@ -3,10 +3,14 @@ from flask_socketio import SocketIO, emit
 import jwt
 import redis
 import threading
+from flask_cors import CORS
+from dataTether.config import Config
+
 
 app = Flask(__name__)
-app.config.from_object('config.Config')
-socketio = SocketIO(app, ping_timeout=30, ping_interval=10)
+app.config.from_object(Config)
+CORS(app, resources={r"/*": {"origins": "*"}})
+socketio = SocketIO(app, ping_timeout=30, ping_interval=10, cors_allowed_origins='*')
 redis_store = redis.StrictRedis(host=app.config['REDIS_HOST'], port=app.config['REDIS_PORT'], db=app.config['REDIS_DB'])
 pubsub = redis_store.pubsub()
 worker = None
@@ -28,6 +32,7 @@ def listen_for_updates():
 
 @socketio.on('connect')
 def handle_connect():
+    print("connection being made!")
     token = request.args.get('token')
     try:
         payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
@@ -45,4 +50,4 @@ def handle_disconnect():
 
 if __name__ == '__main__':
     start_worker()
-    socketio.run(app, host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5050)
