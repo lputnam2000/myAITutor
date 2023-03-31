@@ -53,7 +53,7 @@ def listen_for_updates():
                         user_id = data['userid']
                         content = data['content']
                         if user_id:
-                            socketio.emit('embeddings_processing', str(content), room=user_id)
+                            socketio.emit('push_to_user', str(content), room=user_id)
                 if message['type'] == 'pmessage':
                     broken_up_key = message['channel'].decode('utf-8').split(':')
                     if broken_up_key[1] == 'user':
@@ -76,8 +76,9 @@ def handle_connect():
         user_id = payload.get('sub')
         print("user_id: ", user_id)
         join_room(user_id)
-        #redis_key = f'user:{user_id}'
-        #emit('redis_update', redis_store.get(redis_key))
+        value = redis_store.get('user:'+str(user_id))
+        if value is not None:
+            socketio.emit('redis_update', str(value), room=user_id)
     except (jwt.InvalidSignatureError, jwt.DecodeError):
         print("JWT Authentication Error")
         pass
