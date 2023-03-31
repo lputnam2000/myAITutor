@@ -41,7 +41,6 @@ const Settings = () => {
                     <Section
                         ref={extensionKeyRef}
                         title="Extension Key"
-                        content="Phasellus et libero vel enim tincidunt imperdiet. Vivamus et ante facilisis, commodo ligula id, semper nisl."
                     >
                         <ExtensionInformation/>
                     </Section>

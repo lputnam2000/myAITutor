@@ -39,7 +39,7 @@ const Container = styled.div`
 
   &:hover {
     border-radius: 20px;
-    background-color: #2ef162;
+    background-color: #48fdce;
     color: ${props => props.theme.colors.secondary};
   }
 `;

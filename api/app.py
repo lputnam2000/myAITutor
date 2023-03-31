@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify, g
+from api.socket_helper import socketio
+from flask_socketio import SocketIO, join_room, leave_room
 from http import HTTPStatus
 from dotenv import load_dotenv
 import fitz
@@ -10,6 +12,7 @@ from api.summary import get_summary, get_summary_string
 from api.utils.utils import require_api_key, get_mongo_client, send_notification_to_client
 from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_pdf_class
 from api.utils.aws import get_pdf
+from api.socket_helper import send_update
 from logging.config import dictConfig
 import threading
 import nltk
@@ -18,6 +21,8 @@ import logging
 from uuid import uuid4
 load_dotenv()
 nltk.download('punkt')
+
+
 
 dictConfig({
     'version': 1,
@@ -44,6 +49,7 @@ def create_app():
     return app
 
 app = create_app()
+socketio.init_app(app, cors_allowed_origins="*")
 logger = logging.getLogger('myapp')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 
@@ -87,7 +93,7 @@ def webhook_testing():
 def generate_pdf_embeddings():
     try:
         data = request.json
-        thread = threading.Thread(target=process_pdf_embeddings, args=(data,))
+        thread = threading.Thread(target=process_pdf_embeddings, args=(data, socketio))
         thread.start()
         return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
     except Exception as e:
@@ -155,7 +161,7 @@ def process_summary_pdf(data,stream_name):
         logger.removeHandler(new_handler)
         raise e
 
-def process_pdf_embeddings(data):
+def process_pdf_embeddings(data, socketio_instance):
     try:
         with app.app_context():
             bucket = data['bucket']
@@ -169,7 +175,7 @@ def process_pdf_embeddings(data):
             class_name = create_pdf_class(key, client)
             upload_documents_pdf(documents, client, class_name)
             print('UPLOADED DOCUMENTS')
-            send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+            send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
             print(f'FINISHED EMBEDDINGS for - {key}')
     except Exception as e:
         print(e)
@@ -281,5 +287,33 @@ def process_summary_youtube(data,stream_name):
         raise e
 
 
+
 if __name__ =="__main__":
-    app.run(host='0.0.0.0', debug=True)
+    socketio.run(app, host='0.0.0.0', debug=True)
+
+
+
+def join_user_room(user_id):
+    room = user_id
+    join_room(room)
+    print(f"Joined room: {room}")  # Add this print statement
+    return room
+
+def leave_user_room(user_id):
+    room = user_id
+    leave_room(room)
+    return room
+
+# Use the token or user_id you receive from the Next.js frontend
+@socketio.on('join')
+def on_join(data):
+    user_id = data['userId']
+    print(f'New Connection: {user_id}')
+    join_user_room(user_id)
+    send_update(socketio, user_id, 'user_update', {'msg': 'This Works'})
+
+@socketio.on('leave')
+def on_leave(data):
+    user_id = data['userId']
+    print(f'Closing Connection: {user_id}')
+    leave_user_room(user_id)

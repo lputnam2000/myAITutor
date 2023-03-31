@@ -157,7 +157,10 @@ export default function SignIn({csrfToken, providers}) {
                 }),
             }).then((response) => {
             if (response.ok) {
-                toastIdRef.current = toast({description: `Link Sent! Check Your Email for the Sign ${isSignIn ? 'In' : 'Up'} Link`})
+                toastIdRef.current = toast({
+                    position: 'top',
+                    description: `Link Sent! Check Your Email for the Sign ${isSignIn ? 'In' : 'Up'} Link`
+                })
             }
         })
     };
