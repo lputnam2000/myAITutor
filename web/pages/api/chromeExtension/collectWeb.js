@@ -7,7 +7,7 @@ async function secretToUser(secret) {
         const client = await clientPromise;
         const db = client.db("admin");
         const accountCollection = db.collection("users");
-        const userRecord = await accountCollection.findOne({ "apikey": secret });
+        const userRecord = await accountCollection.findOne({ "apiKey": secret });
         if (userRecord !== null) {
             return userRecord["_id"].toString()
         } else {
@@ -97,6 +97,7 @@ export default async function handler(req, res) {
                     secret = authHeader.substring(7);
                 }
                 const user_id_from_secret = await secretToUser(secret)
+                console.log(user_id_from_secret)
                 if (!user_id_from_secret) {
                     return res.status(401).json({error: "invalid credentials"}).end()
                 }
