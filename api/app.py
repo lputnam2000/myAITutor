@@ -106,6 +106,7 @@ def generate_pdf_embeddings():
             stream_name = f'stream-name-video-embeddings-{str(uuid4())}'
             thread = threading.Thread(target=run_in_context, args=(data, process_mp4_embeddings, socketio, stream_name))
             thread.start()
+            # process_video(data)
             return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
         else:
             return jsonify({"message": "Request not accepted, invalid filetype"}), HTTPStatus.FORBIDDEN
@@ -174,24 +175,35 @@ def process_summary_pdf(data,stream_name):
         logger.removeHandler(new_handler)
         raise e
 
-# def process_video_embeddings(data, socketio_instance):
-#     try:
-#         with app.app_context():
+# def process_video(data):
+#     @copy_current_request_context
+#     def run_in_context(data, function, socketio_instance, stream_name):
+#         function(data, socketio_instance, stream_name)
 
-#             # bucket = data['bucket']
-#             # key = data['key']
-#             # print(f'Downloading VIDEO for - {key}')
-#             # user_id = data['user_id']
-#             # video_file_name = get_video_file(bucket,key)
-#             # send_notification_to_client(user_id, key, f'Upload complete for:{key}')
-#             # pdf = get_pdf(bucket, key)            
-#             # documents = get_documents(pdf)
-#             # client = get_client()
-#             # class_name = create_pdf_class(key, client)
-#             # upload_documents_pdf(documents, client, class_name)
-#             # print('UPLOADED DOCUMENTS')
-#             # send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
-#             # print(f'FINISHED EMBEDDINGS for - {key}')
+#     stream_name = f'stream-name-video-embeddings-{str(uuid4())}'
+#     thread_embeddings = threading.Thread(target=run_in_context, args=(data, process_mp4_embeddings, socketio, stream_name))
+#     thread_thumbnails = threading.Thread(target=run_in_context, args=(data, create_video_thumbnail, socketio, stream_name))
+
+#     thread_embeddings.start()
+#     thread_thumbnails.start()
+
+# def create_video_thumbnail(data, socketio_instance, stream_name):
+#     try:
+#         bucket = data['bucket']
+#         key = data['key']
+#         user_id = data['user_id']
+
+#         clip = VideoFileClip("my_video.mp4")
+
+#         # Get a frame from the start of the video
+#         thumbnail = clip.get_frame(0)
+
+#         # Save the thumbnail image
+#         thumbnail_path = "my_video_thumbnail.jpg"
+#         with open(thumbnail_path, "wb") as f:
+#             f.write(thumbnail)
+
+#         # send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
 #     except Exception as e:
 #         print(e)
 

@@ -2,8 +2,10 @@ from pytube import YouTube
 from ..utils.utils import  get_mongo_client, send_notification_to_client
 from .websiteToEmbeddings import get_client, create_class, upload_documents
 from ..weaviate_embeddings import create_youtube_class, upload_documents_youtube
-from ..utils.aws import get_video_file
+from ..utils.aws import get_video_file, upload_video_thumbnail
 from moviepy.editor import *
+from moviepy.video.io.VideoFileClip import VideoFileClip
+import base64
 from flask import current_app
 import logging
 from watchtower import CloudWatchLogHandler
@@ -118,23 +120,23 @@ def download_video(vidLink):
     os.rename(outFile, newFile)
     return newFile
 
-def get_video_transcript(url, isMP4, bucket='', key=''):
+def get_video_transcript(url, isMP4):
     print('#Downloading Video')
     videoFile = ''
     if isMP4:
         # download video from s3
-        videoFile = get_video_file(bucket,key)
+        # videoFile = get_video_file(bucket,key)
 
         # convert to s3
-        videoFileMP3 = f'{key}.mp3'
-        video = VideoFileClip(videoFile)
+        videoFileMP3 = f'{url}.mp3'
+        video = VideoFileClip(url)
         audio = video.audio
         audio.write_audiofile(videoFileMP3)
         video.close()
         audio.close()
 
         # delete mp4
-        os.remove(videoFile)
+        os.remove(url)
         videoFile = videoFileMP3
     else:
         videoFile = download_video(url)
@@ -155,6 +157,13 @@ def upload_to_weaviate(formatted_transcripts):
     formatted_subtitles = srt_to_array(transcripts)
     print('#Transcripts Generated')
     return formatted_subtitles
+
+def create_thumbnail(bucket, key):
+    videoFile = get_video_file(bucket,key)
+    clip = VideoFileClip(videoFile)
+    thumbnail = clip.get_frame(0)
+    upload_video_thumbnail(thumbnail,key)
+    return videoFile
 
 
 if __name__ == "__main__":
@@ -178,10 +187,13 @@ def process_mp4_embeddings(data, socketio_instance, stream_name):
         print(f'1. Downloading VIDEO for - {key}')
         current_app.logger.info(f'1. Downloading VIDEO for - {key}')
         user_id = data['user_id']
-        # video_file_name = get_video_file(bucket,key)
+
+        print(f'CREATING THUMBNAIL FOR: {key}')
+        videoFile = create_thumbnail(bucket, key)
+
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
-        formatted_subtitles = get_video_transcript('lol', isMP4, bucket, key)
+        formatted_subtitles = get_video_transcript(videoFile, isMP4)
         documents = get_weaviate_docs(formatted_subtitles)
         print('2. PARSED DOCUMENTS')
         current_app.logger.info('2. PARSED DOCUMENTS')
