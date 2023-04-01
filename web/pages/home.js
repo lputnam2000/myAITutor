@@ -110,13 +110,13 @@ function Home() {
     useEffect(() => {
     }, [userUploads])
 
-    const handleFileUpload = (file, type, uploadID) => {
+    const handleFileUpload = (file, type, uploadID, url = '') => {
         if (type === 'pdf') {
             let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready', type: type}
-            setUserUploads(oldArray => [...oldArray, newValue])
+            setUserUploads(oldArray => [newValue, ...oldArray])
         } else {
-            let newValue = {uuid: uploadID, title: file, status: 'Not Ready', type: type}
-            setUserUploads(oldArray => [...oldArray, newValue])
+            let newValue = {uuid: uploadID, title: file, status: 'Not Ready', type: type, url}
+            setUserUploads(oldArray => [newValue, ...oldArray,])
         }
     }
 
@@ -132,6 +132,7 @@ function Home() {
                                     return (
                                         <PDFCard key={`${upload.uuid}-${i}`} uploadId={upload.uuid}
                                                  title={upload.title}
+                                                 url={upload.url ? upload.url : ''}
                                                  thumbnail={upload.thumbnail} type={upload.type} onRename={renameTitle}
                                                  onRemove={removeUpload}
                                         />);

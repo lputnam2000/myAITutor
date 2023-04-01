@@ -80,7 +80,7 @@ const typeToLabel = {
     'youtube': 'YouTube'
 }
 
-function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename}) {
+function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''}) {
     // ...
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
     const [newTitle, setNewTitle] = useState(title);
@@ -118,7 +118,7 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename}) {
 
     useEffect(() => {
         if (type === 'youtube') {
-            const apiUrl = `https://noembed.com/embed?url=${encodeURIComponent(title)}`;
+            const apiUrl = `https://noembed.com/embed?url=${encodeURIComponent(url)}`;
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
