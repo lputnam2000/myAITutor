@@ -258,6 +258,11 @@ def process_web_embeddings(data, socketio_instance, stream_name):
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
         user_id = data['user_id']
+
+        def send_progress_update(value, text):
+            send_update(socketio_instance, user_id, f'{key}:progress',  {'value': value, 'text': text})
+
+        send_progress_update(0, 'Surfing the Web! 🍌🦍🌊')
         documents = get_documents_from_url(url)
         print('2. PARSED DOCUMENTS')
         current_app.logger.info('2. PARSED DOCUMENTS')
@@ -265,9 +270,11 @@ def process_web_embeddings(data, socketio_instance, stream_name):
         class_name = create_website_class(key, client)
         print(f'3. CREATED CLASS {class_name}')
         current_app.logger.info(f'3. CREATED CLASS {class_name}')
-        upload_documents_website(documents, client, class_name)
+        send_progress_update(40, "Making Notes! 📝🦍")
+        upload_documents_website(documents, client, class_name, send_progress_update)
         print("4. UPLOADED DOCUMENTS")
         current_app.logger.info("4. UPLOADED DOCUMENTS")
+        send_progress_update(99, "Finishing Up! 💪🦍")
         db_client = get_mongo_client()
         data_db = db_client["data"]
         websitesCollection = data_db["SummaryWebsites"]
@@ -290,17 +297,24 @@ def process_chrome_extension_embeddings(data, socketio_instance, stream_name):
         html = data['content']
         user_id = data['user_id']
         key = data['key']
+
+        def send_progress_update(value, text):
+            send_update(socketio_instance, user_id, f'{key}:progress',  {'value': value, 'text': text})
+
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
+        send_progress_update(0, 'Surfing the Web! 🍌🦍🌊')
         documents = get_documents_from_html(html)
         print('2. PARSED DOCUMENTS')
         current_app.logger.info('2. PARSED DOCUMENTS')
         client = get_client()
         class_name = create_website_class(key, client)
         print(f'3. CREATED CLASS {class_name}')
+        send_progress_update(40, "Making Notes! 📝🦍")
         current_app.logger.info(f'3. CREATED CLASS {class_name}')
         upload_documents_website(documents, client, class_name)
         print("4. UPLOADED DOCUMENTS")
+        send_progress_update(99, "Finishing Up! 💪🦍")
         current_app.logger.info("4. UPLOADED DOCUMENTS")
         db_client = get_mongo_client()
         data_db = db_client["data"]

@@ -120,12 +120,13 @@ def download_video(vidLink):
     os.rename(outFile, newFile)
     return newFile
 
-def get_video_transcript(url, isMP4):
+def get_video_transcript(url, isMP4, send_progress_update):
     print('#Downloading Video')
     videoFile = ''
     if isMP4:
         # download video from s3
         # videoFile = get_video_file(bucket,key)
+        send_progress_update(0, 'Watching the Video! ▶️🦍🍌')
 
         # convert to s3
         videoFileMP3 = f'{url}.mp3'
@@ -139,8 +140,10 @@ def get_video_transcript(url, isMP4):
         os.remove(url)
         videoFile = videoFileMP3
     else:
+        send_progress_update(0, 'Browsing Youtube! ▶️🦍🍌')
         videoFile = download_video(url)
     print('#Video Downloaded')
+    send_progress_update(15, 'Translating hooman-speak to prime chimp-lingo! 👫➡️🦍')
     transcripts = transcribe_file(WHISPER_MODEL_NAME, videoFile)
     os.remove(videoFile)
     formatted_subtitles = srt_to_array(transcripts)
@@ -187,6 +190,9 @@ def process_mp4_embeddings(data, socketio_instance, stream_name):
         print(f'1. Downloading VIDEO for - {key}')
         current_app.logger.info(f'1. Downloading VIDEO for - {key}')
         user_id = data['user_id']
+        
+        def send_progress_update(value, text):
+            send_update(socketio_instance, user_id, f'{key}:progress',  {'value': value, 'text': text})
 
         print(f'CREATING THUMBNAIL FOR: {key}')
         videoFile = create_thumbnail(bucket, key)
@@ -194,7 +200,7 @@ def process_mp4_embeddings(data, socketio_instance, stream_name):
 
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
-        formatted_subtitles = get_video_transcript(videoFile, isMP4)
+        formatted_subtitles = get_video_transcript(videoFile, isMP4, send_progress_update)
         print(formatted_subtitles)
         documents = get_weaviate_docs(formatted_subtitles)
         print('2. PARSED DOCUMENTS')
@@ -203,9 +209,11 @@ def process_mp4_embeddings(data, socketio_instance, stream_name):
         class_name = create_youtube_class(key, client)
         print(f'3. CREATED CLASS {class_name}')
         current_app.logger.info(f'3. CREATED CLASS {class_name}')
-        upload_documents_youtube(documents, client, class_name)
+        send_progress_update(40, "Making Notes! 📝🦍")
+        upload_documents_youtube(documents, client, class_name, send_progress_update)
         print("4. UPLOADED DOCUMENTS")
         current_app.logger.info("4. UPLOADED DOCUMENTS")
+        send_progress_update(99, "Finishing Up! 💪🦍")
         db_client = get_mongo_client()
         data_db = db_client["data"]
         youtube_collection = data_db["SummaryVideos"]
@@ -229,19 +237,24 @@ def process_youtube_embeddings(data, socketio_instance, stream_name):
         url = data['url']
         user_id = data['user_id']
         key = data['key']
+        def send_progress_update(value, text):
+            send_update(socketio_instance, user_id, f'{key}:progress',  {'value': value, 'text': text})
+
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
-        formatted_subtitles = get_video_transcript(url)
+        formatted_subtitles = get_video_transcript(url, False, send_progress_update)
         documents = get_weaviate_docs(formatted_subtitles)
         print('2. PARSED DOCUMENTS')
         current_app.logger.info('2. PARSED DOCUMENTS')
         client = get_client()
         class_name = create_youtube_class(key, client)
+        send_progress_update(40, "Making Notes! 📝🦍")
         print(f'3. CREATED CLASS {class_name}')
         current_app.logger.info(f'3. CREATED CLASS {class_name}')
-        upload_documents_youtube(documents, client, class_name)
+        upload_documents_youtube(documents, client, class_name, send_progress_update)
         print("4. UPLOADED DOCUMENTS")
         current_app.logger.info("4. UPLOADED DOCUMENTS")
+        send_progress_update(99, "Finishing Up! 💪🦍")
         db_client = get_mongo_client()
         data_db = db_client["data"]
         youtube_collection = data_db["SummaryYoutube"]
