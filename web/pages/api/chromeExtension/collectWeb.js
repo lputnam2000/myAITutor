@@ -111,15 +111,16 @@ export default async function handler(req, res) {
                     body: JSON.stringify({
                         key: fullyQualifiedName,
                         user_id: user_id_from_secret,
-                        content: data
+                        content: data,
+                        title: title,
                     }),
                     headers: {
                         'X-API-Key': process.env.CB_API_SECRET,
                         'Content-Type': 'application/json'
                     }
                 })
-                res.status(200)
-                res.json({"key": fullyQualifiedName, 'fileName': title})
+
+                res.status(200).json({"key": fullyQualifiedName, 'fileName': title})
             } catch (e) {
                 console.error(e);
                 return res.status(400).json({'error': e}).end()
