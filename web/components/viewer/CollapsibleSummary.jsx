@@ -41,16 +41,6 @@ const CloseBorder = styled.div`
 
 `
 
-const SubHeading = styled.div`
-  font-weight: bold;
-  font-size: 1.5rem;
-  margin-top: 5px;
-
-`
-const SummaryText = styled.div`
-  margin-bottom: 5px;
-`
-
 const StyledIconButton = styled(IconButton)`
   justify-self: center;
 `
@@ -68,6 +58,22 @@ const fadeIn = keyframes`
 const SummaryEntry = styled.span`
   animation: ${fadeIn} 0.6s ease-out both;
 `;
+
+const SubHeading = styled.div`
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 5px;
+  @media (max-width: 550px) {
+    font-size: 20px;
+  }
+
+`
+const SummaryText = styled.div`
+  margin-bottom: 5px;
+  @media (max-width: 550px) {
+    font-size: 14px;
+  }
+`
 
 const LoadingSpinnerContainer = styled.div`
   display: flex;

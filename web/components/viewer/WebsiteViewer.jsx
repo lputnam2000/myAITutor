@@ -16,7 +16,7 @@ const MarkdownWrapper = styled.div`
   font-weight: 400;
   border: 2px solid #57657e;
   border-radius: 4px;
-
+  font-size: 16px;
 
   h1, h2, h3 {
     font-size: 24px;
@@ -51,6 +51,10 @@ const MarkdownWrapper = styled.div`
   @media (max-width: 550px) {
     padding: 10px;
     height: 300px;
+    font-size: 14px;
+    h1, h2, h3 {
+      font-size: 20px;
+    }
   }
 
   transition: box-shadow 0.1s ease-in-out;

@@ -31,7 +31,8 @@ const InnerContainer = styled.div`
 
 
 const TitleContainer = styled.h1`
-  margin-left: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -41,17 +42,24 @@ const TitleContainer = styled.h1`
 
 const Title = styled.span`
   font-size: 40px;
-  text-decoration: underline;
   white-space: nowrap;
   text-overflow: ellipsis;
+  border-bottom: 2px solid #48fdce;
+
   overflow: hidden;
+  @media (max-width: 900px) {
+    font-size: 25px;
+  }
+  @media (max-width: 550px) {
+    font-size: 20px;
+  }
+
 `
 
 const ShareButton = styled.button`
   font-size: 18px;
   font-weight: 600;
   margin-left: 20px;
-  margin-right: 20px;
   padding: 5px;
   border-radius: 3px;
   background-color: #FFDB58;
@@ -69,6 +77,12 @@ const ShareButton = styled.button`
   display: flex;
   align-items: center;
   gap: 5px;
+  @media (max-width: 900px) {
+    font-size: 16px;
+  }
+  @media (max-width: 550px) {
+    font-size: 14px;
+  }
 `
 
 const ViewerContainer = styled.div`
@@ -108,7 +122,7 @@ function ViewerWithSummary({href}) {
                 </Title>
                 <ShareButton onClick={copyUrl}>
                     Share
-                    <BsLink45Deg size={24}/>
+                    <BsLink45Deg size={22}/>
                 </ShareButton>
             </TitleContainer>
             <InnerContainer>
