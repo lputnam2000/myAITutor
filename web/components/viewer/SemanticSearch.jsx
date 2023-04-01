@@ -40,7 +40,7 @@ const LoadingSpinner = styled.div`
 `
 
 function SemanticSearch({uploadId}) {
-    const {isReady} = useContext(ViewerContext);
+    const {isReady} = useContext(ViewerContext) || {};
     const [searchQuery, setSearchQuery] = useState('');
     const [answers, setAnswers] = useState([]);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false)
