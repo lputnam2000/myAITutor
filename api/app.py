@@ -220,13 +220,21 @@ def process_pdf_embeddings(data, socketio_instance):
             key = data['key']
             print(f'Started EMBEDDINGS for - {key}')
             user_id = data['user_id']
+
+            def send_progress_update(value, text):
+                send_update(socketio_instance, user_id, f'{key}:progress',  {'value': value, 'text': text})
+
+
             send_notification_to_client(user_id, key, f'Upload complete for:{key}')
+            send_progress_update(0, 'Reading the book! 📖🦍')
             pdf = get_pdf(bucket, key)            
             documents = get_documents(pdf)
             client = get_client()
             class_name = create_pdf_class(key, client)
-            upload_documents_pdf(documents, client, class_name)
+            send_progress_update(40, "Making Notes! 📝🦍")
+            upload_documents_pdf(documents, client, class_name, send_progress_update)
             print('UPLOADED DOCUMENTS')
+            send_progress_update(99, "Finishing Up! 💪🦍")
             send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
             print(f'FINISHED EMBEDDINGS for - {key}')
     except Exception as e:

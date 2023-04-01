@@ -1,10 +1,11 @@
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import styled, {keyframes, css} from "styled-components";
-import {Spinner, Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
+import {Progress, Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
 import SemanticSearch from "./SemanticSearch";
 import CollapsibleSummary from "./CollapsibleSummary";
 import GenerateSummary from "./GenerateSummary";
 import {ViewerContext} from "./context";
+import {WebsocketContext} from "./../WebsocketContext";
 
 const Container = styled.div`
   position: absolute;
@@ -34,20 +35,20 @@ const fadeIn = keyframes`
 
 const LoadingDiv = styled.div`
   position: absolute;
+  padding-left: 10px;
   top: 0;
   left: 0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
   width: 100%;
   height: 100%;
   animation: ${fadeIn} 1s ease-in-out;
 `;
 const LoadingText = styled.div`
-  padding-left: 10px;
   font-size: 1.2rem;
   color: #48fdce;
-  margin-left: 10px;
   margin-right: 10px;
 `;
 
@@ -66,16 +67,42 @@ const Joke = styled.div`
             opacity: 1;
           `}
 `
-const SpinnerWrapper = styled.div`
-  width: 30px;
-  margin-left: 10px;
-  margin-right: 10px;
+const ProgressMessage = styled.div`
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #20ee5f;
+`
+const ProgressContainer = styled.div`
+  width: 100%;
+  padding-right: 10px;
 `
 
 function LoadingContainer({}) {
+    const {pdfKey} = useContext(ViewerContext)
+
     const [jokeNumber, setJokeNumber] = useState(0);
     const [fade, setFade] = useState(true);
+    const [progress, setProgress] = useState(undefined);
+    const {socket} = useContext(WebsocketContext);
 
+    useEffect(() => {
+        if (!socket) return;
+        if (pdfKey === '') return
+
+        const handleProgress = (data) => {
+            let jsonData = JSON.parse(data)
+            setProgress(jsonData)
+            console.log('Received data', data)
+        }
+
+        socket.on(`${pdfKey}:progress`, handleProgress);
+
+        // Clean up the listener when the component is unmounted
+        return () => {
+            socket.off(`${pdfKey}:progress`, handleProgress);
+        };
+    }, [socket, pdfKey]);
     const loadingTexts = [
         'Why does it take a while for our chimp to preprocess your document? It\'s got its paws full juggling all those pages!',
         'Chimps might be great at climbing trees, but they\'re not the fastest learners. Hang tight while we process your document!',
@@ -96,18 +123,20 @@ function LoadingContainer({}) {
     }, [loadingTexts.length]);
 
     return (<LoadingDiv>
-            <SpinnerWrapper>
-                <Spinner
-                    thickness='4px'
-                    speed='0.6s'
-                    emptyColor='gray.200'
-                    color='#48fdce'
-                    size='xl'
-                />
-            </SpinnerWrapper>
-
             <LoadingText>Chewing through the info jungle, hang tight! 🌿🦍 &nbsp;
                 <Joke fade={fade}>{loadingTexts[jokeNumber]}</Joke></LoadingText>
+            {
+                progress &&
+                <>
+                    <ProgressMessage>
+                        {progress.text}
+                    </ProgressMessage>
+                    <ProgressContainer>
+                        <Progress size='xs' width={'100%'} value={progress.value} backgroundColor={"gray.500"}
+                                  colorScheme='pink'/>
+                    </ProgressContainer>
+                </>
+            }
         </LoadingDiv>
     )
 }

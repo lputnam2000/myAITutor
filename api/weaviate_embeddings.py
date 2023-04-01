@@ -10,6 +10,14 @@ import time
 ENCODER = tiktoken.get_encoding("gpt2")
 OPEN_AI_KEY = "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"
 
+def send_batch_update_progress(send_progress_update, value, size):
+    def inner_function():
+        nonlocal progress_value
+        progress_value += size
+        send_progress_update(progress_value, "Making Notes! 📝🦍")
+    progress_value = value
+    return inner_function
+
 def get_client():
     resource_owner_config = weaviate.AuthClientPassword(
     username = "aryamanparekh12@gmail.com", 
@@ -202,7 +210,7 @@ def get_documents(doc):
     print('FINISHED EXTRACTING TEXT')
     return formatted_documents
 
-def configure_batch(client, batch_size: int, batch_target_rate: int):
+def configure_batch(client, batch_size: int, batch_target_rate: int, send_progress_update):
     """
     Configure the weaviate client's batch so it creates objects at `batch_target_rate`.
 
@@ -218,6 +226,8 @@ def configure_batch(client, batch_size: int, batch_target_rate: int):
 
     def callback(batch_results: dict) -> None:
         # you could print batch errors here
+        send_progress_update()
+        print('\n\n\n\n\nWe are Here\n\n\n\n\n')
         time_took_to_create_batch = batch_size * (client.batch.creation_time/client.batch.recommended_num_objects)
         time.sleep(
             max(batch_size/batch_target_rate - time_took_to_create_batch + 1, 0)
@@ -229,8 +239,13 @@ def configure_batch(client, batch_size: int, batch_target_rate: int):
         callback=callback,
     )
 
-def upload_documents_pdf(documents, client, class_name):
-    configure_batch(client, 1000, 30)
+def calculate_increment_value(num_documents):
+    num_batches =num_documents/1000 if num_documents%1000 == 0 else (num_documents//1) + 1
+    progress_per_batch = 57 / num_batches
+    return int(progress_per_batch)
+
+def upload_documents_pdf(documents, client, class_name, send_progress_update):
+    configure_batch(client, 1000, 30, send_batch_update_progress(send_progress_update, 40, calculate_increment_value(len(documents))))
     with client.batch as batch:
         # Batch import all Questions
         for i in range(len(documents)):
@@ -238,8 +253,8 @@ def upload_documents_pdf(documents, client, class_name):
             print(i)
             client.batch.add_data_object(properties, class_name)
 
-def upload_documents_website(documents, client, class_name):
-    configure_batch(client, 1000, 30)
+def upload_documents_website(documents, client, class_name, send_progress_update):
+    configure_batch(client, 1000, 30, send_batch_update_progress(send_progress_update, 40, calculate_increment_value(len(documents))))
     with client.batch as batch:
         # Batch import all Questions
         for i in range(len(documents)):
@@ -250,13 +265,14 @@ def upload_documents_website(documents, client, class_name):
             print(i)
             client.batch.add_data_object(properties, class_name)
 
-def upload_documents_youtube(documents, client, class_name):
-    configure_batch(client, 1000, 30)
+def upload_documents_youtube(documents, client, class_name, send_progress_update):
+    configure_batch(client, 1000, 30, send_batch_update_progress(send_progress_update, 40, calculate_increment_value(len(documents))))
     with client.batch as batch:
         # Batch import all Questions
         for i in range(len(documents)):
             # print(documents[i])
             properties = documents[i]
+            print('\nanother ere\n')
             # print(i)
             client.batch.add_data_object(properties, class_name)
 
