@@ -2,6 +2,8 @@ from pytube import YouTube
 from ..utils.utils import  get_mongo_client, send_notification_to_client
 from .websiteToEmbeddings import get_client, create_class, upload_documents
 from ..weaviate_embeddings import create_youtube_class, upload_documents_youtube
+from ..utils.aws import get_video_file
+from moviepy.editor import *
 from flask import current_app
 import logging
 from watchtower import CloudWatchLogHandler
@@ -82,6 +84,7 @@ def transcribe_file(model_id, path):
     url = 'https://api.openai.com/v1/audio/transcriptions'
     headers = {'Authorization': f'Bearer {OPEN_AI_KEY}'}
     data = {'model': 'whisper-1',}
+    print(path)
     files = {
         'file': open(path, 'rb'),
         'model': (None, 'whisper-1'),
@@ -115,9 +118,26 @@ def download_video(vidLink):
     os.rename(outFile, newFile)
     return newFile
 
-def get_video_transcript(url):
+def get_video_transcript(url, isMP4, bucket='', key=''):
     print('#Downloading Video')
-    videoFile = download_video(url)
+    videoFile = ''
+    if isMP4:
+        # download video from s3
+        videoFile = get_video_file(bucket,key)
+
+        # convert to s3
+        videoFileMP3 = f'{key}.mp3'
+        video = VideoFileClip(videoFile)
+        audio = video.audio
+        audio.write_audiofile(videoFileMP3)
+        video.close()
+        audio.close()
+
+        # delete mp4
+        os.remove(videoFile)
+        videoFile = videoFileMP3
+    else:
+        videoFile = download_video(url)
     print('#Video Downloaded')
     transcripts = transcribe_file(WHISPER_MODEL_NAME, videoFile)
     os.remove(videoFile)
@@ -146,6 +166,46 @@ if __name__ == "__main__":
     os.remove(videoFile)
     formatted_subtitles = srt_to_array(transcripts)
     print('#Transcripts Generated')
+
+def process_mp4_embeddings(data, socketio_instance, stream_name):
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(FORMATTER)
+    current_app.logger.addHandler(new_handler)
+    try:
+        isMP4 = True
+        bucket = data['bucket']
+        key = data['key']
+        print(f'1. Downloading VIDEO for - {key}')
+        current_app.logger.info(f'1. Downloading VIDEO for - {key}')
+        user_id = data['user_id']
+        # video_file_name = get_video_file(bucket,key)
+        print(f'1. PROCESSING REQ IN THREAD: {key}')
+        current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
+        formatted_subtitles = get_video_transcript('lol', isMP4, bucket, key)
+        documents = get_weaviate_docs(formatted_subtitles)
+        print('2. PARSED DOCUMENTS')
+        current_app.logger.info('2. PARSED DOCUMENTS')
+        client = get_client()
+        class_name = create_youtube_class(key, client)
+        print(f'3. CREATED CLASS {class_name}')
+        current_app.logger.info(f'3. CREATED CLASS {class_name}')
+        upload_documents_youtube(documents, client, class_name)
+        print("4. UPLOADED DOCUMENTS")
+        current_app.logger.info("4. UPLOADED DOCUMENTS")
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        youtube_collection = data_db["SummaryYoutube"]
+        update_query = {"$set": {"status": "Ready", "transcript": formatted_subtitles}}
+        # Update the document matching the UUID with the new values
+        youtube_collection.update_one({"_id": key}, update_query)
+        send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
+        # send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
+        current_app.logger.removeHandler(new_handler)
+    except Exception as e:
+        print(e)
+        current_app.logger.info(f'Error:{e}')
+        current_app.logger.removeHandler(new_handler)
+        raise e
 
 def process_youtube_embeddings(data, socketio_instance, stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)

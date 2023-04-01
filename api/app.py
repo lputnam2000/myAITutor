@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, g
+from flask import Flask, request, jsonify, g, copy_current_request_context
 from api.socket_helper import socketio
 from flask_socketio import SocketIO, join_room, leave_room
 from http import HTTPStatus
@@ -12,6 +12,7 @@ from api.summary import get_summary, get_summary_string
 from api.utils.utils import require_api_key, get_mongo_client, send_notification_to_client
 from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_pdf_class
 from api.utils.aws import get_pdf
+from api.embeddings.youtubeToEmbeddings import process_mp4_embeddings
 from api.socket_helper import send_update
 from logging.config import dictConfig
 import threading
@@ -93,9 +94,21 @@ def webhook_testing():
 def generate_pdf_embeddings():
     try:
         data = request.json
-        thread = threading.Thread(target=process_pdf_embeddings, args=(data, socketio))
-        thread.start()
-        return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+        if data['content_type'] == 'application/pdf':
+            thread = threading.Thread(target=process_pdf_embeddings, args=(data, socketio))
+            thread.start()
+            return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+        elif data['content_type'] == 'video/mp4':
+            print('VIDEO HAS ARRIVED')
+            @copy_current_request_context
+            def run_in_context(data, function, socketio_instance, stream_name):
+                function(data, socketio_instance, stream_name)
+            stream_name = f'stream-name-video-embeddings-{str(uuid4())}'
+            thread = threading.Thread(target=run_in_context, args=(data, process_mp4_embeddings, socketio, stream_name))
+            thread.start()
+            return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+        else:
+            return jsonify({"message": "Request not accepted, invalid filetype"}), HTTPStatus.FORBIDDEN
     except Exception as e:
         print(e)
         raise e
@@ -160,6 +173,27 @@ def process_summary_pdf(data,stream_name):
         logger.info(f'Error:{e}')
         logger.removeHandler(new_handler)
         raise e
+
+# def process_video_embeddings(data, socketio_instance):
+#     try:
+#         with app.app_context():
+
+#             # bucket = data['bucket']
+#             # key = data['key']
+#             # print(f'Downloading VIDEO for - {key}')
+#             # user_id = data['user_id']
+#             # video_file_name = get_video_file(bucket,key)
+#             # send_notification_to_client(user_id, key, f'Upload complete for:{key}')
+#             # pdf = get_pdf(bucket, key)            
+#             # documents = get_documents(pdf)
+#             # client = get_client()
+#             # class_name = create_pdf_class(key, client)
+#             # upload_documents_pdf(documents, client, class_name)
+#             # print('UPLOADED DOCUMENTS')
+#             # send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
+#             # print(f'FINISHED EMBEDDINGS for - {key}')
+#     except Exception as e:
+#         print(e)
 
 def process_pdf_embeddings(data, socketio_instance):
     try:
