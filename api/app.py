@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, g
+from flask import Flask, request, jsonify, g, copy_current_request_context
 from api.socket_helper import socketio
 from flask_socketio import SocketIO, join_room, leave_room
 from http import HTTPStatus
@@ -12,6 +12,7 @@ from api.summary import get_summary, get_summary_string
 from api.utils.utils import require_api_key, get_mongo_client, send_notification_to_client
 from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_pdf_class
 from api.utils.aws import get_pdf
+from api.embeddings.youtubeToEmbeddings import process_mp4_embeddings
 from api.socket_helper import send_update
 from logging.config import dictConfig
 import threading
@@ -95,9 +96,22 @@ def webhook_testing():
 def generate_pdf_embeddings():
     try:
         data = request.json
-        thread = threading.Thread(target=process_pdf_embeddings, args=(data, socketio))
-        thread.start()
-        return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+        if data['content_type'] == 'application/pdf':
+            thread = threading.Thread(target=process_pdf_embeddings, args=(data, socketio))
+            thread.start()
+            return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+        elif data['content_type'] == 'video/mp4':
+            print('VIDEO HAS ARRIVED')
+            @copy_current_request_context
+            def run_in_context(data, function, socketio_instance, stream_name):
+                function(data, socketio_instance, stream_name)
+            stream_name = f'stream-name-video-embeddings-{str(uuid4())}'
+            thread = threading.Thread(target=run_in_context, args=(data, process_mp4_embeddings, socketio, stream_name))
+            thread.start()
+            # process_video(data)
+            return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+        else:
+            return jsonify({"message": "Request not accepted, invalid filetype"}), HTTPStatus.FORBIDDEN
     except Exception as e:
         print(e)
         raise e
@@ -166,6 +180,38 @@ def process_summary_pdf(data,stream_name):
         logger.info(f'Error:{e}')
         logger.removeHandler(new_handler)
         raise e
+
+# def process_video(data):
+#     @copy_current_request_context
+#     def run_in_context(data, function, socketio_instance, stream_name):
+#         function(data, socketio_instance, stream_name)
+
+#     stream_name = f'stream-name-video-embeddings-{str(uuid4())}'
+#     thread_embeddings = threading.Thread(target=run_in_context, args=(data, process_mp4_embeddings, socketio, stream_name))
+#     thread_thumbnails = threading.Thread(target=run_in_context, args=(data, create_video_thumbnail, socketio, stream_name))
+
+#     thread_embeddings.start()
+#     thread_thumbnails.start()
+
+# def create_video_thumbnail(data, socketio_instance, stream_name):
+#     try:
+#         bucket = data['bucket']
+#         key = data['key']
+#         user_id = data['user_id']
+
+#         clip = VideoFileClip("my_video.mp4")
+
+#         # Get a frame from the start of the video
+#         thumbnail = clip.get_frame(0)
+
+#         # Save the thumbnail image
+#         thumbnail_path = "my_video_thumbnail.jpg"
+#         with open(thumbnail_path, "wb") as f:
+#             f.write(thumbnail)
+
+#         # send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
+#     except Exception as e:
+#         print(e)
 
 def process_pdf_embeddings(data, socketio_instance):
     try:
@@ -310,7 +356,57 @@ def process_summary_youtube(data,stream_name):
         logger.removeHandler(new_handler)
         raise e
 
+@app.route('/summaries/videos/', methods=["POST"])
+@require_api_key
+def generate_summary_video():
+    stream_name = f'stream-name-video-summary-{str(uuid4())}'
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(formatter)
+    logger.addHandler(new_handler)
+    try:
+        data = request.json
+        key = data['key']
+        thread = threading.Thread(target=process_summary_video, args=(data,stream_name))
+        thread.start()
 
+        logger.info(f'Processing youtube summary for {key}')
+        logger.removeHandler(new_handler)
+
+        return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+    except Exception as e:
+        print(e)
+        logger.info(f'Error:{e}')
+        logger.removeHandler(new_handler)
+        raise e
+
+def process_summary_video(data,stream_name):
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(formatter)
+    logger.addHandler(new_handler)
+    try:
+        with app.app_context():
+            key = data['key']
+            user_id = data['user_id']
+            db_client = get_mongo_client()
+            data_db = db_client["data"]
+            video_collection = data_db["SummaryVideos"]
+            video_doc = video_collection.find_one({'_id': key})
+            video_text = [t["text"] for t in video_doc['transcript']]
+            s = get_summary_string(video_text)
+            summaryDict = {}
+            summaryDict['startPage'] = -1
+            summaryDict['endPage'] = -1
+            summaryDict['formattedSummary'] = s
+            video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
+            # result = jsonify(s)
+            send_notification_to_client(user_id, key, f'Summary complete for:{key}')
+            logger.info(f'FINISHED Processing video summaries for {key}')
+            # return result
+    except Exception as e:
+        print(e)
+        logger.info(f'Error:{e}')
+        logger.removeHandler(new_handler)
+        raise e
 
 if __name__ =="__main__":
     socketio.run(app, host='0.0.0.0', debug=True)
