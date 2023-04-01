@@ -154,17 +154,17 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
                     exit={exitAnimation}
                 >
                     {type === 'pdf' && <ImageContainer>
-                        <Image src={thumbnail} alt="" onError={(e) => {
+                        <img src={thumbnail} alt="" onError={(e) => {
                             e.target.style.display = "none"
                         }}/>
                     </ImageContainer>}
                     {type === 'mp4' && <ImageContainer>
-                        <Image src={thumbnail} alt="" onError={(e) => {
+                        <img src={thumbnail} alt="" onError={(e) => {
                             e.target.style.display = "none"
                         }}/>
                     </ImageContainer>}
                     {type === 'youtube' && <ImageContainer>
-                        <Image src={thumbnailUrl} alt="" onError={(e) => {
+                        <img src={thumbnailUrl} alt="" onError={(e) => {
                             e.target.style.display = "none"
                         }}/>
                     </ImageContainer>}
