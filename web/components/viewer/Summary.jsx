@@ -93,7 +93,7 @@ function LoadingContainer({}) {
             }, 1000);
         }, 30000);
         return () => clearInterval(interval);
-    }, []);
+    }, [loadingTexts.length]);
 
     return (<LoadingDiv>
             <SpinnerWrapper>

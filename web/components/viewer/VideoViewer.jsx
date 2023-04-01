@@ -47,7 +47,7 @@ function VideoViewer() {
         return () => {
             timer = null
         }
-    }, [pdfKey])
+    }, [pdfKey, setIsReady, setFileType, setUrl, setSummary, setTitle])
     return (
         <Container>
             {url && <ReactPlayer width={'100%'} height={'100%'} controls={true} url={url}/>}

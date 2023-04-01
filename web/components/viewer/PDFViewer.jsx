@@ -64,7 +64,7 @@ function PdfViewer() {
             console.log(err)
         })
 
-    }, [pdfKey])
+    }, [pdfKey, setPdfFile, setSummary, setTitle, setFileType, setIsReady])
 
 
     const transformToolbar = (slot) => ({

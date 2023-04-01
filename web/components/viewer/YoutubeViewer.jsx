@@ -43,7 +43,7 @@ function YoutubeViewer() {
             console.log(err)
         })
 
-    }, [pdfKey])
+    }, [setSummary, setTitle, setFileType, pdfKey, setIsReady])
     return (
         <Container>
             {url && <PlayerWrapper>
