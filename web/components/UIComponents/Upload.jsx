@@ -82,8 +82,9 @@ const WebsiteInput = ({url, setUrl}) => {
 }
 
 const YoutubeThumbnail = styled.div`
+  margin-bottom: 5px;
 `
-const YoutubeInput = ({url, setUrl}) => {
+const YoutubeInput = ({url, setUrl, title, setTitle}) => {
     const [thumbnailUrl, setThumbnailUrl] = useState('')
     const handleInputChange = (e) => {
         setUrl(e.target.value)
@@ -92,9 +93,15 @@ const YoutubeInput = ({url, setUrl}) => {
             .then(response => response.json())
             .then(data => {
                 setThumbnailUrl(data.thumbnail_url);
+                setTitle(data.title)
             })
             .catch(error => console.error(error));
     }
+
+    const setNewTitle = (e) => {
+        setTitle(e.target.value)
+    }
+
     return (
         <FormControl>
             <FormLabel>YouTube Video URL</FormLabel>
@@ -110,79 +117,15 @@ const YoutubeInput = ({url, setUrl}) => {
                     borderRadius='lg'
                 />}
             </YoutubeThumbnail>
+            {url &&
+                <>
+                    <FormLabel>Video Title</FormLabel>
+                    <Input type='text' value={title} onChange={setNewTitle}/>
+                </>
+            }
         </FormControl>
     )
 }
-
-// const sendS3 = async (file,fileType) => {
-//     if (!file) {
-//         console.log("no file was found")
-//         return
-//     }
-
-//     const requestObject = {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//             "fileName": file.name,
-//             "fileType": file.type,
-//         })
-//     }
-
-//     let uploadID
-
-//     if (fileType === 'pdf') {
-//         await fetch('/api/getUploadURL', requestObject)
-//             .then(res => res.json())
-//             .then(data => {
-//                 uploadID = data["fileName"]
-//                 fetch(data["signedUrl"], {
-//                     headers: {'content-type': file.type},
-//                     method: 'PUT',
-//                     body: file,
-//                 }).then((res) => {
-//                     return res.text()
-//                 }).then((txt) => {
-//                     console.log(txt)
-//                 })
-//             })
-//     } else if (fileType === 'video') {
-//         await fetch('/api/getVideoUploadURL', requestObject)
-//         .then(res => res.json())
-//         .then(data => {
-//             uploadID = data["fileName"]
-//             const options = {
-//                 headers: {'content-type': file.type},
-//                 onUploadProgress: function(progressEvent) {
-//                     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-//                     setProgress(percentCompleted);
-//                     console.log(percentCompleted);
-//                 }
-//             };
-//             axios.put(data["signedUrl"], file, options)
-//                 .then(response => {
-//                     console.log(response.data);
-//                 })
-//                 .catch(error => {
-//                     console.log(error);
-//                 }).finally(() => {
-//                     console.log("done");
-//                 });
-//             // fetch(data["signedUrl"], {
-//             //     headers: {'content-type': file.type},
-//             //     method: 'PUT',
-//             //     body: file,
-//             // }).then((res) => {
-//             //     return res.text()
-//             // }).then((txt) => {
-//             //     console.log(txt)
-//             // })
-//         })
-//     }
-//     return uploadID
-// }
 
 const DropBox = styled.div`
   border: 1px dashed #57657e;
@@ -227,6 +170,7 @@ export default function Upload({handleFile}) {
     const [url, setUrl] = useState('');
     const [progress, setProgress] = useState(0);
     const [isSending, setIsSending] = useState(false)
+    const [title, setTitle] = useState('');
 
     const sendS3 = async (file,fileType) => {
         if (!file) {
@@ -292,7 +236,7 @@ export default function Upload({handleFile}) {
         }
         return uploadID
     }
-
+    
     const closeModal = () => {
         setUrl('')
         setFileType('')
@@ -378,9 +322,9 @@ export default function Upload({handleFile}) {
                 console.error(err)
             })
         } else if (fileType === 'youtube') {
-            axios.post('/api/user/add_youtube_video', {url,}).then((res) => {
-                const {key, fileName} = res.data
-                handleFile(fileName, fileType, key);
+            axios.post('/api/user/add_youtube_video', {url, title}).then((res) => {
+                const {key, url, title} = res.data
+                handleFile(title, fileType, key, url);
                 closeModal()
             }).catch((err) => {
                 console.error(err)
@@ -453,7 +397,7 @@ export default function Upload({handleFile}) {
                     {
                         fileType === 'youtube' &&
                         <>
-                            <YoutubeInput url={url} setUrl={setUrl}/>
+                            <YoutubeInput url={url} setUrl={setUrl} title={title} setTitle={setTitle}/>
                         </>
                     }
                     {

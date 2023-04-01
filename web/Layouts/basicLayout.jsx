@@ -1,7 +1,7 @@
 import Navbar from "../components/UIComponents/Navbar"
-import {useRouter} from 'next/router';
 import styled from 'styled-components'
 import FeedbackOverlay from "../components/FeedbackOverlay";
+import WebsocketContextProvider from "../components/WebsocketContext";
 
 
 const Main = styled.main`
@@ -20,13 +20,15 @@ const Main = styled.main`
 `
 
 export default function BasicLayout({children}) {
-    const router = useRouter();
     return (
         <>
             <Navbar/>
             <Main>
-                {children}
-                <FeedbackOverlay/>
+                <WebsocketContextProvider>
+                    {children}
+                    <FeedbackOverlay/>
+                </WebsocketContextProvider>
+
             </Main>
         </>
     )

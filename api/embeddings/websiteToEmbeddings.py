@@ -198,6 +198,31 @@ class WebsiteTextExtracter:
 #         print(e)
 #         raise e
 
+def process_chrome_extension_text(data, socketio_instance, stream_name):
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(FORMATTER)
+    current_app.logger.addHandler(new_handler)
+    try:
+        print("ADDING WEBSITE TEXT TO MONGO")
+        current_app.logger.info('ADDING WEBSITE TEXT TO MONGO')
+        html = data['content']
+        website_text = get_text_from_html(html)
+        user_id = data['user_id']
+        key = data['key']
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        websites_collection = data_db["SummaryWebsites"]
+        websites_collection.update_one({"_id": key}, {"$set": {"content": website_text, "isWebsiteReady": True}})
+        send_update(socketio_instance, user_id, key,  {'key': 'isWebsiteReady', 'value': True})
+
+        print("WEBSITE ADDED TEXT TO MONGO")
+        current_app.logger.info('WEBSITE ADDED TEXT TO MONGO')
+        current_app.logger.removeHandler(new_handler)
+    except Exception as e:
+        current_app.logger.info(f'Error:{e}')
+        current_app.logger.removeHandler(new_handler)
+        print(e)   
+
 def process_web_text(data, socketio_instance, stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
     new_handler.setFormatter(FORMATTER)

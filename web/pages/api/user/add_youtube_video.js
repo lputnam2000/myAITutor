@@ -7,11 +7,10 @@ import axios from "axios";
 /**
  * Return a uuid to store the object in s3 under while also keeping track of who owns the object
  * **/
-async function generateRecord(session, url) {
+async function generateRecord(session, url, title) {
     const client = await clientPromise;
     const db = client.db("data");
     let today = new Date();
-    let title = url
     let owner = session.user.id
     let uuid = uuidv4();
 
@@ -32,7 +31,7 @@ async function generateRecord(session, url) {
             });
             uploads.updateOne(
                 record,
-                {$set: {"uploads": [{uuid, title, status: 'Not Ready', type: 'youtube'}]}},
+                {$set: {"uploads": [{uuid, title, status: 'Not Ready', type: 'youtube', url}]}},
                 {upsert: true}
             );
             videoCollection.insertOne({
@@ -53,8 +52,14 @@ async function generateRecord(session, url) {
                     uuid = uuidv4();
                 }
             }
+
             uploads.update(record, {
-                $push: {"uploads": {uuid, title, status: 'Not Ready', type: 'youtube'}}
+                $push: {
+                    "uploads": {
+                        $each: [{uuid, title, status: 'Not Ready', type: 'youtube', url}],
+                        $position: 0
+                    }
+                }
             })
             videoCollection.insertOne({
                 _id: uuid,
@@ -77,11 +82,11 @@ export default async (req, res) => {
     if (session) {
         // Signed in
         if (req.method == 'POST') {
-            const {url} = req.body
+            const {url, title} = req.body
             //First, validate the data and send back an error message if data is invalid
             //S3
             let user_id = session.user.id
-            let fullyQualifiedName = await generateRecord(session, url)
+            let fullyQualifiedName = await generateRecord(session, url, title)
             fetch(process.env.BACKEND_URL + '/embeddings/youtube_video/', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -93,14 +98,14 @@ export default async (req, res) => {
                     'X-API-Key': process.env.CB_API_SECRET,
                     'Content-Type': 'application/json'
                 }
-            }).then((res)=> {
+            }).then((res) => {
                 console.log(res)
             }).catch(() => {
                 console.log('error')
             })
 
             res.status(200)
-            res.json({"key": fullyQualifiedName, 'fileName': url})
+            res.json({"key": fullyQualifiedName, 'url': url, 'title': title})
         } else {
             res.status(404)
             res.json({"Error": "404"})

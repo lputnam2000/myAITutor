@@ -149,7 +149,7 @@ def needs_ocr(extracted_text):
             total_tokens += tup[1]
     return total_tokens < 100
 
-def get_summary(doc, start_page=6, end_page=8):
+def get_summary(doc, start_page=6, end_page=8, send_summary_update=lambda x:  None):
     summary = []
 
     # extract the text and clean it up
@@ -191,13 +191,14 @@ def get_summary(doc, start_page=6, end_page=8):
         print(f'{start}-{summary_end_page}')
         generated_summary = make_gpt_summary(input_text, context)
         summary.append((start, summary_end_page, generated_summary))
+        send_summary_update(summary)
         context = generate_context(generated_summary)
         start = cur_page
 
     print('FINISHED SUMMARISING TEXT')
     return summary
 
-def get_summary_string(content_arr:str):
+def get_summary_string(content_arr:str, send_summary_update):
     summary = []
     # extract the text and clean it up
     print('STARTED FORMATTING TEXT')
@@ -218,6 +219,7 @@ def get_summary_string(content_arr:str):
                 break
         generated_summary = make_gpt_summary(input_text, context)
         summary.append((-1, -1, generated_summary))
+        send_summary_update(summary)
         context = generate_context(generated_summary)
 
     print('FINISHED SUMMARISING TEXT')
