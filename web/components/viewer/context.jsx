@@ -16,6 +16,7 @@ function ViewerContextProvider({children}) {
     const [isReady, setIsReady] = useState(false);
     const [isWebsiteReady, setIsWebsiteReady] = useState(false);
     const {socket} = useContext(WebsocketContext);
+    const [liveSummary, setLiveSummary] = useState({isSummarizing: false, summaryJson: {formattedSummary: []}});
 
     useEffect(() => {
         if (!router.isReady) return;
@@ -38,11 +39,23 @@ function ViewerContextProvider({children}) {
             console.log('Message received:', data);
         };
 
+        const handleLiveSummary = (data) => {
+            let jsonData = JSON.parse(data)
+            if (!jsonData.isSummarizing && jsonData.summaryJson !== {}) {
+                setSummary(summary => [jsonData.summaryJson, ...summary])
+            }
+            setLiveSummary(jsonData)
+
+            console.log('Received data', data)
+        }
+
         socket.on(pdfKey, handleMessage);
+        socket.on(`${pdfKey}:summary`, handleLiveSummary);
 
         // Clean up the listener when the component is unmounted
         return () => {
             socket.off(pdfKey, handleMessage);
+            socket.off(`${pdfKey}:summary`, handleLiveSummary);
         };
     }, [socket, pdfKey]);
 
@@ -62,7 +75,9 @@ function ViewerContextProvider({children}) {
             isReady,
             setIsReady,
             isWebsiteReady,
-            setIsWebsiteReady
+            setIsWebsiteReady,
+            liveSummary,
+            setLiveSummary
         }}>
             {children}
         </ViewerContext.Provider>
