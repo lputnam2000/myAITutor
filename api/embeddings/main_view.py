@@ -65,6 +65,7 @@ def extension_to_embedding():
             'status': 'Not Ready',
             'type': 'url'
         }
+
         send_update(socketio, user_id, 'home', new_upload)
 
         thread = threading.Thread(target=run_in_context, args=(data,process_chrome_extension_embeddings, socketio, stream_name))
