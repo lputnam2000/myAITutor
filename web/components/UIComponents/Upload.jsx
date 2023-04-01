@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components"
 import {
     Modal,
@@ -11,7 +11,7 @@ import {
     Image,
     Button, FormControl, FormLabel, Input, FormHelperText, FormErrorMessage,
 } from '@chakra-ui/react'
-import {Select} from '@chakra-ui/react'
+import {Select, Progress} from '@chakra-ui/react'
 import axios from "axios";
 
 
@@ -114,41 +114,75 @@ const YoutubeInput = ({url, setUrl}) => {
     )
 }
 
-const sendS3 = async (file) => {
-    if (!file) {
-        console.log("no file was found")
-        return
-    }
+// const sendS3 = async (file,fileType) => {
+//     if (!file) {
+//         console.log("no file was found")
+//         return
+//     }
 
-    const requestObject = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            "fileName": file.name,
-            "fileType": file.type,
-        })
-    }
+//     const requestObject = {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//             "fileName": file.name,
+//             "fileType": file.type,
+//         })
+//     }
 
-    let uploadID
+//     let uploadID
 
-    await fetch('/api/getUploadURL', requestObject)
-        .then(res => res.json())
-        .then(data => {
-            uploadID = data["fileName"]
-            fetch(data["signedUrl"], {
-                headers: {'content-type': file.type},
-                method: 'PUT',
-                body: file,
-            }).then((res) => {
-                return res.text()
-            }).then((txt) => {
-                console.log(txt)
-            })
-        })
-    return uploadID
-}
+//     if (fileType === 'pdf') {
+//         await fetch('/api/getUploadURL', requestObject)
+//             .then(res => res.json())
+//             .then(data => {
+//                 uploadID = data["fileName"]
+//                 fetch(data["signedUrl"], {
+//                     headers: {'content-type': file.type},
+//                     method: 'PUT',
+//                     body: file,
+//                 }).then((res) => {
+//                     return res.text()
+//                 }).then((txt) => {
+//                     console.log(txt)
+//                 })
+//             })
+//     } else if (fileType === 'video') {
+//         await fetch('/api/getVideoUploadURL', requestObject)
+//         .then(res => res.json())
+//         .then(data => {
+//             uploadID = data["fileName"]
+//             const options = {
+//                 headers: {'content-type': file.type},
+//                 onUploadProgress: function(progressEvent) {
+//                     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+//                     setProgress(percentCompleted);
+//                     console.log(percentCompleted);
+//                 }
+//             };
+//             axios.put(data["signedUrl"], file, options)
+//                 .then(response => {
+//                     console.log(response.data);
+//                 })
+//                 .catch(error => {
+//                     console.log(error);
+//                 }).finally(() => {
+//                     console.log("done");
+//                 });
+//             // fetch(data["signedUrl"], {
+//             //     headers: {'content-type': file.type},
+//             //     method: 'PUT',
+//             //     body: file,
+//             // }).then((res) => {
+//             //     return res.text()
+//             // }).then((txt) => {
+//             //     console.log(txt)
+//             // })
+//         })
+//     }
+//     return uploadID
+// }
 
 const DropBox = styled.div`
   border: 1px dashed #57657e;
@@ -173,13 +207,91 @@ const StyledOption = styled.option`
   }
 `
 
+const ProgressContainer = styled.div`
+  margin-top: 10px;
+  padding: 5px
+  display: flex;
+  flex-direction: column;
+`
+const ProgressText = styled.div`
+    font-size: 16px;
+    margin-bottom: 5px;
+`
+
 export default function Upload({handleFile}) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileType, setFileType] = useState('');
     const {isOpen, onOpen, onClose} = useDisclosure("");
     const hiddenFileInput = React.useRef(null);
+    const hiddenVideoFileInput = React.useRef(null);
     const [url, setUrl] = useState('');
+    const [progress, setProgress] = useState(0);
+    const [isSending, setIsSending] = useState(false)
 
+    const sendS3 = async (file,fileType) => {
+        if (!file) {
+            console.log("no file was found")
+            return
+        }
+        
+        // add code to disable submit and upload
+        setIsSending(true);
+
+        const requestObject = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "fileName": file.name,
+                "fileType": file.type,
+            })
+        }
+    
+        let uploadID
+    
+        if (fileType === 'pdf') {
+            await fetch('/api/getUploadURL', requestObject)
+                .then(res => res.json())
+                .then(data => {
+                    uploadID = data["fileName"]
+                    fetch(data["signedUrl"], {
+                        headers: {'content-type': file.type},
+                        method: 'PUT',
+                        body: file,
+                    }).then((res) => {
+                        return res.text()
+                    }).then((txt) => {
+                        console.log(txt)
+                    })
+                })
+        } else if (fileType === 'video') {
+            await fetch('/api/getVideoUploadURL', requestObject)
+            .then(res => res.json())
+            .then(data => {
+                uploadID = data["fileName"]
+                const options = {
+                    headers: {'content-type': file.type},
+                    onUploadProgress: function(progressEvent) {
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        setProgress(percentCompleted);
+                        console.log(percentCompleted);
+                    }
+                };
+                axios.put(data["signedUrl"], file, options)
+                    .then(response => {
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    }).finally(() => {
+                        console.log("done");
+                        setIsSending(false);
+                    });
+            })
+        }
+        return uploadID
+    }
 
     const closeModal = () => {
         setUrl('')
@@ -196,12 +308,27 @@ export default function Upload({handleFile}) {
         hiddenFileInput.current.click();
     };
 
+    const handleVideoFileButtonClick = () => {
+        hiddenVideoFileInput.current.click();
+    };
+
     const handleFileChange = event => {
         const fileUploaded = event.target.files[0];
         if (!fileUploaded) return;
         const fileExtension = fileUploaded.name.split('.').pop().toLowerCase();
         if (fileExtension !== 'pdf') {
             alert('Please select a PDF file.');
+            return;
+        }
+        setSelectedFile(fileUploaded)
+    };
+
+    const handleVideoFileChange = event => {
+        const fileUploaded = event.target.files[0];
+        if (!fileUploaded) return;
+        const fileExtension = fileUploaded.name.split('.').pop().toLowerCase();
+        if (fileExtension !== 'mp4') {
+            alert('Please select a MP4 file.');
             return;
         }
         setSelectedFile(fileUploaded)
@@ -218,6 +345,17 @@ export default function Upload({handleFile}) {
         setSelectedFile(fileUploaded)
     };
 
+    const handleVideoFileDrop = event => {
+        event.preventDefault();
+        const fileUploaded = event.dataTransfer.files[0];
+        const fileExtension = fileUploaded.name.split('.').pop().toLowerCase();
+        if (fileExtension !== 'mp4') {
+            alert('Please select a mp4 file.');
+            return;
+        }
+        setSelectedFile(fileUploaded)
+    };
+
     const handleDragOver = event => {
         event.preventDefault();
     };
@@ -226,7 +364,7 @@ export default function Upload({handleFile}) {
         if (selectedFile) {
             return <FileInformation>Selected file: {selectedFile.name}</FileInformation>;
         } else {
-            return
+            return <></>
         }
     };
 
@@ -249,15 +387,27 @@ export default function Upload({handleFile}) {
             })
             console.log(url)
         } else if (fileType === 'pdf') {
-            const uploadID = await sendS3(selectedFile);
+            const uploadID = await sendS3(selectedFile,fileType);
             console.log(uploadID);
             handleFile(selectedFile, fileType, uploadID);
             closeModal();
+        } else if (fileType === 'video'){
+            const uploadID = await sendS3(selectedFile,fileType);
+            console.log(uploadID);
+            handleFile(selectedFile, fileType, uploadID);
         } else {
             closeModal()
         }
 
     }
+
+    useEffect(()=> {
+        if (progress === 100) {
+            closeModal()
+            setProgress(0)
+        }
+    }, [progress])
+
 
     return (<>
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -272,6 +422,7 @@ export default function Upload({handleFile}) {
                         <StyledOption value='pdf'>Document (PDF)</StyledOption>
                         <StyledOption value='url'>Website link</StyledOption>
                         <StyledOption value='youtube'>Youtube Video</StyledOption>
+                        <StyledOption value='video'>MP4 File</StyledOption>
                     </StyledSelect>
                     {
                         fileType === 'pdf' && <>
@@ -304,13 +455,42 @@ export default function Upload({handleFile}) {
                             <YoutubeInput url={url} setUrl={setUrl}/>
                         </>
                     }
+                    {
+                        fileType === 'video' && <>
+                            <DropBox onDrop={handleVideoFileDrop} onDragOver={handleDragOver}
+                            > <DropText>Drag and drop a MP4 file here or</DropText>
+
+                                <PopButton bg={'white'} onClick={handleVideoFileButtonClick}>
+                                    Select MP4
+                                </PopButton>
+                                <input
+                                    type="file"
+                                    ref={hiddenVideoFileInput}
+                                    onChange={handleVideoFileChange}
+                                    accept="video/mp4"
+                                    style={{display: 'none'}}
+                                />
+                            </DropBox>
+                            {renderSelectedFile()}
+                            
+                            {
+                                progress!==0 && 
+                                <ProgressContainer>
+                                    <ProgressText>
+                                        Uploading Video!
+                                    </ProgressText>
+                                    <Progress  size='xs' value={progress} colorScheme='green'/>
+                                </ProgressContainer>
+                            }
+                        </>
+                    }
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button colorScheme={'blue'} mr={3} onClick={uploadDocument}>
+                    <Button colorScheme={'blue'} mr={3} onClick={uploadDocument} isDisabled={isSending}>
                         Submit
                     </Button>
-                    <Button colorScheme={'red'} mr={3} onClick={closeModal}>
+                    <Button colorScheme={'red'} mr={3} onClick={closeModal} isDisabled={isSending}>
                         Close
                     </Button>
                 </ModalFooter>

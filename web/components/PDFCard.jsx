@@ -77,7 +77,8 @@ const Tag = styled.div`
 const typeToLabel = {
     'pdf': 'PDF',
     'url': 'Website',
-    'youtube': 'YouTube'
+    'youtube': 'YouTube',
+    'mp4': 'Video'
 }
 
 function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename}) {

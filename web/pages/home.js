@@ -111,7 +111,7 @@ function Home() {
     }, [userUploads])
 
     const handleFileUpload = (file, type, uploadID) => {
-        if (type === 'pdf') {
+        if (type === 'pdf' || type === 'video') {
             let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready', type: type}
             setUserUploads(oldArray => [...oldArray, newValue])
         } else {
