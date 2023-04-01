@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from flask import Flask, Blueprint, jsonify, request, copy_current_request_context, current_app
 from ..utils.utils import require_api_key
-from .websiteToEmbeddings import process_web_embeddings, process_chrome_extension_embeddings, process_web_text
+from .websiteToEmbeddings import process_web_embeddings,  process_chrome_extension_text, process_chrome_extension_embeddings, process_web_text
 from .youtubeToEmbeddings import process_youtube_embeddings
 from uuid import uuid4
 from watchtower import CloudWatchLogHandler
@@ -29,9 +29,11 @@ def website_to_embedding():
 
         thread_embeddings = threading.Thread(target=run_in_context, args=(data, process_web_embeddings, socketio, stream_name))
         thread_embeddings.start()
-        thread_text = threading.Thread(target=run_in_context, args=(data, process_web_text, socketio, stream_name))
         current_app.logger.info(f'Processing website embeddings for {key}')
 
+
+
+        thread_text = threading.Thread(target=run_in_context, args=(data, process_web_text, socketio, stream_name))
         thread_text.start()
         current_app.logger.info(f'Processing website text for {key}')
 
@@ -60,6 +62,9 @@ def extension_to_embedding():
         thread.start()
 
         key = data['key']
+        thread_text = threading.Thread(target=run_in_context, args=(data, process_chrome_extension_text, socketio, stream_name))
+        thread_text.start()
+        current_app.logger.info(f'Processing website text for {key}')
 
         current_app.logger.info(f'Processing extension embeddings for {key}')
         current_app.logger.removeHandler(new_handler)
