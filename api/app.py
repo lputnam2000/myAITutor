@@ -324,7 +324,7 @@ def process_summary_youtube(data,stream_name):
             video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
             # result = jsonify(s)
             send_notification_to_client(user_id, key, f'Summary complete for:{key}')
-            logger.info(f'FINISHED Processing video summaries for {key}')
+            logger.info(f'FINISHED Processing youtube summaries for {key}')
             # return result
     except Exception as e:
         print(e)
@@ -332,7 +332,57 @@ def process_summary_youtube(data,stream_name):
         logger.removeHandler(new_handler)
         raise e
 
+@app.route('/summaries/videos/', methods=["POST"])
+@require_api_key
+def generate_summary_video():
+    stream_name = f'stream-name-video-summary-{str(uuid4())}'
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(formatter)
+    logger.addHandler(new_handler)
+    try:
+        data = request.json
+        key = data['key']
+        thread = threading.Thread(target=process_summary_video, args=(data,stream_name))
+        thread.start()
 
+        logger.info(f'Processing youtube summary for {key}')
+        logger.removeHandler(new_handler)
+
+        return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
+    except Exception as e:
+        print(e)
+        logger.info(f'Error:{e}')
+        logger.removeHandler(new_handler)
+        raise e
+
+def process_summary_video(data,stream_name):
+    new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
+    new_handler.setFormatter(formatter)
+    logger.addHandler(new_handler)
+    try:
+        with app.app_context():
+            key = data['key']
+            user_id = data['user_id']
+            db_client = get_mongo_client()
+            data_db = db_client["data"]
+            video_collection = data_db["SummaryVideos"]
+            video_doc = video_collection.find_one({'_id': key})
+            video_text = [t["text"] for t in video_doc['transcript']]
+            s = get_summary_string(video_text)
+            summaryDict = {}
+            summaryDict['startPage'] = -1
+            summaryDict['endPage'] = -1
+            summaryDict['formattedSummary'] = s
+            video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
+            # result = jsonify(s)
+            send_notification_to_client(user_id, key, f'Summary complete for:{key}')
+            logger.info(f'FINISHED Processing video summaries for {key}')
+            # return result
+    except Exception as e:
+        print(e)
+        logger.info(f'Error:{e}')
+        logger.removeHandler(new_handler)
+        raise e
 
 if __name__ =="__main__":
     socketio.run(app, host='0.0.0.0', debug=True)
