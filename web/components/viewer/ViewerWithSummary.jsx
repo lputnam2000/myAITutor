@@ -3,7 +3,7 @@ import styled from "styled-components";
 import {ViewerContext} from "./context";
 import Summary from "./Summary";
 import PDFViewer from "./PDFViewer";
-import axios from "axios";
+import {BsLink45Deg} from 'react-icons/bs'
 import WebsiteViewer from "./WebsiteViewer";
 import YoutubeViewer from "./YoutubeViewer";
 
@@ -27,14 +27,45 @@ const InnerContainer = styled.div`
 `
 
 
-const Title = styled.h1`
-  font-size: 40px;
+const TitleContainer = styled.h1`
   margin-left: 30px;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  color: #48fdce;
+  justify-content: space-between;
+`
+
+const Title = styled.span`
+  font-size: 40px;
   text-decoration: underline;
   white-space: nowrap;
+  text-overflow: ellipsis;
   overflow: hidden;
-  color: #48fdce;
+`
+
+const ShareButton = styled.button`
+  font-size: 18px;
+  font-weight: 600;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: #FFDB58;
+  color: #1c2025;
+  transition: box-shadow ease-in-out .1s;
+
+  &:hover {
+    box-shadow: 4px 4px 0px #776c43;
+  }
+
+  &:active {
+    box-shadow: none;
+  }
+
+  display: flex;
+  align-items: center;
+  gap: 5px;
 `
 
 const ViewerContainer = styled.div`
@@ -53,17 +84,28 @@ const SummaryContainer = styled.div`
   }
 `
 
-function ViewerWithSummary() {
+function ViewerWithSummary({href}) {
 
     const {title, fileType} = useContext(ViewerContext);
 
 
+    const copyUrl = () => {
+        navigator.clipboard.writeText(window.location.href);
+    }
     // const pagesRef = useRef([]);
 
 
     return (
         <Container>
-            <Title>{title}</Title>
+            <TitleContainer>
+                <Title>
+                    {title}
+                </Title>
+                <ShareButton onClick={copyUrl}>
+                    Share
+                    <BsLink45Deg size={24}/>
+                </ShareButton>
+            </TitleContainer>
             <InnerContainer>
                 <ViewerContainer>
                     {
