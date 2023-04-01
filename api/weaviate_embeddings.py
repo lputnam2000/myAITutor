@@ -255,9 +255,9 @@ def upload_documents_youtube(documents, client, class_name):
     with client.batch as batch:
         # Batch import all Questions
         for i in range(len(documents)):
-            print(documents[i])
+            # print(documents[i])
             properties = documents[i]
-            print(i)
+            # print(i)
             client.batch.add_data_object(properties, class_name)
 
 # documents = get_documents(fitz.open('ex2.pdf'))

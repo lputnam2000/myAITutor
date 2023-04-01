@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import fitz
 import io
+from PIL import Image
 load_dotenv()
 
 # BUCKET_NAME = 'chimppdfstore'
@@ -14,6 +15,24 @@ def get_s3_client():
         aws_access_key_id=os.getenv('CB_AWS_ACCESS_KEY_ID'),
         aws_secret_access_key=os.getenv('CB_AWS_SECRET_ACCESS_KEY'),
         region_name=os.getenv('CB_AWS_REGION'))
+
+def get_video_file(bucket, key):
+    s3 = get_s3_client()
+    s3.download_file(bucket, key, f'{key}.mp4')
+    return f'{key}.mp4'
+
+def upload_video_thumbnail(thumbnail, key):
+    bucket_name_imgs = "videouploads-thumbnails"
+    
+    # get bytes for thumbnail
+    pil_image = Image.fromarray(thumbnail)
+    bytes_io = io.BytesIO()
+    pil_image.save(bytes_io, format='JPEG')
+    thumbnail_bytes = bytes_io.getvalue()
+
+    # Upload the thumbnail image to the S3 bucket
+    s3 = get_s3_client()
+    s3.put_object(Bucket=bucket_name_imgs, Key=key, Body=thumbnail_bytes)
 
 
 def get_pdf(bucket, key):

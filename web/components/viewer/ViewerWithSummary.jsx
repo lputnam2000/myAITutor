@@ -6,6 +6,7 @@ import PDFViewer from "./PDFViewer";
 import {BsLink45Deg} from 'react-icons/bs'
 import WebsiteViewer from "./WebsiteViewer";
 import YoutubeViewer from "./YoutubeViewer";
+import VideoViewer from './VideoViewer';
 
 
 const Container = styled.div`
@@ -111,7 +112,7 @@ function ViewerWithSummary({href}) {
     const copyUrl = () => {
         navigator.clipboard.writeText(window.location.href);
     }
-    // const pagesRef = useRef([]);
+
 
 
     return (
@@ -135,6 +136,9 @@ function ViewerWithSummary({href}) {
                     }
                     {
                         fileType === 'youtube' && <YoutubeViewer/>
+                    }
+                    {
+                        fileType === 'mp4' && <VideoViewer/>
                     }
                 </ViewerContainer>
                 <SummaryContainer>
