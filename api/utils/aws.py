@@ -15,6 +15,10 @@ def get_s3_client():
         aws_secret_access_key=os.getenv('CB_AWS_SECRET_ACCESS_KEY'),
         region_name=os.getenv('CB_AWS_REGION'))
 
+def get_video_file(bucket, key):
+    s3 = get_s3_client()
+    s3.download_file(bucket, key, f'{key}.mp4')
+    return f'{key}.mp4'
 
 def get_pdf(bucket, key):
     s3 = get_s3_client()
