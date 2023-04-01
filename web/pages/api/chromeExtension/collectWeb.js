@@ -65,7 +65,12 @@ async function generateRecord(user_id, html, title) {
                 }
             }
             uploads.update(record, {
-                $push: {"uploads": {uuid, title, status: 'Not Ready', type: 'url'}}
+                $push: {
+                    "uploads": {
+                        $each: [{uuid, title, status: 'Not Ready', type: 'url'}],
+                        $position: 0
+                    }
+                }
             })
             websitesCollection.insertOne({
                 _id: uuid,
