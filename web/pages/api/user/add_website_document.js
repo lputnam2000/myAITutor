@@ -60,6 +60,7 @@ async function generateRecord(session, url) {
                 owner,
                 title,
                 status: 'Not Ready',
+                isWebsiteReady: false,
                 summary: [],
                 type: 'url',
                 url

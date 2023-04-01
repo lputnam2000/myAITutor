@@ -1,65 +1,20 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Link from "next/link";
 import {useRouter} from 'next/router';
-import {useSession, signIn, signOut} from "next-auth/react"
-import {Badge, Flex, Avatar, Box, Text, IconButton} from '@chakra-ui/react'
+import {useSession, signOut} from "next-auth/react"
+import {IconButton} from '@chakra-ui/react'
 import styled from 'styled-components'
 
-import {
-    Button,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    MenuItemOption,
-    MenuGroup,
-    MenuOptionGroup,
-    MenuDivider,
-} from '@chakra-ui/react'
 import {AiOutlineHome} from "react-icons/ai";
 
-function BadgePP({name, profilePic}) {
-    const router = useRouter()
-
-
-    return (<>
-        <Menu>
-            <MenuButton>
-                <Flex bg='#FBFBFF' p='0.5rem' borderRadius='1.4rem'>
-                    <Avatar src={profilePic}/>
-                    <Box ml='3'>
-                        <Text fontWeight='bold'>
-                            {name}
-                            <Badge ml='1' colorScheme='green'>
-                                New
-                            </Badge>
-                        </Text>
-                        <Text fontSize='sm' className="tw-font-main tw-text-gray-400 tw-text-right tw-pr-5">More
-                            Options</Text>
-                    </Box>
-                </Flex>
-            </MenuButton>
-            <MenuList>
-                <MenuItem onClick={() => {
-                    signOut();
-                    router.push("/api/auth/signout");
-                }}>Log out</MenuItem>
-            </MenuList>
-        </Menu>
-    </>)
-}
-
-/*<div className={`${styles["nosqueeze"]} ${styles["btn-hover"]} ${styles["color-1"]}`} onClick={signOutClick}>
-      Sign out
-    </div>*/
 
 const Container = styled.div`
-  height: 50px;
   background-color: #242933;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: #57657e 2px solid;
+  height: 50px;
   @media (max-width: 600px) {
     height: 75px;
   }
@@ -169,13 +124,6 @@ function Navbar(props) {
     const {data: session} = useSession()
     const [color1, setColor1] = useState('');
     const [color2, setColor2] = useState('');
-    const [username, setUsername] = useState('');
-
-    useEffect(() => {
-        if (session) {
-            setUsername(session.user.name);
-        }
-    }, [session]);
 
     useEffect(() => {
         setColor1(getRandomColor())
@@ -207,9 +155,6 @@ function Navbar(props) {
                 chimpbase
             </Logo>
             <ButtonsContainer>
-                {/*<StyledLink href={'home'}>*/}
-                {/*    Home*/}
-                {/*</StyledLink>*/}
                 <ProfileDropdown>
                     <IconContainer>
 

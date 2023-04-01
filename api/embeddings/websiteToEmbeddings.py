@@ -10,6 +10,7 @@ from watchtower import CloudWatchLogHandler
 import logging
 from ..utils.utils import  get_mongo_client, send_notification_to_client
 from ..weaviate_embeddings import upload_documents_website, create_website_class
+from ..socket_helper import send_update
 
 FORMATTER = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 ENCODER = tiktoken.get_encoding("gpt2")
@@ -197,7 +198,7 @@ class WebsiteTextExtracter:
 #         print(e)
 #         raise e
 
-def process_web_text(data,stream_name):
+def process_web_text(data, socketio_instance, stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
     new_handler.setFormatter(FORMATTER)
     current_app.logger.addHandler(new_handler)
@@ -206,12 +207,14 @@ def process_web_text(data,stream_name):
         current_app.logger.info('ADDING WEBSITE TEXT TO MONGO')
         url = data['url']
         website_text = get_text_from_url(url)
-        # print(website_text)
+        user_id = data['user_id']
         key = data['key']
         db_client = get_mongo_client()
         data_db = db_client["data"]
         websites_collection = data_db["SummaryWebsites"]
-        websites_collection.update_one({"_id": key}, {"$set": {"content": website_text}})
+        websites_collection.update_one({"_id": key}, {"$set": {"content": website_text, "isWebsiteReady": True}})
+        send_update(socketio_instance, user_id, key,  {'key': 'isWebsiteReady', 'value': True})
+
         print("WEBSITE ADDED TEXT TO MONGO")
         current_app.logger.info('WEBSITE ADDED TEXT TO MONGO')
         current_app.logger.removeHandler(new_handler)
@@ -220,7 +223,7 @@ def process_web_text(data,stream_name):
         current_app.logger.removeHandler(new_handler)
         print(e)   
 
-def process_web_embeddings(data,stream_name):
+def process_web_embeddings(data, socketio_instance, stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
     new_handler.setFormatter(FORMATTER)
     current_app.logger.addHandler(new_handler)
@@ -246,6 +249,7 @@ def process_web_embeddings(data,stream_name):
         update_query = {"$set": {"status": "Ready", "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
+        send_update(socketio_instance, user_id, key, {'key': 'isReady', 'value': True})
         current_app.logger.removeHandler(new_handler)
         send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
     except Exception as e:
@@ -253,7 +257,7 @@ def process_web_embeddings(data,stream_name):
         current_app.logger.removeHandler(new_handler)
         print(e)
 
-def process_chrome_extension_embeddings(data,stream_name):
+def process_chrome_extension_embeddings(data, socketio_instance, stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
     new_handler.setFormatter(FORMATTER)
     current_app.logger.addHandler(new_handler)
@@ -279,6 +283,7 @@ def process_chrome_extension_embeddings(data,stream_name):
         update_query = {"$set": {"status": "Ready", "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
+        send_update(socketio_instance, user_id, key, {'key': 'isReady', 'value': True})
         current_app.logger.removeHandler(new_handler)
         send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
     except Exception as e:

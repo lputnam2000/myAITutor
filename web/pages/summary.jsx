@@ -6,6 +6,7 @@ import ViewerContextProvider from "../components/viewer/context";
 import ViewerWithSummary from "../components/viewer/ViewerWithSummary";
 import Navbar from "../components/UIComponents/Navbar";
 import Layout from "../Layouts/basicLayout"
+import WebsocketContextProvider from "../components/WebsocketContext";
 
 
 const gradientKeyframes = keyframes`
@@ -24,19 +25,16 @@ const Container = styled.div`
   height: auto;
   min-height: 100vh;
   //background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0);
-  background-size: 400% 400%;
-  animation: ${gradientKeyframes} 300s ease infinite;
-  width: 100vw;
 `
 
 
 function PageSummary(props) {
     return <Container>
-
-        <ViewerContextProvider>
-            <ViewerWithSummary/>
-        </ViewerContextProvider>
-
+        <WebsocketContextProvider>
+            <ViewerContextProvider>
+                <ViewerWithSummary/>
+            </ViewerContextProvider>
+        </WebsocketContextProvider>
     </Container>
 
 }
