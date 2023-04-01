@@ -49,11 +49,14 @@ def listen_for_updates():
             for message in pubsub.listen():
                 if message['type'] == 'message':
                     if message['channel'].decode('utf-8') == "push_to_user":
+                        # HANDLE MESSAGE NOTIFICATIONS
                         data = json.loads(message['data'])
                         user_id = data['userid']
-                        content = data['content']
+                        user_message = data['data']['data']
+                        channel = data['data']['channel']
                         if user_id:
-                            socketio.emit('push_to_user', str(content), room=user_id)
+                            socketio.emit(channel, user_message, room=user_id)
+
                 if message['type'] == 'pmessage':
                     broken_up_key = message['channel'].decode('utf-8').split(':')
                     if broken_up_key[1] == 'user':

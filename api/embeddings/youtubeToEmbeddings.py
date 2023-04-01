@@ -179,7 +179,7 @@ if __name__ == "__main__":
     formatted_subtitles = srt_to_array(transcripts)
     print('#Transcripts Generated')
 
-def process_mp4_embeddings(data, socketio_instance, stream_name):
+def process_mp4_embeddings(data, stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
     new_handler.setFormatter(FORMATTER)
     current_app.logger.addHandler(new_handler)
@@ -192,7 +192,7 @@ def process_mp4_embeddings(data, socketio_instance, stream_name):
         user_id = data['user_id']
         
         def send_progress_update(value, text):
-            send_update(socketio_instance, user_id, f'{key}:progress',  {'value': value, 'text': text})
+            send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
 
         print(f'CREATING THUMBNAIL FOR: {key}')
         videoFile = create_thumbnail(bucket, key)
@@ -220,7 +220,7 @@ def process_mp4_embeddings(data, socketio_instance, stream_name):
         update_query = {"$set": {"status": "Ready", "transcript": formatted_subtitles}}
         # Update the document matching the UUID with the new values
         youtube_collection.update_one({"_id": key}, update_query)
-        send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
+        send_update( user_id, key,  {'key': 'isReady', 'value': True})
         # send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
         current_app.logger.removeHandler(new_handler)
     except Exception as e:
@@ -229,7 +229,7 @@ def process_mp4_embeddings(data, socketio_instance, stream_name):
         current_app.logger.removeHandler(new_handler)
         raise e
 
-def process_youtube_embeddings(data, socketio_instance, stream_name):
+def process_youtube_embeddings(data, stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
     new_handler.setFormatter(FORMATTER)
     current_app.logger.addHandler(new_handler)
@@ -238,7 +238,7 @@ def process_youtube_embeddings(data, socketio_instance, stream_name):
         user_id = data['user_id']
         key = data['key']
         def send_progress_update(value, text):
-            send_update(socketio_instance, user_id, f'{key}:progress',  {'value': value, 'text': text})
+            send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
 
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
@@ -261,7 +261,7 @@ def process_youtube_embeddings(data, socketio_instance, stream_name):
         update_query = {"$set": {"status": "Ready", "transcript": formatted_subtitles}}
         # Update the document matching the UUID with the new values
         youtube_collection.update_one({"_id": key}, update_query)
-        send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
+        send_update( user_id, key,  {'key': 'isReady', 'value': True})
         # send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
         current_app.logger.removeHandler(new_handler)
     except Exception as e:

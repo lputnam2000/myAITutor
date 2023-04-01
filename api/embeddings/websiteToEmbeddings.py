@@ -198,7 +198,7 @@ class WebsiteTextExtracter:
 #         print(e)
 #         raise e
 
-def process_chrome_extension_text(data, socketio_instance, stream_name):
+def process_chrome_extension_text(data, stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
     new_handler.setFormatter(FORMATTER)
     current_app.logger.addHandler(new_handler)
@@ -213,7 +213,7 @@ def process_chrome_extension_text(data, socketio_instance, stream_name):
         data_db = db_client["data"]
         websites_collection = data_db["SummaryWebsites"]
         websites_collection.update_one({"_id": key}, {"$set": {"content": website_text, "isWebsiteReady": True}})
-        send_update(socketio_instance, user_id, key,  {'key': 'isWebsiteReady', 'value': True})
+        send_update( user_id, key,  {'key': 'isWebsiteReady', 'value': True})
 
         print("WEBSITE ADDED TEXT TO MONGO")
         current_app.logger.info('WEBSITE ADDED TEXT TO MONGO')
@@ -223,7 +223,7 @@ def process_chrome_extension_text(data, socketio_instance, stream_name):
         current_app.logger.removeHandler(new_handler)
         print(e)   
 
-def process_web_text(data, socketio_instance, stream_name):
+def process_web_text(data, stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
     new_handler.setFormatter(FORMATTER)
     current_app.logger.addHandler(new_handler)
@@ -238,7 +238,7 @@ def process_web_text(data, socketio_instance, stream_name):
         data_db = db_client["data"]
         websites_collection = data_db["SummaryWebsites"]
         websites_collection.update_one({"_id": key}, {"$set": {"content": website_text, "isWebsiteReady": True}})
-        send_update(socketio_instance, user_id, key,  {'key': 'isWebsiteReady', 'value': True})
+        send_update( user_id, key,  {'key': 'isWebsiteReady', 'value': True})
 
         print("WEBSITE ADDED TEXT TO MONGO")
         current_app.logger.info('WEBSITE ADDED TEXT TO MONGO')
@@ -248,7 +248,7 @@ def process_web_text(data, socketio_instance, stream_name):
         current_app.logger.removeHandler(new_handler)
         print(e)   
 
-def process_web_embeddings(data, socketio_instance, stream_name):
+def process_web_embeddings(data,  stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
     new_handler.setFormatter(FORMATTER)
     current_app.logger.addHandler(new_handler)
@@ -260,7 +260,7 @@ def process_web_embeddings(data, socketio_instance, stream_name):
         user_id = data['user_id']
 
         def send_progress_update(value, text):
-            send_update(socketio_instance, user_id, f'{key}:progress',  {'value': value, 'text': text})
+            send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
 
         send_progress_update(0, 'Surfing the Web! 🍌🦍🌊')
         documents = get_documents_from_url(url)
@@ -281,7 +281,7 @@ def process_web_embeddings(data, socketio_instance, stream_name):
         update_query = {"$set": {"status": "Ready", "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
-        send_update(socketio_instance, user_id, key, {'key': 'isReady', 'value': True})
+        send_update( user_id, key, {'key': 'isReady', 'value': True})
         current_app.logger.removeHandler(new_handler)
         send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
     except Exception as e:
@@ -289,7 +289,7 @@ def process_web_embeddings(data, socketio_instance, stream_name):
         current_app.logger.removeHandler(new_handler)
         print(e)
 
-def process_chrome_extension_embeddings(data, socketio_instance, stream_name):
+def process_chrome_extension_embeddings(data,  stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
     new_handler.setFormatter(FORMATTER)
     current_app.logger.addHandler(new_handler)
@@ -299,7 +299,7 @@ def process_chrome_extension_embeddings(data, socketio_instance, stream_name):
         key = data['key']
 
         def send_progress_update(value, text):
-            send_update(socketio_instance, user_id, f'{key}:progress',  {'value': value, 'text': text})
+            send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
 
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
@@ -322,7 +322,7 @@ def process_chrome_extension_embeddings(data, socketio_instance, stream_name):
         update_query = {"$set": {"status": "Ready", "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
-        send_update(socketio_instance, user_id, key, {'key': 'isReady', 'value': True})
+        send_update( user_id, key, {'key': 'isReady', 'value': True})
         current_app.logger.removeHandler(new_handler)
         send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
     except Exception as e:

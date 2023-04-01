@@ -1,9 +1,13 @@
-from flask_socketio import SocketIO
+from api.utils import pushMessageToUser
 import json
-socketio = SocketIO()
 
 
-def send_update(socketio, user_id, channel, data):
-    message = json.dumps(data)
+def send_update(user_id, channel, data):
+    message = {
+        'data': json.dumps(data),
+        'channel': channel
+    }
+
+    message_str = json.dumps(message)
     print(f'SENDING UPDATE-{channel}: {message}')
-    socketio.emit(channel, message, room=user_id)
+    pushMessageToUser(user_id, message_str)
