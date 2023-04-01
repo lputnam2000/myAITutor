@@ -9,8 +9,6 @@ import { DataTetherProvider } from '../components/DataTetherProvider';
 
 const openSans = Open_Sans({ subsets: ['latin'], variable: '--font-open' },)
 const buenard = Buenard({ weight: "700", variable: '--font-b', subsets: ['latin'], })
-const openSans = Open_Sans({subsets: ['latin'], variable: '--font-open'},)
-const buenard = Buenard({weight: "700", variable: '--font-b', subsets: ['latin'],})
 
 import '/styles/globals.css'
 import {SessionProvider} from "next-auth/react"
