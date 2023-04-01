@@ -227,7 +227,6 @@ def configure_batch(client, batch_size: int, batch_target_rate: int, send_progre
     def callback(batch_results: dict) -> None:
         # you could print batch errors here
         send_progress_update()
-        print('\n\n\n\n\nWe are Here\n\n\n\n\n')
         time_took_to_create_batch = batch_size * (client.batch.creation_time/client.batch.recommended_num_objects)
         time.sleep(
             max(batch_size/batch_target_rate - time_took_to_create_batch + 1, 0)
@@ -272,7 +271,6 @@ def upload_documents_youtube(documents, client, class_name, send_progress_update
         for i in range(len(documents)):
             # print(documents[i])
             properties = documents[i]
-            print('\nanother ere\n')
             # print(i)
             client.batch.add_data_object(properties, class_name)
 
