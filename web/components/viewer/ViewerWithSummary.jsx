@@ -3,69 +3,129 @@ import styled from "styled-components";
 import {ViewerContext} from "./context";
 import Summary from "./Summary";
 import PDFViewer from "./PDFViewer";
-import axios from "axios";
+import {BsLink45Deg} from 'react-icons/bs'
 import WebsiteViewer from "./WebsiteViewer";
 import YoutubeViewer from "./YoutubeViewer";
 import VideoViewer from './VideoViewer';
 
 
 const Container = styled.div`
-  //min-height: 100vh;
   display: flex;
   flex-direction: column;
   padding-top: 10px;
+  flex-grow: 1;
+  width: 100%;
 `
 
 
 const InnerContainer = styled.div`
   display: flex;
-  @media (min-width: 750px) {
+  width: 100%;
+  flex-grow: 1;
+  @media (min-width: 900px) {
     flex-direction: row;
+    align-items: stretch
   }
   flex-direction: column;
-  align-items: center;
-  //justify-content: space-between;
+  align-items: stretch;
 `
 
 
-const Title = styled.h1`
-  font-size: 40px;
-  margin-left: 30px;
+const TitleContainer = styled.h1`
+  margin-left: 10px;
+  margin-right: 10px;
   margin-bottom: 10px;
-  text-decoration: underline;
-  white-space: nowrap;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
   color: #48fdce;
+  justify-content: space-between;
+`
+
+const Title = styled.span`
+  font-size: 40px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-bottom: 2px solid #48fdce;
+
+  overflow: hidden;
+  @media (max-width: 900px) {
+    font-size: 25px;
+  }
+  @media (max-width: 550px) {
+    font-size: 20px;
+  }
+
+`
+
+const ShareButton = styled.button`
+  font-size: 18px;
+  font-weight: 600;
+  margin-left: 20px;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: #FFDB58;
+  color: #1c2025;
+  transition: box-shadow ease-in-out .1s;
+
+  &:hover {
+    box-shadow: 4px 4px 0px #776c43;
+  }
+
+  &:active {
+    box-shadow: none;
+  }
+
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  @media (max-width: 900px) {
+    font-size: 16px;
+  }
+  @media (max-width: 550px) {
+    font-size: 14px;
+  }
 `
 
 const ViewerContainer = styled.div`
   flex: 1;
-  height: 100%;
-  width: 100%;
-
+  margin: 10px;
 `
+
 const SummaryContainer = styled.div`
-  width: 95%;
-  height: 750px;
-  @media (min-width: 750px) {
+  margin: 10px 10px 10px 10px;
+  position: relative;
+  @media (max-width: 899px) {
+    height: 450px;
+  }
+  @media (min-width: 900px) {
     width: 40vw;
-    margin-top: 10px;
-    margin-right: 20px;
+    margin: 10px 10px 10px 0px;
   }
 `
 
-function ViewerWithSummary() {
+
+function ViewerWithSummary({href}) {
 
     const {title, fileType} = useContext(ViewerContext);
 
 
+    const copyUrl = () => {
+        navigator.clipboard.writeText(window.location.href);
+    }
 
-    // const pagesRef = useRef([]);
 
 
     return (
         <Container>
-            <Title>{title}</Title>
+            <TitleContainer>
+                <Title>
+                    {title}
+                </Title>
+                <ShareButton onClick={copyUrl}>
+                    Share
+                    <BsLink45Deg size={22}/>
+                </ShareButton>
+            </TitleContainer>
             <InnerContainer>
                 <ViewerContainer>
                     {

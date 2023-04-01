@@ -5,10 +5,10 @@ import styled from 'styled-components'
 import ReactPlayer from 'react-player/youtube'
 
 const Container = styled.div`
-  width: 95%;
-  margin-left: 20px;
-  height: 750px;
+  position: relative;
+  height: 0;
   border: 2px black solid;
+  padding-bottom: 56.25%;
 
   &:hover {
     box-shadow: 5px 5px 0px #000000;
@@ -16,21 +16,20 @@ const Container = styled.div`
   }
 
   margin-bottom: 10px;
-`
+`;
+
+const PlayerWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+`;
 
 function YoutubeViewer() {
     const [url, setUrl] = useState('');
     const {setSummary, setTitle, setFileType, pdfKey, setIsReady} = useContext(ViewerContext);
 
-    const getDocumentDetails = (pdfKey) => {
-        let params = {'key': pdfKey}
-        axios.get('/api/user/get_youtube_video', {params: params}).then(res => {
-            setSummary(res.data.documentDetails.summary)
-            setIsReady(res.data.documentDetails.status === 'Ready')
-        }).catch(err => {
-            console.log(err)
-        })
-    }
     useEffect(() => {
         if (!pdfKey) return
         let params = {'key': pdfKey}
@@ -43,14 +42,15 @@ function YoutubeViewer() {
         }).catch(err => {
             console.log(err)
         })
-        // let timer = setInterval(() => getDocumentDetails(pdfKey), 3000);
-        // return () => {
-        //     timer = null
-        // }
+
     }, [pdfKey])
     return (
         <Container>
-            {url && <ReactPlayer width={'100%'} height={'100%'} controls={true} url={url}/>}
+            {url && <PlayerWrapper>
+                <ReactPlayer width={'100%'} height={'100%'} controls={true} url={url}/>
+            </PlayerWrapper>
+            }
+
         </Container>
     );
 }

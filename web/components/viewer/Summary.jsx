@@ -7,19 +7,18 @@ import GenerateSummary from "./GenerateSummary";
 import {ViewerContext} from "./context";
 
 const Container = styled.div`
+  position: absolute;
   height: 100%;
   width: 100%;
-  overflow-y: auto;
-  position: relative;
-  border: 2px black solid;
+  overflow: auto;
+  border: 2px #57657e solid;
   border-radius: 2px;
-  height: 750px;
   background-color: #242933;
   color: #fbfbff;
+  transition: box-shadow 0.1s ease-in-out;
 
   &:hover {
-    box-shadow: 5px 5px 0px #000000;
-    transition: box-shadow 0.1s ease-in-out;
+    box-shadow: 5px 5px 0px #48fdce;
   }
 `
 
@@ -60,6 +59,7 @@ const Joke = styled.div`
   opacity: 0;
   transition: opacity 1s ease-in-out;
   color: #20ee5f;
+  font-size: 16px;
   ${(props) =>
           props.fade &&
           css`
@@ -123,12 +123,12 @@ function Summary({}) {
                 ) :
 
                 <Tabs height={'100%'} variant='enclosed' isFitted>
-                    <TabList height={'5%'}>
+                    <TabList height={'35px'}>
                         <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
                         <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Search</Tab>
                     </TabList>
 
-                    <TabPanels height={'94%'}>
+                    <TabPanels height={'calc(100%-35px)'}>
                         <TabPanel style={{height: '100%', padding: '0px', marginRight: '10px'}}>
                             <SummaryContainer>
                                 <GenerateSummary/>
