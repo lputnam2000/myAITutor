@@ -190,10 +190,12 @@ def process_mp4_embeddings(data, socketio_instance, stream_name):
 
         print(f'CREATING THUMBNAIL FOR: {key}')
         videoFile = create_thumbnail(bucket, key)
+        #TODO: send socket notification to client that thumbnail is done
 
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
         formatted_subtitles = get_video_transcript(videoFile, isMP4)
+        print(formatted_subtitles)
         documents = get_weaviate_docs(formatted_subtitles)
         print('2. PARSED DOCUMENTS')
         current_app.logger.info('2. PARSED DOCUMENTS')
@@ -206,7 +208,7 @@ def process_mp4_embeddings(data, socketio_instance, stream_name):
         current_app.logger.info("4. UPLOADED DOCUMENTS")
         db_client = get_mongo_client()
         data_db = db_client["data"]
-        youtube_collection = data_db["SummaryYoutube"]
+        youtube_collection = data_db["SummaryVideos"]
         update_query = {"$set": {"status": "Ready", "transcript": formatted_subtitles}}
         # Update the document matching the UUID with the new values
         youtube_collection.update_one({"_id": key}, update_query)
