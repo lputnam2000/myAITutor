@@ -178,14 +178,8 @@ function PDFGenerateSummary(props) {
 
 function YoutubeGenerateSummary(props) {
     const {pdfKey} = useContext(ViewerContext)
-    const [summaryLoading, setSummaryLoading] = useState(false)
-
 
     const generateSummaryButton = () => {
-        setSummaryLoading(true)
-        setTimeout(() => {
-            setSummaryLoading(false)
-        }, 10000)
         axios.post('/api/user/generate_summary_youtube', {
             key: pdfKey
         }).then((res) => {
@@ -200,6 +194,25 @@ function YoutubeGenerateSummary(props) {
             </NewSummaryButton>
         </Container>
     );
+}
+function VideoGenerateSummary(props) {
+    const { pdfKey} = useContext(ViewerContext)
+
+    const generateSummaryButton = () => {
+        axios.post('/api/user/generate_summary_video', {
+            key: pdfKey
+        }).then((res) => {
+            console.log(res)
+        })
+    }
+
+    return (
+        <Container>
+          <NewSummaryButton onClick={generateSummaryButton}>
+              Generate Video Summary <SmallAddIcon boxSize={6}/>
+          </NewSummaryButton>
+        <Container/>
+    )
 }
 
 function URLGenerateSummary(props) {
@@ -233,9 +246,10 @@ function URLGenerateSummary(props) {
 function GenerateSummary() {
     const {fileType} = useContext(ViewerContext)
     return <>
-        {fileType === 'pdf' && <PDFGenerateSummary/>}
-        {fileType === 'url' && <URLGenerateSummary/>}
-        {fileType === 'youtube' && <YoutubeGenerateSummary/>}
+        {fileType ==='pdf' && <PDFGenerateSummary />}
+        {fileType ==='url' && <URLGenerateSummary />}
+        {fileType ==='youtube' && <YoutubeGenerateSummary />}
+        {fileType ==='mp4' && <VideoGenerateSummary />}
     </>
 }
 

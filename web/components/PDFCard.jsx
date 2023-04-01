@@ -77,7 +77,8 @@ const Tag = styled.div`
 const typeToLabel = {
     'pdf': 'PDF',
     'url': 'Website',
-    'youtube': 'YouTube'
+    'youtube': 'YouTube',
+    'mp4': 'Video'
 }
 
 function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''}) {
@@ -152,6 +153,11 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
                     exit={exitAnimation}
                 >
                     {type === 'pdf' && <ImageContainer>
+                        <img src={thumbnail} alt="" onError={(e) => {
+                            e.target.style.display = "none"
+                        }}/>
+                    </ImageContainer>}
+                    {type === 'mp4' && <ImageContainer>
                         <img src={thumbnail} alt="" onError={(e) => {
                             e.target.style.display = "none"
                         }}/>

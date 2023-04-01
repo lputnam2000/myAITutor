@@ -6,6 +6,7 @@ import PDFViewer from "./PDFViewer";
 import axios from "axios";
 import WebsiteViewer from "./WebsiteViewer";
 import YoutubeViewer from "./YoutubeViewer";
+import VideoViewer from './VideoViewer';
 
 
 const Container = styled.div`
@@ -58,6 +59,7 @@ function ViewerWithSummary() {
     const {title, fileType} = useContext(ViewerContext);
 
 
+
     // const pagesRef = useRef([]);
 
 
@@ -74,6 +76,9 @@ function ViewerWithSummary() {
                     }
                     {
                         fileType === 'youtube' && <YoutubeViewer/>
+                    }
+                    {
+                        fileType === 'mp4' && <VideoViewer/>
                     }
                 </ViewerContainer>
                 <SummaryContainer>

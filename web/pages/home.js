@@ -126,8 +126,8 @@ function Home() {
     useEffect(() => {
     }, [userUploads])
 
-    const handleFileUpload = (file, type, uploadID, url = '') => {
-        if (type === 'pdf') {
+    const handleFileUpload = (file, type, uploadID) => {
+        if (type === 'pdf' || type === 'video') {
             let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready', type: type}
             setUserUploads(oldArray => [newValue, ...oldArray])
         } else {
