@@ -1,7 +1,8 @@
-import React, {useMemo, useState} from 'react';
-import styled from 'styled-components'
-import {IconButton} from "@chakra-ui/react";
+import React, {useContext, useEffect, useMemo, useState} from 'react';
+import styled, {keyframes} from 'styled-components'
+import {IconButton, Spinner} from "@chakra-ui/react";
 import {ChevronDownIcon, ChevronRightIcon, TriangleDownIcon, TriangleUpIcon} from "@chakra-ui/icons";
+import {ViewerContext} from "./context";
 
 
 const Container = styled.div`
@@ -36,7 +37,7 @@ const CloseBorderContainer = styled.div`
 const CloseBorder = styled.div`
   width: 3px;
   height: 100%;
-  background-color: #23b7eb;
+  background-color: #48fdce;
 
 `
 
@@ -54,23 +55,60 @@ const StyledIconButton = styled(IconButton)`
   justify-self: center;
 `
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+const SummaryEntry = styled.span`
+  animation: ${fadeIn} 0.6s ease-out both;
+`;
 
-function CollapsibleSummary({summaryJson, isOpen, fileType}) {
+const LoadingSpinnerContainer = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 40px;
+  gap: 10px;
+`
+
+function LoadingSpinner() {
+    return (
+        <LoadingSpinnerContainer>
+            <Spinner
+                thickness='4px'
+                speed='0.65s'
+                emptyColor='gray.200'
+                color='#48fdce'
+                size='xl'
+            />
+            🦍🍌📚
+        </LoadingSpinnerContainer>
+    )
+}
+
+
+function CollapsibleSummary({summaryJson, isOpen, fileType, isStreaming = false}) {
     const [open, setOpen] = useState(isOpen);
+    const {liveSummary} = useContext(ViewerContext)
     const SummaryPanel = useMemo(() => {
         let panelOutput = []
         let formattedSummary = summaryJson.formattedSummary
         for (let i = 0; i < formattedSummary.length; i++) {
             for (let j = 0; j < formattedSummary[i][2].length; j++) {
                 panelOutput.push(
-                    <span key={`number-${i}-${j}`}>
+                    <SummaryEntry key={`number-${i}-${j}`}>
                         <SubHeading key={`${i}-${j}-0`}>
                             {formattedSummary[i][2][j][0]}
                         </SubHeading>
                         <SummaryText key={`${i}-${j}-1`}>
                             {formattedSummary[i][2][j][1]}
                         </SummaryText>
-                    </span>
+                    </SummaryEntry>
                 )
             }
         }
@@ -114,6 +152,7 @@ function CollapsibleSummary({summaryJson, isOpen, fileType}) {
                 </CloseBorderContainer>
                 <SummaryText>
                     {SummaryPanel}
+                    {isStreaming && liveSummary.isSummarizing && <LoadingSpinner/>}
                 </SummaryText>
             </>}
         </Container>
