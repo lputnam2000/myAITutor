@@ -394,6 +394,7 @@ export default function Upload({handleFile}) {
         } else if (fileType === 'video'){
             const uploadID = await sendS3(selectedFile,fileType);
             console.log(uploadID);
+            console.log(fileType);
             handleFile(selectedFile, fileType, uploadID);
         } else {
             closeModal()

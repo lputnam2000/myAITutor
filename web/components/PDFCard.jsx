@@ -157,6 +157,11 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename}) {
                             e.target.style.display = "none"
                         }}/>
                     </ImageContainer>}
+                    {type === 'mp4' && <ImageContainer>
+                        <img src={thumbnail} alt="" onError={(e) => {
+                            e.target.style.display = "none"
+                        }}/>
+                    </ImageContainer>}
                     {type === 'youtube' && <ImageContainer>
                         <img src={thumbnailUrl} alt="" onError={(e) => {
                             e.target.style.display = "none"

@@ -14,6 +14,13 @@ const thumbnailBucket = new AWS.S3({
     region: REGION,
 })
 
+const videoThumbnailBucket = new AWS.S3({
+    accessKeyId: process.env.CB_AWS_ACCESS_ID,
+    secretAccessKey: process.env.CB_AWS_ACCESS_KEY,
+    params: {Bucket: process.env.CB_AWS_VIDEO_THUMBNAIL_BUCKET},
+    region: REGION,
+})
+
 async function generatePreSignedGetUrl(bucket, key) {
     let result = bucket.getSignedUrlPromise('getObject', {
         Key: key,
@@ -41,6 +48,8 @@ const requestHandler = async (req, res) => {
                     let results = await Promise.all(userUploads['uploads'].map(async (upload) => {
                         if (upload.type === 'pdf') {
                             upload.thumbnail = await generatePreSignedGetUrl(thumbnailBucket, upload.uuid);
+                        } else if (upload.type === 'mp4') {
+                            upload.thumbnail = await generatePreSignedGetUrl(videoThumbnailBucket, upload.uuid);
                         }
                         return upload;
                     }))
