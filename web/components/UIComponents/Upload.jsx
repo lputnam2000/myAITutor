@@ -82,8 +82,9 @@ const WebsiteInput = ({url, setUrl}) => {
 }
 
 const YoutubeThumbnail = styled.div`
+  margin-bottom: 5px;
 `
-const YoutubeInput = ({url, setUrl}) => {
+const YoutubeInput = ({url, setUrl, title, setTitle}) => {
     const [thumbnailUrl, setThumbnailUrl] = useState('')
     const handleInputChange = (e) => {
         setUrl(e.target.value)
@@ -92,9 +93,15 @@ const YoutubeInput = ({url, setUrl}) => {
             .then(response => response.json())
             .then(data => {
                 setThumbnailUrl(data.thumbnail_url);
+                setTitle(data.title)
             })
             .catch(error => console.error(error));
     }
+
+    const setNewTitle = (e) => {
+        setTitle(e.target.value)
+    }
+
     return (
         <FormControl>
             <FormLabel>YouTube Video URL</FormLabel>
@@ -110,6 +117,12 @@ const YoutubeInput = ({url, setUrl}) => {
                     borderRadius='lg'
                 />}
             </YoutubeThumbnail>
+            {url &&
+                <>
+                    <FormLabel>Video Title</FormLabel>
+                    <Input type='text' value={title} onChange={setNewTitle}/>
+                </>
+            }
         </FormControl>
     )
 }
@@ -179,7 +192,7 @@ export default function Upload({handleFile}) {
     const {isOpen, onOpen, onClose} = useDisclosure("");
     const hiddenFileInput = React.useRef(null);
     const [url, setUrl] = useState('');
-
+    const [title, setTitle] = useState('');
 
     const closeModal = () => {
         setUrl('')
@@ -240,9 +253,9 @@ export default function Upload({handleFile}) {
                 console.error(err)
             })
         } else if (fileType === 'youtube') {
-            axios.post('/api/user/add_youtube_video', {url,}).then((res) => {
-                const {key, fileName} = res.data
-                handleFile(fileName, fileType, key);
+            axios.post('/api/user/add_youtube_video', {url, title}).then((res) => {
+                const {key, url, title} = res.data
+                handleFile(title, fileType, key, url);
                 closeModal()
             }).catch((err) => {
                 console.error(err)
@@ -301,7 +314,7 @@ export default function Upload({handleFile}) {
                     {
                         fileType === 'youtube' &&
                         <>
-                            <YoutubeInput url={url} setUrl={setUrl}/>
+                            <YoutubeInput url={url} setUrl={setUrl} title={title} setTitle={setTitle}/>
                         </>
                     }
                 </ModalBody>
