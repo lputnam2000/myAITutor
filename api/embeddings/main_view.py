@@ -7,7 +7,7 @@ from uuid import uuid4
 from watchtower import CloudWatchLogHandler
 import logging
 import threading
-from ..socket_helper import socketio
+from ..socket_helper import socketio, send_update
 
 embeddings_bp = Blueprint('embeddings', __name__, url_prefix='/embeddings')
 # logger = logging.getLogger('myapp-blueprint')
@@ -57,6 +57,15 @@ def extension_to_embedding():
         @copy_current_request_context
         def run_in_context(data, function, socketio_instance, stream_name):
             function(data, socketio_instance, stream_name)
+        user_id = data['user_id']
+        key = data['key']
+        new_upload = {
+            'uuid': user_id,
+            'title': data['title'],
+            'status': 'Not Ready',
+            'type': 'url'
+        }
+        send_update(socketio, user_id, 'home', new_upload)
 
         thread = threading.Thread(target=run_in_context, args=(data,process_chrome_extension_embeddings, socketio, stream_name))
         thread.start()

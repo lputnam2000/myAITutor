@@ -1,10 +1,10 @@
 import {createContext, useEffect, useState} from "react";
 import {useSession} from "next-auth/react"
 import io from 'socket.io-client';
-
-export const WebsocketContext = createContext();
-
 import React from 'react';
+
+export const WebsocketContext = createContext({socket: undefined});
+
 
 function WebsocketContextProvider({children}) {
     const [socket, setSocket] = useState(null);
@@ -17,7 +17,7 @@ function WebsocketContextProvider({children}) {
                 console.log('Update received:', data);
                 // Handle the data/update as needed
             });
-            
+
 
             socket.emit('join', {userId: data.user.id});
 

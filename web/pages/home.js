@@ -1,10 +1,10 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import styled from 'styled-components'
 import axios from "axios";
 import Upload from "../components/UIComponents/Upload";
 import PDFCard from "../components/PDFCard";
 import Layout from "../Layouts/basicLayout"
-import WebsocketContextProvider from "../components/WebsocketContext";
+import {WebsocketContext} from "../components/WebsocketContext";
 
 const HomeContainer = styled.div`
   padding: 30px;
@@ -34,6 +34,22 @@ function Home() {
 
     const [cardsPerRow, setCardsPerRow] = useState(8);
     const filesContainerRef = useRef(null);
+    const {socket} = useContext(WebsocketContext)
+
+    useEffect(() => {
+        if (!socket) return;
+        const handleNewUpload = (data) => {
+            let jsonData = JSON.parse(data)
+            setUserUploads(userUploads => [jsonData, ...userUploads])
+        }
+
+        socket.on('home', handleNewUpload);
+
+        // Clean up the listener when the component is unmounted
+        return () => {
+            socket.off('home', handleNewUpload);
+        };
+    }, [socket]);
 
     useEffect(() => {
         const calculateCardsPerRow = () => {
@@ -123,29 +139,27 @@ function Home() {
 
     return (
         <Container>
-            <WebsocketContextProvider>
-                <HomeContainer>
-                    <UserFilesContainer ref={filesContainerRef}>
-                        <Upload handleFile={handleFileUpload}></Upload>
-                        {
-                            userUploads.map((upload, i) => {
-                                    return (
-                                        <PDFCard key={`${upload.uuid}-${i}`} uploadId={upload.uuid}
-                                                 title={upload.title}
-                                                 url={upload.url ? upload.url : ''}
-                                                 thumbnail={upload.thumbnail} type={upload.type} onRename={renameTitle}
-                                                 onRemove={removeUpload}
-                                        />);
-                                }
-                            )
-                        }
-                        {Array(cardsPerRow)
-                            .fill(0)
-                            .map((_, i) => <EmptyCard key={`empty-${i}`}/>)
-                        }
-                    </UserFilesContainer>
-                </HomeContainer>
-            </WebsocketContextProvider>
+            <HomeContainer>
+                <UserFilesContainer ref={filesContainerRef}>
+                    <Upload handleFile={handleFileUpload}></Upload>
+                    {
+                        userUploads.map((upload, i) => {
+                                return (
+                                    <PDFCard key={`${upload.uuid}-${i}`} uploadId={upload.uuid}
+                                             title={upload.title}
+                                             url={upload.url ? upload.url : ''}
+                                             thumbnail={upload.thumbnail} type={upload.type} onRename={renameTitle}
+                                             onRemove={removeUpload}
+                                    />);
+                            }
+                        )
+                    }
+                    {Array(cardsPerRow)
+                        .fill(0)
+                        .map((_, i) => <EmptyCard key={`empty-${i}`}/>)
+                    }
+                </UserFilesContainer>
+            </HomeContainer>
         </Container>
     );
 }
