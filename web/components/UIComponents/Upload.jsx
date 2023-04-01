@@ -157,8 +157,8 @@ const ProgressContainer = styled.div`
   flex-direction: column;
 `
 const ProgressText = styled.div`
-    font-size: 16px;
-    margin-bottom: 5px;
+  font-size: 16px;
+  margin-bottom: 5px;
 `
 
 export default function Upload({handleFile}) {
@@ -172,12 +172,12 @@ export default function Upload({handleFile}) {
     const [isSending, setIsSending] = useState(false)
     const [title, setTitle] = useState('');
 
-    const sendS3 = async (file,fileType) => {
+    const sendS3 = async (file, fileType) => {
         if (!file) {
             console.log("no file was found")
             return
         }
-        
+
         // add code to disable submit and upload
         setIsSending(true);
 
@@ -191,9 +191,9 @@ export default function Upload({handleFile}) {
                 "fileType": file.type,
             })
         }
-    
+
         let uploadID
-    
+
         if (fileType === 'pdf') {
             await fetch('/api/getUploadURL', requestObject)
                 .then(res => res.json())
@@ -211,32 +211,32 @@ export default function Upload({handleFile}) {
                 })
         } else if (fileType === 'video') {
             await fetch('/api/getVideoUploadURL', requestObject)
-            .then(res => res.json())
-            .then(data => {
-                uploadID = data["fileName"]
-                const options = {
-                    headers: {'content-type': file.type},
-                    onUploadProgress: function(progressEvent) {
-                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                        setProgress(percentCompleted);
-                        console.log(percentCompleted);
-                    }
-                };
-                axios.put(data["signedUrl"], file, options)
-                    .then(response => {
-                        console.log(response.data);
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    }).finally(() => {
+                .then(res => res.json())
+                .then(data => {
+                    uploadID = data["fileName"]
+                    const options = {
+                        headers: {'content-type': file.type},
+                        onUploadProgress: function (progressEvent) {
+                            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                            setProgress(percentCompleted);
+                            console.log(percentCompleted);
+                        }
+                    };
+                    axios.put(data["signedUrl"], file, options)
+                        .then(response => {
+                            console.log(response.data);
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        }).finally(() => {
                         console.log("done");
                         setIsSending(false);
                     });
-            })
+                })
         }
         return uploadID
     }
-    
+
     const closeModal = () => {
         setUrl('')
         setFileType('')
@@ -331,12 +331,12 @@ export default function Upload({handleFile}) {
             })
             console.log(url)
         } else if (fileType === 'pdf') {
-            const uploadID = await sendS3(selectedFile,fileType);
+            const uploadID = await sendS3(selectedFile, fileType);
             console.log(uploadID);
             handleFile(selectedFile, fileType, uploadID);
             closeModal();
-        } else if (fileType === 'video'){
-            const uploadID = await sendS3(selectedFile,fileType);
+        } else if (fileType === 'video') {
+            const uploadID = await sendS3(selectedFile, fileType);
             console.log(uploadID);
             console.log(fileType);
             handleFile(selectedFile, fileType, uploadID);
@@ -346,7 +346,7 @@ export default function Upload({handleFile}) {
 
     }
 
-    useEffect(()=> {
+    useEffect(() => {
         if (progress === 100) {
             closeModal()
             setProgress(0)
@@ -417,14 +417,14 @@ export default function Upload({handleFile}) {
                                 />
                             </DropBox>
                             {renderSelectedFile()}
-                            
+
                             {
-                                progress!==0 && 
+                                progress !== 0 &&
                                 <ProgressContainer>
                                     <ProgressText>
                                         Uploading Video!
                                     </ProgressText>
-                                    <Progress  size='xs' value={progress} colorScheme='green'/>
+                                    <Progress size='xs' value={progress} colorScheme='green'/>
                                 </ProgressContainer>
                             }
                         </>

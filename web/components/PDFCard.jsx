@@ -18,6 +18,7 @@ import {HiDotsVertical} from 'react-icons/hi'
 import {useRouter} from "next/router";
 import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import {AnimatePresence, motion,} from 'framer-motion';
+import Image from "next/image";
 
 const Container = styled.div`
   display: flex;
@@ -127,7 +128,7 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
                 })
                 .catch(error => console.error(error));
         }
-    }, [type, uploadId])
+    }, [type, url, uploadId])
 
     const openSummary = () => {
         router.push(`/summary?uploadId=${uploadId}&fileType=${type}`)
@@ -153,17 +154,17 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
                     exit={exitAnimation}
                 >
                     {type === 'pdf' && <ImageContainer>
-                        <img src={thumbnail} alt="" onError={(e) => {
+                        <Image src={thumbnail} alt="" onError={(e) => {
                             e.target.style.display = "none"
                         }}/>
                     </ImageContainer>}
                     {type === 'mp4' && <ImageContainer>
-                        <img src={thumbnail} alt="" onError={(e) => {
+                        <Image src={thumbnail} alt="" onError={(e) => {
                             e.target.style.display = "none"
                         }}/>
                     </ImageContainer>}
                     {type === 'youtube' && <ImageContainer>
-                        <img src={thumbnailUrl} alt="" onError={(e) => {
+                        <Image src={thumbnailUrl} alt="" onError={(e) => {
                             e.target.style.display = "none"
                         }}/>
                     </ImageContainer>}

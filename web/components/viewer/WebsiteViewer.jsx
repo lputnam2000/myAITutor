@@ -125,7 +125,7 @@ function WebsiteViewer() {
         }).catch(err => {
             console.log(err)
         })
-    }, [pdfKey])
+    }, [pdfKey, setSummary, setTitle, setFileType, setMarkdown, setIsWebsiteReady, setIsReady])
     return (
         <MarkdownWrapper>
             <ContentWrapper>

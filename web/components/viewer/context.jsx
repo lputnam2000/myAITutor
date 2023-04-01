@@ -22,7 +22,7 @@ function ViewerContextProvider({children}) {
         if (!router.isReady) return;
         setPdfKey(router.query.uploadId)
         setFileType(router.query.fileType)
-    }, [router.isReady]);
+    }, [router.isReady, router.query]);
 
     useEffect(() => {
         if (!socket) return;

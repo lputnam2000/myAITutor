@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Store } from '@react-pdf-viewer/core';
+import {Store} from '@react-pdf-viewer/core';
 
 import StoreProps from './StoreProps';
 
@@ -7,7 +7,7 @@ interface ReadingIndicatorProps {
     store: Store<StoreProps>;
 }
 
-const ReadingIndicator: React.FC<ReadingIndicatorProps> = ({ store }) => {
+const ReadingIndicator: React.FC<ReadingIndicatorProps> = ({store}) => {
     const [percentages, setPercentages] = React.useState(0);
 
     const handleScroll = (e: Event) => {
@@ -32,7 +32,7 @@ const ReadingIndicator: React.FC<ReadingIndicatorProps> = ({ store }) => {
         store.subscribe('getPagesContainer', handlePagesContainer);
 
         return () => store.unsubscribe('getPagesContainer', handlePagesContainer);
-    }, []);
+    }, [store]);
 
     return (
         <div
