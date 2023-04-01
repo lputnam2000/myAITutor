@@ -9,21 +9,24 @@ import YoutubeViewer from "./YoutubeViewer";
 
 
 const Container = styled.div`
-  //min-height: 100vh;
   display: flex;
   flex-direction: column;
   padding-top: 10px;
+  flex-grow: 1;
+  width: 100%;
 `
 
 
 const InnerContainer = styled.div`
   display: flex;
-  @media (min-width: 750px) {
+  width: 100%;
+  flex-grow: 1;
+  @media (min-width: 900px) {
     flex-direction: row;
+    align-items: stretch
   }
   flex-direction: column;
-  align-items: center;
-  //justify-content: space-between;
+  align-items: stretch;
 `
 
 
@@ -70,19 +73,21 @@ const ShareButton = styled.button`
 
 const ViewerContainer = styled.div`
   flex: 1;
-  height: 100%;
-  width: 100%;
-
+  margin: 10px;
 `
+
 const SummaryContainer = styled.div`
-  width: 95%;
-  height: 750px;
-  @media (min-width: 750px) {
+  margin: 10px 10px 10px 10px;
+  position: relative;
+  @media (max-width: 899px) {
+    height: 450px;
+  }
+  @media (min-width: 900px) {
     width: 40vw;
-    margin-top: 10px;
-    margin-right: 20px;
+    margin: 10px 10px 10px 0px;
   }
 `
+
 
 function ViewerWithSummary({href}) {
 

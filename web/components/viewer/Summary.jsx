@@ -7,19 +7,18 @@ import GenerateSummary from "./GenerateSummary";
 import {ViewerContext} from "./context";
 
 const Container = styled.div`
+  position: absolute;
   height: 100%;
   width: 100%;
-  overflow-y: auto;
-  position: relative;
-  border: 2px black solid;
+  overflow: auto;
+  border: 2px #57657e solid;
   border-radius: 2px;
-  height: 750px;
   background-color: #242933;
   color: #fbfbff;
+  transition: box-shadow 0.1s ease-in-out;
 
   &:hover {
-    box-shadow: 5px 5px 0px #000000;
-    transition: box-shadow 0.1s ease-in-out;
+    box-shadow: 5px 5px 0px #48fdce;
   }
 `
 

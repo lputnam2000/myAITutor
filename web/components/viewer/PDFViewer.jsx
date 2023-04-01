@@ -13,33 +13,34 @@ import {defaultLayoutPlugin} from "@react-pdf-viewer/default-layout";
 
 
 const Container = styled.div`
-
   border: 2px black solid;
-  height: 500px;
   background-color: #292929;
   border-radius: 3px;
-  margin-left: 10px;
-  margin-right: 10px;
-  padding-bottom: 32px;
+  position: relative;
 
-  @media (min-width: 750px) {
-    margin-left: auto;
-    margin-right: auto;
-    border: 2px black solid;
-    height: 750px;
-    width: 95%;
-    padding-bottom: 32px;
-    border-radius: 3px;
-
-
+  height: 500px;
+  @media (max-width: 550px) {
+    padding: 10px;
+    height: 350px;
+  }
+  @media (min-width: 900px) {
+    border: 2px solid #57657e;
+    height: 100%;
+    transition: box-shadow 0.1s ease-in-out;
     &:hover {
-      box-shadow: 5px 5px 0px #000000;
-      transition: box-shadow 0.1s ease-in-out;
+      box-shadow: 5px 5px 0px #48fdce;
     }
   }
-
 `
 
+const ViewerWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+`
 
 function PdfViewer() {
     const toolbarPluginInstance = toolbarPlugin();
@@ -49,15 +50,6 @@ function PdfViewer() {
     const [pdfFile, setPdfFile] = useState('');
     const {pdfKey, setSummary, setTitle, setFileType, setIsReady} = useContext(ViewerContext);
 
-    const getDocumentDetails = (pdfKey) => {
-        let params = {'key': pdfKey}
-        axios.get('/api/user/get_pdf', {params: params}).then(res => {
-            setSummary(res.data.documentDetails.summary)
-            setIsReady(res.data.documentDetails.status === 'Ready')
-        }).catch(err => {
-            console.log(err)
-        })
-    }
     useEffect(() => {
         if (!pdfKey) return
 
@@ -71,10 +63,7 @@ function PdfViewer() {
         }).catch(err => {
             console.log(err)
         })
-        // let timer = setInterval(() => getDocumentDetails(pdfKey), 3000);
-        // return () => {
-        //     timer = null
-        // }
+
     }, [pdfKey])
 
 
@@ -111,12 +100,13 @@ function PdfViewer() {
     return (
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.3.122/build/pdf.worker.js">
             <Container>
-                {/*<Toolbar>{renderDefaultToolbar(transform)}</Toolbar>*/}
-                {pdfFile &&
-                    <Viewer theme='dark' fileUrl={pdfFile}
-                            onDocumentLoad={initializeContext}
-                            plugins={[defaultLayoutPluginInstance, readingIndicatorPluginInstance]}/>
-                }
+                <ViewerWrapper>
+                    {pdfFile &&
+                        <Viewer theme='dark' fileUrl={pdfFile}
+                                onDocumentLoad={initializeContext}
+                                plugins={[defaultLayoutPluginInstance, readingIndicatorPluginInstance]}/>
+                    }
+                </ViewerWrapper>
             </Container>
             <ReadingIndicator/>
         </Worker>
