@@ -8,17 +8,15 @@ import {Spinner} from "@chakra-ui/react";
 
 
 const MarkdownWrapper = styled.div`
+  height: 100%;
   position: relative;
   background-color: #282c34;
   color: #ffffff;
-  padding: 20px;
   max-width: 100%;
-  margin: 5px 10px 10px 10px;
-  overflow: auto;
-  height: 80vh;
   font-weight: 400;
-  border: 2px solid black;
+  border: 2px solid #57657e;
   border-radius: 4px;
+  font-size: 16px;
 
   h1, h2, h3 {
     font-size: 24px;
@@ -46,9 +44,23 @@ const MarkdownWrapper = styled.div`
     border-radius: 5px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
+    padding: 10px;
+    height: 450px;
+  }
+  @media (max-width: 550px) {
     padding: 10px;
     height: 300px;
+    font-size: 14px;
+    h1, h2, h3 {
+      font-size: 20px;
+    }
+  }
+
+  transition: box-shadow 0.1s ease-in-out;
+
+  &:hover {
+    box-shadow: 5px 5px 0px #48fdce;
   }
 `;
 
@@ -78,6 +90,15 @@ const LoadingText = styled.p`
   color: #48fdce;
 `;
 
+const ContentWrapper = styled.div`
+  position: absolute;
+  width: calc(100% - 12px);
+  top: 5px;
+  left: 10px;
+  bottom: 5px;
+  overflow: auto;
+`
+
 function WebsiteViewer() {
     const [markdown, setMarkdown] = useState('');
     const {
@@ -90,16 +111,6 @@ function WebsiteViewer() {
         isWebsiteReady
     } = useContext(ViewerContext);
 
-    const getDocumentDetails = (pdfKey) => {
-        let params = {'key': pdfKey}
-        axios.get('/api/user/get_url_document', {params: params}).then(res => {
-            setSummary(res.data.documentDetails.summary)
-            setIsReady(res.data.documentDetails.status === 'Ready')
-
-        }).catch(err => {
-            console.log(err)
-        })
-    }
     useEffect(() => {
         if (!pdfKey) return
         let params = {'key': pdfKey}
@@ -114,14 +125,12 @@ function WebsiteViewer() {
         }).catch(err => {
             console.log(err)
         })
-        // let timer = setInterval(() => getDocumentDetails(pdfKey), 3000);
-        // return () => {
-        //     timer = null
-        // }
     }, [pdfKey])
     return (
         <MarkdownWrapper>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
+            <ContentWrapper>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
+            </ContentWrapper>
             {!isWebsiteReady && <LoadingDiv>
                 <Spinner
                     thickness='4px'
@@ -134,6 +143,7 @@ function WebsiteViewer() {
             </LoadingDiv>
             }
         </MarkdownWrapper>
+
     );
 }
 
