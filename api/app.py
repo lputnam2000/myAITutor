@@ -1,6 +1,4 @@
 from flask import Flask, request, jsonify, g, copy_current_request_context
-from api.socket_helper import socketio
-from flask_socketio import SocketIO, join_room, leave_room
 from http import HTTPStatus
 from dotenv import load_dotenv
 import fitz
@@ -51,7 +49,6 @@ def create_app():
     return app
 
 app = create_app()
-socketio.init_app(app, cors_allowed_origins="*")
 logger = logging.getLogger('myapp')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 
@@ -97,16 +94,16 @@ def generate_pdf_embeddings():
     try:
         data = request.json
         if data['content_type'] == 'application/pdf':
-            thread = threading.Thread(target=process_pdf_embeddings, args=(data, socketio))
+            thread = threading.Thread(target=process_pdf_embeddings, args=(data))
             thread.start()
             return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
         elif data['content_type'] == 'video/mp4':
             print('VIDEO HAS ARRIVED')
             @copy_current_request_context
-            def run_in_context(data, function, socketio_instance, stream_name):
-                function(data, socketio_instance, stream_name)
+            def run_in_context(data, function, stream_name):
+                function(data, stream_name)
             stream_name = f'stream-name-video-embeddings-{str(uuid4())}'
-            thread = threading.Thread(target=run_in_context, args=(data, process_mp4_embeddings, socketio, stream_name))
+            thread = threading.Thread(target=run_in_context, args=(data, process_mp4_embeddings, stream_name))
             thread.start()
             # process_video(data)
             return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
@@ -130,7 +127,7 @@ def generate_summary():
         user_id = data['user_id']
         thread = threading.Thread(target=process_summary_pdf, args=(data,stream_name))
         thread.start()
-        send_update(socketio, user_id, f'{pdfKey}:summary', {"isSummarizing": True, "summaryJson": {"formattedSummary": []}})
+        send_update(user_id, f'{pdfKey}:summary', {"isSummarizing": True, "summaryJson": {"formattedSummary": []}})
 
         logger.info(f'Processing PDF summaries for {pdfKey}')
         logger.removeHandler(new_handler)
@@ -157,7 +154,7 @@ def process_summary_pdf(data,stream_name):
             summaryDict['endPage'] = endPage
             def send_summary_update(latest_summary, isSummarizing=True):
                 summaryDict['formattedSummary'] = latest_summary
-                send_update(socketio, user_id, f'{pdfKey}:summary', {"isSummarizing": isSummarizing, "summaryJson": summaryDict})
+                send_update( user_id, f'{pdfKey}:summary', {"isSummarizing": isSummarizing, "summaryJson": summaryDict})
            
             s3 = get_s3_client()
             response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
@@ -213,7 +210,7 @@ def process_summary_pdf(data,stream_name):
 #     except Exception as e:
 #         print(e)
 
-def process_pdf_embeddings(data, socketio_instance):
+def process_pdf_embeddings(data):
     try:
         with app.app_context():
             bucket = data['bucket']
@@ -222,7 +219,7 @@ def process_pdf_embeddings(data, socketio_instance):
             user_id = data['user_id']
 
             def send_progress_update(value, text):
-                send_update(socketio_instance, user_id, f'{key}:progress',  {'value': value, 'text': text})
+                send_update(user_id, f'{key}:progress',  {'value': value, 'text': text})
 
 
             send_notification_to_client(user_id, key, f'Upload complete for:{key}')
@@ -235,7 +232,7 @@ def process_pdf_embeddings(data, socketio_instance):
             upload_documents_pdf(documents, client, class_name, send_progress_update)
             print('UPLOADED DOCUMENTS')
             send_progress_update(99, "Finishing Up! 💪🦍")
-            send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
+            send_update(user_id, key,  {'key': 'isReady', 'value': True})
             print(f'FINISHED EMBEDDINGS for - {key}')
     except Exception as e:
         print(e)
@@ -253,7 +250,7 @@ def generate_summary_websites():
         user_id = data['user_id']
         thread = threading.Thread(target=process_summary_websites, args=(data,stream_name))
         thread.start()
-        send_update(socketio, user_id, f'{key}:summary', {"isSummarizing": True, "summaryJson": {"formattedSummary": []}})
+        send_update(user_id, f'{key}:summary', {"isSummarizing": True, "summaryJson": {"formattedSummary": []}})
 
         logger.info(f'Processing website summary for {key}')
         logger.removeHandler(new_handler)
@@ -279,7 +276,7 @@ def process_summary_websites(data,stream_name):
             
             def send_summary_update(latest_summary, isSummarizing=True):
                 summaryDict['formattedSummary'] = latest_summary
-                send_update(socketio, user_id, f'{key}:summary', {"isSummarizing": isSummarizing, "summaryJson": summaryDict})
+                send_update(user_id, f'{key}:summary', {"isSummarizing": isSummarizing, "summaryJson": summaryDict})
            
             db_client = get_mongo_client()
             data_db = db_client["data"]
@@ -316,7 +313,7 @@ def generate_summary_youtube():
         user_id = data['user_id']
         thread = threading.Thread(target=process_summary_youtube, args=(data,stream_name))
         thread.start()
-        send_update(socketio, user_id, f'{key}:summary', {"isSummarizing": True, "summaryJson": {"formattedSummary": []}})
+        send_update(user_id, f'{key}:summary', {"isSummarizing": True, "summaryJson": {"formattedSummary": []}})
 
         logger.info(f'Processing youtube summary for {key}')
         logger.removeHandler(new_handler)
@@ -342,7 +339,7 @@ def process_summary_youtube(data,stream_name):
 
             def send_summary_update(latest_summary, isSummarizing=True):
                 summaryDict['formattedSummary'] = latest_summary
-                send_update(socketio, user_id, f'{key}:summary', {"isSummarizing": isSummarizing, "summaryJson": summaryDict})
+                send_update(user_id, f'{key}:summary', {"isSummarizing": isSummarizing, "summaryJson": summaryDict})
             
             
             db_client = get_mongo_client()
@@ -417,31 +414,6 @@ def process_summary_video(data,stream_name):
         raise e
 
 if __name__ =="__main__":
-    socketio.run(app, host='0.0.0.0', debug=True)
+    app.run( host='0.0.0.0', debug=True)
 
 
-
-def join_user_room(user_id):
-    room = user_id
-    join_room(room)
-    print(f"Joined room: {room}")  # Add this print statement
-    return room
-
-def leave_user_room(user_id):
-    room = user_id
-    leave_room(room)
-    return room
-
-# Use the token or user_id you receive from the Next.js frontend
-@socketio.on('join')
-def on_join(data):
-    user_id = data['userId']
-    print(f'New Connection: {user_id}')
-    join_user_room(user_id)
-    send_update(socketio, user_id, 'user_update', {'msg': 'This Works'})
-
-@socketio.on('leave')
-def on_leave(data):
-    user_id = data['userId']
-    print(f'Closing Connection: {user_id}')
-    leave_user_room(user_id)
