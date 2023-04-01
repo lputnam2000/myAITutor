@@ -18,6 +18,7 @@ import threading
 import nltk
 from watchtower import CloudWatchLogHandler
 import logging
+from api.utils.dataTether import getRedisClient, pushMessageToUser
 from uuid import uuid4
 load_dotenv()
 nltk.download('punkt')
@@ -82,6 +83,7 @@ def teardown_mongo_client(exception):
 
 @app.route("/")
 def index():
+    pushMessageToUser("63fce1ef058dde4abc3bbe10", "hello")
     return "<p>Hello, World!</p>"
 
 @app.route("/webook")
