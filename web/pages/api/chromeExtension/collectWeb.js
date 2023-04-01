@@ -2,6 +2,14 @@ import cors from 'cors'
 import clientPromise from "../../../lib/mongodb";
 import {v4 as uuidv4} from 'uuid';
 
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: '4mb' // Set desired value here
+        }
+    }
+}
+
 async function secretToUser(secret) {
     try {
         const client = await clientPromise;
