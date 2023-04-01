@@ -113,7 +113,7 @@ function LoadingContainer({}) {
 }
 
 function Summary({}) {
-    const {summary, pdfKey, fileType, isReady} = useContext(ViewerContext)
+    const {summary, pdfKey, fileType, isReady, liveSummary} = useContext(ViewerContext)
 
 
     return (
@@ -132,6 +132,11 @@ function Summary({}) {
                         <TabPanel style={{height: '100%', padding: '0px', marginRight: '10px'}}>
                             <SummaryContainer>
                                 <GenerateSummary/>
+                                {
+                                    liveSummary.isSummarizing &&
+                                    <CollapsibleSummary fileType={fileType} isOpen={true}
+                                                        summaryJson={liveSummary.summaryJson} isStreaming={true}/>
+                                }
                                 {
                                     summary.map((s, idx) => <CollapsibleSummary fileType={fileType} isOpen={idx === 0}
                                                                                 key={idx}

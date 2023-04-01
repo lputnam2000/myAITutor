@@ -1,13 +1,13 @@
 from http import HTTPStatus
 from flask import Flask, Blueprint, jsonify, request, copy_current_request_context, current_app
 from ..utils.utils import require_api_key
-from .websiteToEmbeddings import process_web_embeddings, process_chrome_extension_embeddings, process_web_text
+from .websiteToEmbeddings import process_web_embeddings,  process_chrome_extension_text, process_chrome_extension_embeddings, process_web_text
 from .youtubeToEmbeddings import process_youtube_embeddings
 from uuid import uuid4
 from watchtower import CloudWatchLogHandler
 import logging
 import threading
-from ..socket_helper import socketio
+from ..socket_helper import socketio, send_update
 
 embeddings_bp = Blueprint('embeddings', __name__, url_prefix='/embeddings')
 # logger = logging.getLogger('myapp-blueprint')
@@ -29,9 +29,11 @@ def website_to_embedding():
 
         thread_embeddings = threading.Thread(target=run_in_context, args=(data, process_web_embeddings, socketio, stream_name))
         thread_embeddings.start()
-        thread_text = threading.Thread(target=run_in_context, args=(data, process_web_text, socketio, stream_name))
         current_app.logger.info(f'Processing website embeddings for {key}')
 
+
+
+        thread_text = threading.Thread(target=run_in_context, args=(data, process_web_text, socketio, stream_name))
         thread_text.start()
         current_app.logger.info(f'Processing website text for {key}')
 
@@ -55,11 +57,23 @@ def extension_to_embedding():
         @copy_current_request_context
         def run_in_context(data, function, socketio_instance, stream_name):
             function(data, socketio_instance, stream_name)
+        user_id = data['user_id']
+        key = data['key']
+        new_upload = {
+            'uuid': user_id,
+            'title': data['title'],
+            'status': 'Not Ready',
+            'type': 'url'
+        }
+        send_update(socketio, user_id, 'home', new_upload)
 
         thread = threading.Thread(target=run_in_context, args=(data,process_chrome_extension_embeddings, socketio, stream_name))
         thread.start()
 
         key = data['key']
+        thread_text = threading.Thread(target=run_in_context, args=(data, process_chrome_extension_text, socketio, stream_name))
+        thread_text.start()
+        current_app.logger.info(f'Processing website text for {key}')
 
         current_app.logger.info(f'Processing extension embeddings for {key}')
         current_app.logger.removeHandler(new_handler)

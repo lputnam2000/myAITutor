@@ -53,7 +53,12 @@ async function generateRecord(session, url) {
                 }
             }
             uploads.update(record, {
-                $push: {"uploads": {uuid, title, status: 'Not Ready', type: 'url'}}
+                $push: {
+                    "uploads": {
+                        $each: [{uuid, title, status: 'Not Ready', type: 'url'}],
+                        $position: 0
+                    }
+                }
             })
             documentsCollection.insertOne({
                 _id: uuid,

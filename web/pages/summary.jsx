@@ -30,11 +30,9 @@ const Container = styled.div`
 
 function PageSummary(props) {
     return <Container>
-        <WebsocketContextProvider>
-            <ViewerContextProvider>
-                <ViewerWithSummary/>
-            </ViewerContextProvider>
-        </WebsocketContextProvider>
+        <ViewerContextProvider>
+            <ViewerWithSummary/>
+        </ViewerContextProvider>
     </Container>
 
 }

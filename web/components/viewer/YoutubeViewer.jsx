@@ -43,10 +43,10 @@ function YoutubeViewer() {
         }).catch(err => {
             console.log(err)
         })
-        let timer = setInterval(() => getDocumentDetails(pdfKey), 3000);
-        return () => {
-            timer = null
-        }
+        // let timer = setInterval(() => getDocumentDetails(pdfKey), 3000);
+        // return () => {
+        //     timer = null
+        // }
     }, [pdfKey])
     return (
         <Container>
