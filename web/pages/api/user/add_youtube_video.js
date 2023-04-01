@@ -53,8 +53,14 @@ async function generateRecord(session, url) {
                     uuid = uuidv4();
                 }
             }
+
             uploads.update(record, {
-                $push: {"uploads": {uuid, title, status: 'Not Ready', type: 'youtube'}}
+                $push: {
+                    "uploads": {
+                        $each: [{uuid, title, status: 'Not Ready', type: 'youtube'}],
+                        $position: 0
+                    }
+                }
             })
             videoCollection.insertOne({
                 _id: uuid,
@@ -93,7 +99,7 @@ export default async (req, res) => {
                     'X-API-Key': process.env.CB_API_SECRET,
                     'Content-Type': 'application/json'
                 }
-            }).then((res)=> {
+            }).then((res) => {
                 console.log(res)
             }).catch(() => {
                 console.log('error')
