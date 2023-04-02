@@ -21,6 +21,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Set the PYTHONPATH environment variable
 ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=TRUE
 
 # Set the AWS environment variables
 RUN mkdir -p /root/.aws && cp ./credentials /root/.aws/credentials
