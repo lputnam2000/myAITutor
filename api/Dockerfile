@@ -15,6 +15,9 @@ RUN mkdir api
 COPY . ./api
 COPY requirements.txt .
 
+RUN rm -r /root/nltk_data
+RUN python -m nltk.downloader punkt
+
 # Install the dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
@@ -30,4 +33,4 @@ ENV AWS_REGION=us-east-1
 EXPOSE 5000
 
 # Start the Flask app with gunicorn using 8 worker threads
-CMD ["gunicorn", "-w", "8", "-b", "0.0.0.0:5000", "api.app:app"]
+CMD ["gunicorn", "-w", "8", "-b", "0.0.0.0:8000", "api.app:app"]
