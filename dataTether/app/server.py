@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 app.config.from_object(Config)
 CORS(app, resources={r"/*": {"origins": "*"}})
-socketio = SocketIO(app, async_mode='eventlet', ping_timeout=30, ping_interval=60, cors_allowed_origins='*')
+socketio = SocketIO(app, async_mode='eventlet', ping_timeout=30, ping_interval=60, cors_allowed_origins='*', transports=['websocket'])
 
 pool = redis.ConnectionPool(
     host=app.config['REDIS_HOST'],
