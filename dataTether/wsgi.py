@@ -1,9 +1,7 @@
 from app.server import app, socketio, run_app
 
-
-
-if __name__ == "__main__":
+def run_the_app():
+    print('Starting the app...')
     run_app()
+    print('App started successfully!')
     socketio.run(app)
-else:
-    run_app()

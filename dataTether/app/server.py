@@ -113,6 +113,6 @@ def run_app():
     start_worker()
     signal.signal(signal.SIGINT, signal_handler)
 
-if __name__ == '__main__':
-    run_app()
-    socketio.run(app, host='0.0.0.0', port=5050)
+# if __name__ == '__main__':
+#     run_app()
+#     socketio.run(app, host='0.0.0.0', port=5050)
