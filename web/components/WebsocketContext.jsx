@@ -74,7 +74,7 @@ function WebsocketContextProvider({children}) {
     useEffect(() => {
 
         if (authToken && !socket) {
-            const newSocket = io('http://sockets.chimpbase.com', {
+            const newSocket = io('wss://sockets.chimpbase.com', {
                 query: {token: authToken},
                 transports: ['websocket']
             });
