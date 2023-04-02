@@ -20,7 +20,6 @@ import logging
 from api.utils.dataTether import getRedisClient, pushMessageToUser
 from uuid import uuid4
 load_dotenv()
-nltk.download('punkt')
 
 
 
