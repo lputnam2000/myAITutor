@@ -4,4 +4,4 @@ def run_the_app():
     print('Starting the app...')
     run_app()
     print('App started successfully!')
-    socketio.run(app)
+    return app
