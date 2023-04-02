@@ -14,6 +14,7 @@ RUN mkdir api
 # Copy the contents of the current directory (../api/) into the 'api' directory in the container
 COPY . ./api
 COPY requirements.txt .
+COPY credentials ./credentials
 
 # Install the dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
@@ -25,6 +26,9 @@ ENV PYTHONPATH=/app
 ENV AWS_ACCESS_KEY_ID=AKIA6NDMNPBRGSVBY4WA
 ENV AWS_SECRET_ACCESS_KEY=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
 ENV AWS_REGION=us-east-1
+RUN mkdir -p /root/.aws && cp ./credentials /root/.aws/credentials
+
+
 
 # Expose the port Gunicorn will run on
 EXPOSE 8000
