@@ -63,6 +63,7 @@ function WebsocketContextProvider({children}) {
     }, [setAuthToken, authToken])
 
     useEffect(() => {
+        console.log('called here too')
         if (session) {
             fetchData();
         } else {
@@ -71,7 +72,10 @@ function WebsocketContextProvider({children}) {
     }, [session, fetchData]);
 
     useEffect(() => {
+        console.log('called')
+
         if (authToken && !socket) {
+            console.log('called')
             const newSocket = io('localhost:5050', {
                 query: {token: authToken},
             });

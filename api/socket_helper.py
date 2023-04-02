@@ -1,10 +1,10 @@
-from api.utils import pushMessageToUser
+from api.utils.dataTether import pushMessageToUser
 import json
 
 
 def send_update(user_id, channel, data):
     message = {
-        'data': json.dumps(data),
+        'data': data,
         'channel': channel
     }
 
