@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 5050
 
 # Run the command to start the app with Gunicorn
-CMD ["gunicorn", "--worker-class", "eventlet", "-w", "1", "app.server:gunicorn_app", "-b", "0.0.0.0:5050"]
+CMD ["gunicorn", "--worker-class", "eventlet", "-w", "1", "wsgi:app", "-b", "0.0.0.0:5050"]

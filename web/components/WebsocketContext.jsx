@@ -72,12 +72,11 @@ function WebsocketContextProvider({children}) {
     }, [session, fetchData]);
 
     useEffect(() => {
-        console.log('called')
 
         if (authToken && !socket) {
-            console.log('called')
-            const newSocket = io(process.env.DATA_TETHER_URL, {
+            const newSocket = io('http://sockets.chimpbase.com', {
                 query: {token: authToken},
+                transports: ['websocket']
             });
 
             // Handle socket connection errors
