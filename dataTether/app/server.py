@@ -4,17 +4,19 @@ import jwt
 import redis
 import threading
 from flask_cors import CORS
-from dataTether.config import Config
+from config import Config
 import eventlet
 import signal
 import json
 
 eventlet.monkey_patch()
 
+
 app = Flask(__name__)
+
 app.config.from_object(Config)
 CORS(app, resources={r"/*": {"origins": "*"}})
-socketio = SocketIO(app, async_mode='threading', ping_timeout=30, ping_interval=60, cors_allowed_origins='*')
+socketio = SocketIO(app, async_mode='eventlet', ping_timeout=30, ping_interval=60, cors_allowed_origins='*')
 
 pool = redis.ConnectionPool(
     host=app.config['REDIS_HOST'],
@@ -35,6 +37,7 @@ worker = None
 def start_worker():
     global worker, pubsub
     pubsub = redis_store.pubsub()
+
     worker = threading.Thread(target=listen_for_updates)
     worker.start()
 
@@ -50,12 +53,19 @@ def listen_for_updates():
                 if message['type'] == 'message':
                     if message['channel'].decode('utf-8') == "push_to_user":
                         # HANDLE MESSAGE NOTIFICATIONS
-                        data = json.loads(message['data'])
-                        user_id = data['userid']
-                        user_message = data['data']['data']
-                        channel = data['data']['channel']
-                        if user_id:
-                            socketio.emit(channel, user_message, room=user_id)
+                        try:
+                            data = json.loads(message['data'].decode('utf-8'))
+                            user_id = data['userid']
+                            message_data = data['content']
+                            message_obj = json.loads(message_data)
+                            channel = message_obj['channel']
+                            user_message = json.dumps(message_obj['data'])
+                            if user_id:
+                                print(f'sending message: {user_message}, channel: {channel}')
+                                socketio.emit(channel, user_message, room=user_id)
+                        except Exception:
+                            print(f'Exception - {message}')
+                        
 
                 if message['type'] == 'pmessage':
                     broken_up_key = message['channel'].decode('utf-8').split(':')
@@ -97,7 +107,14 @@ def signal_handler(sig, frame):
     redis_store.close()
     socketio.stop()
 
-if __name__ == '__main__':
+def run_app():
+    print('running')
     start_worker()
     signal.signal(signal.SIGINT, signal_handler)
     socketio.run(app, host='0.0.0.0', port=5050)
+    print('running')
+
+if __name__ == '__main__':
+    run_app()
+else:
+    gunicorn_app = run_app()

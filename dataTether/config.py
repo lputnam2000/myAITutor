@@ -1,6 +1,10 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 class Config:
-    SECRET_KEY = 'testkey'
-    REDIS_HOST = 'redis-18322.c8.us-east-1-2.ec2.cloud.redislabs.com'
-    REDIS_PORT = 18322
-    REDIS_DB = 0
-    REDIS_PASSWORD= "Pq31scfJnfOzfmoJwnOx0tFpUdli98jM"
+    SECRET_KEY =  os.environ.get("SECRET_KEY")
+    REDIS_HOST = os.environ.get("REDIS_HOST")
+    REDIS_PORT =os.environ.get("REDIS_PORT")
+    REDIS_DB =os.environ.get("REDIS_DB")
+    REDIS_PASSWORD= os.environ.get("REDIS_PASSWORD")
