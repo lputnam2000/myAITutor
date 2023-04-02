@@ -30,4 +30,4 @@ ENV AWS_REGION=us-east-1
 EXPOSE 5000
 
 # Start the Flask app with gunicorn using 8 worker threads
-CMD ["gunicorn", "-w", "8", "-b", "0.0.0.0:8000", "api.app:app"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "api.app:app"]
