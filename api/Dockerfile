@@ -3,6 +3,9 @@ FROM python:3.8-slim-buster
 
 WORKDIR /app
 
+# Install R
+RUN apt-get update && apt-get install -y r-base
+
 # Copy the application code and requirements.txt
 
 # Create the 'api' directory inside the container
