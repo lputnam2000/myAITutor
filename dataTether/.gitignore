@@ -1,2 +1,2 @@
-./socket_venv
-./*/__pycache__/
+socket_venv/
+*/__pycache__/
