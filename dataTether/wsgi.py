@@ -5,3 +5,4 @@ def run_the_app():
     run_app()
     print('App started successfully!')
     return app
+

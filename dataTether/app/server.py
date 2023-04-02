@@ -34,6 +34,11 @@ redis_store = redis.Redis(connection_pool=pool)
 pubsub = None
 worker = None
 
+@app.route("/")
+def index():
+    pushMessageToUser("63fce1ef058dde4abc3bbe10", "hello")
+    return "<h1>Hello, Sockets!</h1>"
+
 def start_worker():
     global worker, pubsub
     pubsub = redis_store.pubsub()
