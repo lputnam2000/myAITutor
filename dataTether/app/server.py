@@ -111,10 +111,10 @@ def run_app():
     print('running')
     start_worker()
     signal.signal(signal.SIGINT, signal_handler)
-    socketio.run(app, host='0.0.0.0', port=5050)
-    print('running')
 
 if __name__ == '__main__':
     run_app()
+    socketio.run(app, host='0.0.0.0', port=5050)
 else:
-    gunicorn_app = run_app()
+    run_app()
+    gunicorn_app = socketio.run(app)
