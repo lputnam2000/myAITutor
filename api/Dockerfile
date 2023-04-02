@@ -27,7 +27,7 @@ ENV AWS_SECRET_ACCESS_KEY=Lkw6L2RLWo0VGXhHBMnjr279RjO9N83sFtGwJ79J
 ENV AWS_REGION=us-east-1
 
 # Expose the port Gunicorn will run on
-EXPOSE 5000
+EXPOSE 8000
 
 # Start the Flask app with gunicorn using 8 worker threads
 CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "api.app:app"]
