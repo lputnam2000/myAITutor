@@ -1,6 +1,6 @@
 from http import HTTPStatus
 from flask import Flask, Blueprint, jsonify, request, copy_current_request_context, current_app
-from ..utils.utils import require_api_key
+from api.utils.utils import require_api_key
 from .websiteToEmbeddings import process_web_embeddings,  process_chrome_extension_text, process_chrome_extension_embeddings, process_web_text
 from .youtubeToEmbeddings import process_youtube_embeddings
 from uuid import uuid4
