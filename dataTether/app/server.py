@@ -43,6 +43,7 @@ def start_worker():
 
 def listen_for_updates():
     global pubsub, redis_store
+    print('#Listenting For Updates')
     while True:
         try:
             if pubsub == None:
@@ -108,13 +109,10 @@ def signal_handler(sig, frame):
     socketio.stop()
 
 def run_app():
-    print('running')
+    print('#Running the app')
     start_worker()
     signal.signal(signal.SIGINT, signal_handler)
 
 if __name__ == '__main__':
     run_app()
     socketio.run(app, host='0.0.0.0', port=5050)
-else:
-    run_app()
-    gunicorn_app = socketio.run(app)
