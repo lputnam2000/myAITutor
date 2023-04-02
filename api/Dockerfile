@@ -23,9 +23,6 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 ENV PYTHONPATH=/app
 
 # Set the AWS environment variables
-ENV AWS_ACCESS_KEY_ID=AKIA6NDMNPBRGSVBY4WA
-ENV AWS_SECRET_ACCESS_KEY=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
-ENV AWS_REGION=us-east-1
 RUN mkdir -p /root/.aws && cp ./credentials /root/.aws/credentials
 
 
