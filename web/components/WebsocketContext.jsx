@@ -76,7 +76,7 @@ function WebsocketContextProvider({children}) {
 
         if (authToken && !socket) {
             console.log('called')
-            const newSocket = io('localhost:5050', {
+            const newSocket = io(process.env.DATA_TETHER_URL, {
                 query: {token: authToken},
             });
 
