@@ -8,7 +8,7 @@ import time
 from flask import app, current_app
 from watchtower import CloudWatchLogHandler
 import logging
-from ..utils.utils import  get_mongo_client, send_notification_to_client
+from api.utils.utils import  get_mongo_client, send_notification_to_client
 from ..weaviate_embeddings import upload_documents_website, create_website_class
 from ..socket_helper import send_update
 

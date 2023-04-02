@@ -1,8 +1,8 @@
 from pytube import YouTube
-from ..utils.utils import  get_mongo_client, send_notification_to_client
+from api.utils.utils import  get_mongo_client, send_notification_to_client
 from .websiteToEmbeddings import get_client, create_class, upload_documents
 from ..weaviate_embeddings import create_youtube_class, upload_documents_youtube
-from ..utils.aws import get_video_file, upload_video_thumbnail
+from api.utils.aws import get_video_file, upload_video_thumbnail
 from moviepy.editor import *
 from moviepy.video.io.VideoFileClip import VideoFileClip
 import base64

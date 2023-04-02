@@ -18,7 +18,6 @@ import nltk
 from watchtower import CloudWatchLogHandler
 import logging
 from api.utils.dataTether import getRedisClient, pushMessageToUser
-from api.wsgi import app
 from uuid import uuid4
 load_dotenv()
 nltk.download('punkt')
@@ -49,6 +48,7 @@ def create_app():
     app.register_blueprint(embeddings_bp)
     return app
 
+app = create_app()
 logger = logging.getLogger('myapp')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 
@@ -413,3 +413,5 @@ def process_summary_video(data,stream_name):
         logger.removeHandler(new_handler)
         raise e
 
+if __name__ =="__main__":
+    app.run( host='0.0.0.0', debug=True)

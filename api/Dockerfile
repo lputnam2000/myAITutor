@@ -1,28 +1,30 @@
 # Use the official Ubuntu 20.04 base image
-FROM ubuntu:20.04
+FROM python:3.8-slim-buster
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Update the package list and install required packages
-RUN apt-get update && apt-get install -y \
-    python3.8 \
-    python3-pip
-
-# Create and set the working directory
-RUN mkdir /api
-WORKDIR /api
+WORKDIR /app
 
 # Copy the application code and requirements.txt
-COPY . /api/
-COPY .env /api/.env
+
+# Create the 'api' directory inside the container
+RUN mkdir api
+
+# Copy the contents of the current directory (../api/) into the 'api' directory in the container
+COPY . ./api
+COPY requirements.txt .
 
 # Install the dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Expose the required port for the Flask app
+# Set the PYTHONPATH environment variable
+ENV PYTHONPATH=/app
+
+# Set the AWS environment variables
+ENV AWS_ACCESS_KEY_ID=AKIA6NDMNPBRGSVBY4WA
+ENV AWS_SECRET_ACCESS_KEY=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
+ENV AWS_REGION=us-east-1
+
+# Expose the port Gunicorn will run on
 EXPOSE 5000
 
 # Start the Flask app with gunicorn using 8 worker threads
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "8", "wsgi:app"]
+CMD ["gunicorn", "-w", "8", "-b", "0.0.0.0:5000", "api.app:app"]
