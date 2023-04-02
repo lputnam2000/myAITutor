@@ -101,7 +101,7 @@ function WebsocketContextProvider({children}) {
 
             setSocket(newSocket);
         }
-    }, [authToken, socket]);
+    }, [authToken, socket, handle_push_to_user]);
 
     const contextValue = {socket, variableState, addCallback, removeCallback};
 
