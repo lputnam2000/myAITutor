@@ -15,9 +15,6 @@ RUN mkdir api
 COPY . ./api
 COPY requirements.txt .
 
-RUN rm -r /root/nltk_data
-RUN python -m nltk.downloader punkt
-
 # Install the dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
