@@ -19,10 +19,11 @@ const requestHandler = async (req, res) => {
                     let apiKey = userRecord.apiKey
                     if (userRecord.apiKey === undefined) {
                         apiKey = uuidv4();
-                        console.log(await usersCollection.updateOne(
+                        const result = await usersCollection.updateOne(
                             {"_id": userIDObject},
                             {$set: {"apiKey": apiKey}}
-                        ))
+                        );
+                        console.log(result);
                     }
                     let userName = userRecord.name === undefined ? '' : userRecord.name
                     res.status(200).json({

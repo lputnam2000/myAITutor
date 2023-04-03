@@ -1,6 +1,6 @@
 import clientPromise from "../../lib/mongodb";
 
-export default async function handler (req, res) {
+export default async function handler(req, res) {
     if (req.method === "POST") {
         try {
             const client = await clientPromise
@@ -8,14 +8,7 @@ export default async function handler (req, res) {
             const collection = db.collection('waiting_list');
             const email = req.body.email;
 
-            collection.insertOne({email}, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(400).json({'error': 'MongoDB is Down'})
-
-                }
-                console.log('Email inserted successfully:', email);
-            });
+            const result = await collection.insertOne({email});
             return res.status(200).json({'message': 'Email Inserted Successfully'})
         } catch (e) {
             console.error(e);
