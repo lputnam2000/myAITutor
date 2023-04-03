@@ -9,25 +9,23 @@ const Container = styled.div`
   width: 100%;
   //height: 70vh;
 `
+
 const InnerContainer = styled.div`
   display: flex;
-  @media (min-width: 750px) {
+  width: 100%;
+  flex-grow: 1;
+  @media (min-width: 900px) {
     flex-direction: row;
+    align-items: stretch
   }
   flex-direction: column;
-  align-items: center;
-  //justify-content: space-between;
+  align-items: stretch;
 `
 
 const PDFViewerContainer = styled.div`
-  flex: 6;
-  width: 100%;
-  @media (max-width: 750px) {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-  padding-left: 0px;
-  padding-right: 0px;
+  flex: 1;
+  margin: 10px;
+  margin-right: 20px;
 `
 const SelectDemoContainer = styled.div`
   margin-top: 20px;
@@ -50,6 +48,18 @@ const DemoOption = styled.div`
   border-radius: 3px;
   cursor: pointer;
 
+`
+
+const SummaryContainer = styled.div`
+  margin: 10px 10px 10px 10px;
+  position: relative;
+  @media (max-width: 899px) {
+    height: 450px;
+  }
+  @media (min-width: 900px) {
+    width: 40vw;
+    margin: 10px 10px 10px 0px;
+  }
 `
 
 function DemoPdfSummary(props) {
@@ -80,7 +90,9 @@ function DemoPdfSummary(props) {
                 <PDFViewerContainer>
                     {pdfFile && <DemoPDFViewer pdfFile={pdfFile}/>}
                 </PDFViewerContainer>
-                <DemoSummary pdfKey={demoKey} summary={summary}/>
+                <SummaryContainer>
+                    <DemoSummary pdfKey={demoKey} summary={summary}/>
+                </SummaryContainer>
             </InnerContainer>
         </Container>
     );

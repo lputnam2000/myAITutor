@@ -2,7 +2,7 @@ import Head from 'next/head'
 import styled, {keyframes} from 'styled-components'
 import HomeNavbar from "../components/HomeNavbar";
 import {FormControl, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
-import {useEffect, useRef, useState} from "react";
+import { useState} from "react";
 import axios from "axios";
 import DemoPDFSummary from "../components/DemoPDFSummary";
 import { useSession } from 'next-auth/react';
@@ -74,9 +74,8 @@ const gradientKeyframes = keyframes`
 
 const Main = styled.main`
   min-height: 100vh;
-  background: linear-gradient(-45deg, #85d4ef, #8ff6de, #ef9c82, #f59ec0);
-  background-size: 400% 400%;
-  animation: ${gradientKeyframes} 300s ease infinite;
+  background-color: #1c2025;
+  color: #fff;
 `
 
 const HeadlineContainer = styled.div`
@@ -97,14 +96,12 @@ const Text = styled.h1`
     font-size: 50px;
   }
   font-size: 24px;
-  color: black;
 `
 const Underline = styled.span`
     position: relative;
   text-decoration: underline;
-    color: ${props => props.color};
-  }
 `
+
 const Banner = styled.div`
   background-color: black;
   color: white;
@@ -168,29 +165,29 @@ export default function Home() {
                             and <Underline color={'#000'}>Conquer</Underline></Text>
                     </HeadlineContainer>
                     <DemoPDFSummary/>
-                    <WaitingListCard id={'waiting-list'}>
-                        <JoinWaitingListHeading>
-                            Join the Waiting list
-                        </JoinWaitingListHeading>
-                        <InfoText>
-                            Say goodbye to information overload, hello to effortless understanding!
-                        </InfoText>
-                        <FormControl>
-                            <FormLabel>Email address</FormLabel>
-                            <Input isInvalid={emailErrorMessage !== ''} value={email}
-                                   onChange={(e) => setEmail(e.target.value)} borderColor={'black'
-                            } focusBorderColor={'black'}
-                                   type='email'/>
-                            {
-                                joinedWaitlist ?
-                                <FormHelperText>Thanks for joining the waitlist! We&apos;ll keep you updated via email. Be sure to check your inbox regularly.</FormHelperText>
-                                : <FormHelperText>We&apos;ll never share your email.</FormHelperText>
-                            }
-                        </FormControl>
-                        <Submit isDisabled={isDisabled} onClick={submitEntry}>
-                            Join the Chimp Squad
-                        </Submit>
-                    </WaitingListCard>
+                    {/*<WaitingListCard id={'waiting-list'}>*/}
+                    {/*    <JoinWaitingListHeading>*/}
+                    {/*        Join the Waiting list*/}
+                    {/*    </JoinWaitingListHeading>*/}
+                    {/*    <InfoText>*/}
+                    {/*        Say goodbye to information overload, hello to effortless understanding!*/}
+                    {/*    </InfoText>*/}
+                    {/*    <FormControl>*/}
+                    {/*        <FormLabel>Email address</FormLabel>*/}
+                    {/*        <Input isInvalid={emailErrorMessage !== ''} value={email}*/}
+                    {/*               onChange={(e) => setEmail(e.target.value)} borderColor={'black'*/}
+                    {/*        } focusBorderColor={'black'}*/}
+                    {/*               type='email'/>*/}
+                    {/*        {*/}
+                    {/*            joinedWaitlist ?*/}
+                    {/*            <FormHelperText>Thanks for joining the waitlist! We&apos;ll keep you updated via email. Be sure to check your inbox regularly.</FormHelperText>*/}
+                    {/*            : <FormHelperText>We&apos;ll never share your email.</FormHelperText>*/}
+                    {/*        }*/}
+                    {/*    </FormControl>*/}
+                    {/*    <Submit isDisabled={isDisabled} onClick={submitEntry}>*/}
+                    {/*        Join the Chimp Squad*/}
+                    {/*    </Submit>*/}
+                    {/*</WaitingListCard>*/}
                 </Container>
             </Main>
         </>
