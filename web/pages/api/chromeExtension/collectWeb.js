@@ -39,60 +39,52 @@ async function generateRecord(user_id, html, title) {
     const websitesCollection = db.collection('SummaryWebsites');
     const record = {userid: owner};
 
-    uploads.findOne(record, (err, result) => {
-        if (err) {
-            console.log(err);
-        } else if (!result) {
-            uploads.insertOne(record, (err, res) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("Record added");
-                }
-            });
-            uploads.updateOne(
+    try {
+        const result = await uploads.findOne(record);
+        if (!result) {
+            await Promise.all([
+                uploads.insertOne(record),
+                websitesCollection.insertOne({
+                    _id: uuid,
+                    owner,
+                    title,
+                    status: 'Not Ready',
+                    summary: [],
+                    type: 'url',
+                    html
+                })
+            ]);
+            await uploads.updateOne(
                 record,
                 {$set: {"uploads": [{uuid, title, status: 'Not Ready', type: 'url'}]}},
                 {upsert: true}
             );
-            websitesCollection.insertOne({
-                _id: uuid,
-                owner,
-                title,
-                status: 'Not Ready',
-                summary: [],
-                type: 'url',
-                html
-            });
         } else {
-            // console.log("Record already exists:", result);
-            let currentData = uploads.count({'userid': owner}, {limit: 1})
-            if (currentData && currentData.uploads) {
-                while (currentData.uploads.includes(uuid)) {
-                    uuid = uuidv4();
-                }
-            }
-            uploads.update(record, {
-                $push: {
-                    "uploads": {
-                        $each: [{uuid, title, status: 'Not Ready', type: 'url'}],
-                        $position: 0
+            await Promise.all([
+                uploads.update(record, {
+                    $push: {
+                        "uploads": {
+                            $each: [{uuid, title, status: 'Not Ready', type: 'url'}],
+                            $position: 0
+                        }
                     }
-                }
-            })
-            websitesCollection.insertOne({
-                _id: uuid,
-                owner,
-                title,
-                status: 'Not Ready',
-                summary: [],
-                type: 'url',
-                html
-            });
+                }),
+                websitesCollection.insertOne({
+                    _id: uuid,
+                    owner,
+                    title,
+                    status: 'Not Ready',
+                    summary: [],
+                    type: 'url',
+                    html
+                })
+            ]);
         }
-    });
-    let fullyQualifiedName = uuid;
-    return fullyQualifiedName
+    } catch (error) {
+        console.log(error)
+    }
+
+    return uuid;
 }
 
 export default async function handler(req, res) {
