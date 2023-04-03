@@ -1,64 +1,42 @@
-import React, {useContext, useMemo} from 'react';
-import styled from "styled-components";
+import React from 'react';
 import {Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
 import SemanticSearch from "./SemanticSearch";
 import CollapsibleSummary from "./CollapsibleSummary";
-import {SmallAddIcon} from "@chakra-ui/icons";
-import GenerateSummary from "./GenerateSummary";
-import {ViewerContext} from "./context";
+import styled, {keyframes, css} from "styled-components";
+
 
 const Container = styled.div`
+  position: absolute;
+  height: 100%;
   width: 100%;
-  @media (min-width: 750px) {
-    flex: 4;
-    width: 40vw;
-    margin-right: 10px;
-  }
-  margin: 20px 30px 20px 30px;
-
-  overflow-y: auto;
-
-  border: 2px black solid;
-  border-radius: 15px 3px 3px 3px;
-  height: 750px;
-  background-color: whitesmoke;
+  overflow: auto;
+  border: 2px #57657e solid;
+  border-radius: 2px;
+  background-color: #242933;
+  color: #fbfbff;
+  transition: box-shadow 0.1s ease-in-out;
 
   &:hover {
-    box-shadow: 5px 5px 0px #000000;
-    transition: box-shadow 0.1s ease-in-out;
+    box-shadow: 5px 5px 0px #48fdce;
   }
 `
 
-const SubHeading = styled.div`
-  font-weight: bold;
-  font-size: 1.5rem;
-  margin-top: 5px;
-`
-const SummaryText = styled.div`
-`
+
 const SummaryContainer = styled.div`
-  overflow-y: hidden;
 `
 
-const StyledTabList = styled(TabList)`
-  position: -webkit-sticky; /* Safari */
-  position: sticky;
-  z-index: 4;
-  top: 0;
-`
 
 function Summary({pdfKey, summary}) {
     return (
         <Container>
             <Tabs height={'100%'} variant='enclosed' isFitted>
-                <StyledTabList>
-                    <Tab backgroundColor={'white'} _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
-                    <Tab backgroundColor={'white'} _selected={{color: 'white', bg: 'black'}}>Search</Tab>
-                </StyledTabList>
-
-                <TabPanels height={'94%'}>
-                    <TabPanel style={{height: '100%', padding: '0px'}}>
-                        <SummaryContainer>
+                <TabList height={'35px'}>
+                    <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
+                    <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Search</Tab>
+                </TabList>
+                <TabPanels height={'calc(100%-35px)'}>
+                    <TabPanel style={{height: '100%', padding: '0px', marginRight: '10px'}}>
+                    <SummaryContainer>
                             {
                                 summary.map((s, idx) => <CollapsibleSummary isOpen={idx === 0} key={idx}
                                                                             summaryJson={s}/>)
