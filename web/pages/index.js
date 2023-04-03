@@ -4,7 +4,8 @@ import HomeNavbar from "../components/HomeNavbar";
 // import {FormControl, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
 import { useState} from "react";
 import axios from "axios";
-import DemoPDFSummary from "../components/DemoPDFSummary";
+import dynamic from 'next/dynamic';
+const DemoPDFSummary = dynamic(() => import("../components/DemoPDFSummary"), { ssr: false });
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
