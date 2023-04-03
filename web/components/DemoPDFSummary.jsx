@@ -62,22 +62,17 @@ const SummaryContainer = styled.div`
   }
 `
 
-function DemoPdfSummary(props) {
-    const [demoKey, setDemoKey] = useState('b1bee4f2-c9e1-45da-acaa-b560c145ecca');
+function DemoPdfSummary({demoPDFData}) {
+    const [demoKey, setDemoKey] = useState('f36f637f-1ee6-45dd-ba7b-9b989b5294a5');
     const [pdfFile, setPdfFile] = useState('');
     const [summary, setSummary] = useState([]);
     const [title, setTitle] = useState('');
 
     useEffect(() => {
-        let params = {'key': demoKey}
-        axios.get('/api/user/get_demo_pdf', {params: params}).then(res => {
-            setPdfFile(res.data.s3Url)
-            setSummary(res.data.documentDetails.summary)
-            setTitle(res.data.documentDetails.title)
-        }).catch(err => {
-            console.log(err)
-        })
-    }, [demoKey])
+        setPdfFile(demoPDFData.s3Url)
+        setSummary(demoPDFData.documentDetails.summary)
+        setTitle(demoPDFData.documentDetails.title)
+    }, [demoPDFData])
 
     return (
         <Container>

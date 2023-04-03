@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styled, {keyframes} from 'styled-components'
 import HomeNavbar from "../components/HomeNavbar";
-import {FormControl, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
+// import {FormControl, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
 import { useState} from "react";
 import axios from "axios";
 import DemoPDFSummary from "../components/DemoPDFSummary";
@@ -113,7 +113,29 @@ const Banner = styled.div`
   }
 `
 
-export default function Home() {
+
+export async function getServerSideProps() {
+    async function  getDemoPdf() {
+        let params = {'key': 'f36f637f-1ee6-45dd-ba7b-9b989b5294a5'}
+        try {
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/user/get_demo_pdf`, { params: params });
+            return res.data;
+        } catch (err) {
+            console.log(err);
+            return null; // Return null in case of an error
+        }
+    }
+
+    const demoPDFData = await getDemoPdf();
+    console.log(demoPDFData)
+    return {
+        props: {
+            demoPDFData,
+        },
+    };
+}
+
+export default function Home({demoPDFData}) {
     const [email, setEmail] = useState('');
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
     const [isDisabled, setIsDisabled] = useState(false)
@@ -164,7 +186,7 @@ export default function Home() {
                             color={'#000'}>Simplify&nbsp;</Underline>
                             and <Underline color={'#000'}>Conquer</Underline></Text>
                     </HeadlineContainer>
-                    <DemoPDFSummary/>
+                    <DemoPDFSummary demoPDFData={demoPDFData}/>
                     {/*<WaitingListCard id={'waiting-list'}>*/}
                     {/*    <JoinWaitingListHeading>*/}
                     {/*        Join the Waiting list*/}
