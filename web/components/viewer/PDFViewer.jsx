@@ -44,7 +44,7 @@ const ViewerWrapper = styled.div`
 
 function PdfViewer() {
     const toolbarPluginInstance = toolbarPlugin();
-    const {renderDefaultToolbar, Toolbar} = toolbarPluginInstance;
+    const {renderDefaultToolbar} = toolbarPluginInstance;
     const readingIndicatorPluginInstance = readingIndicatorPlugin();
     const {ReadingIndicator} = readingIndicatorPluginInstance;
     const [pdfFile, setPdfFile] = useState('');
