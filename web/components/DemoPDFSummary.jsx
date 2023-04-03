@@ -9,25 +9,23 @@ const Container = styled.div`
   width: 100%;
   //height: 70vh;
 `
+
 const InnerContainer = styled.div`
   display: flex;
-  @media (min-width: 750px) {
+  width: 100%;
+  flex-grow: 1;
+  @media (min-width: 900px) {
     flex-direction: row;
+    align-items: stretch
   }
   flex-direction: column;
-  align-items: center;
-  //justify-content: space-between;
+  align-items: stretch;
 `
 
 const PDFViewerContainer = styled.div`
-  flex: 6;
-  width: 100%;
-  @media (max-width: 750px) {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-  padding-left: 0px;
-  padding-right: 0px;
+  flex: 1;
+  margin: 10px;
+  margin-right: 20px;
 `
 const SelectDemoContainer = styled.div`
   margin-top: 20px;
@@ -52,22 +50,29 @@ const DemoOption = styled.div`
 
 `
 
-function DemoPdfSummary(props) {
-    const [demoKey, setDemoKey] = useState('b1bee4f2-c9e1-45da-acaa-b560c145ecca');
+const SummaryContainer = styled.div`
+  margin: 10px 10px 10px 10px;
+  position: relative;
+  @media (max-width: 899px) {
+    height: 450px;
+  }
+  @media (min-width: 900px) {
+    width: 40vw;
+    margin: 10px 10px 10px 0px;
+  }
+`
+
+function DemoPdfSummary({demoPDFData}) {
+    const [demoKey, setDemoKey] = useState('f36f637f-1ee6-45dd-ba7b-9b989b5294a5');
     const [pdfFile, setPdfFile] = useState('');
     const [summary, setSummary] = useState([]);
     const [title, setTitle] = useState('');
 
     useEffect(() => {
-        let params = {'key': demoKey}
-        axios.get('/api/user/get_demo_pdf', {params: params}).then(res => {
-            setPdfFile(res.data.s3Url)
-            setSummary(res.data.documentDetails.summary)
-            setTitle(res.data.documentDetails.title)
-        }).catch(err => {
-            console.log(err)
-        })
-    }, [demoKey])
+        setPdfFile(demoPDFData.s3Url)
+        setSummary(demoPDFData.documentDetails.summary)
+        setTitle(demoPDFData.documentDetails.title)
+    }, [demoPDFData])
 
     return (
         <Container>
@@ -80,7 +85,9 @@ function DemoPdfSummary(props) {
                 <PDFViewerContainer>
                     {pdfFile && <DemoPDFViewer pdfFile={pdfFile}/>}
                 </PDFViewerContainer>
-                <DemoSummary pdfKey={demoKey} summary={summary}/>
+                <SummaryContainer>
+                    <DemoSummary pdfKey={demoKey} summary={summary}/>
+                </SummaryContainer>
             </InnerContainer>
         </Container>
     );
