@@ -1,20 +1,19 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import {Viewer, Worker} from "@react-pdf-viewer/core";
-import {dropPlugin} from '@react-pdf-viewer/drop';
 import '@react-pdf-viewer/drop/lib/styles/index.css';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import {toolbarPlugin} from '@react-pdf-viewer/toolbar';
 import '@react-pdf-viewer/toolbar/lib/styles/index.css';
 import styled from 'styled-components'
 import readingIndicatorPlugin from "./ReadingIndicatorPlugin"
-import {ViewerContext} from "./context";
+import {defaultLayoutPlugin} from "@react-pdf-viewer/default-layout";
 
 
 const Container = styled.div`
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  background-color: whitesmoke;
+  background-color: #292929;
   border-radius: 3px;
   padding-bottom: 32px;
   border: 1px black solid;
@@ -40,14 +39,13 @@ const Container = styled.div`
 
 
 function DemoPdfViewer({pdfFile}) {
-    const dropPluginInstance = dropPlugin();
     const toolbarPluginInstance = toolbarPlugin();
-    const {renderDefaultToolbar, Toolbar} = toolbarPluginInstance;
+    const {renderDefaultToolbar} = toolbarPluginInstance;
     const readingIndicatorPluginInstance = readingIndicatorPlugin();
     const {ReadingIndicator} = readingIndicatorPluginInstance;
     const [numPages, setNumPages] = useState(0);
 
-    const transform = (slot) => ({
+    const transformToolbar = (slot) => ({
         ...slot,
         // These slots will be empty
         Download: () => <></>,
@@ -67,13 +65,23 @@ function DemoPdfViewer({pdfFile}) {
         setNumPages(info.doc._pdfInfo.numPages)
     }
 
+    const renderCustomToolbar = (
+        Toolbar
+    ) => <Toolbar>{renderDefaultToolbar(transformToolbar)}</Toolbar>;
+
+    const defaultLayoutPluginInstance = defaultLayoutPlugin({
+        sidebarTabs: (defaultTabs) => [
+            defaultTabs[0], // Thumbnails tab
+        ],
+        renderToolbar: renderCustomToolbar,
+    })
+
     return (
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.3.122/build/pdf.worker.js">
             <Container>
-                <Toolbar>{renderDefaultToolbar(transform)}</Toolbar>
-                <Viewer fileUrl={pdfFile}
+                <Viewer theme='dark' fileUrl={pdfFile}
                         onDocumentLoad={initializeContext}
-                        plugins={[toolbarPluginInstance, readingIndicatorPluginInstance]}/>
+                        plugins={[defaultLayoutPluginInstance, readingIndicatorPluginInstance]}/>
             </Container>
             <ReadingIndicator/>
         </Worker>

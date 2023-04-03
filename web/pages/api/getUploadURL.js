@@ -44,45 +44,37 @@ async function generateRecord(session, fileName) {
     let uploads = db.collection("UserUploads");
     const documentsCollection = db.collection('SummaryDocuments');
     const record = {userid: owner};
-
-    uploads.findOne(record, (err, result) => {
-        if (err) {
-            console.log(err);
-        } else if (!result) {
-            uploads.insertOne(record, (err, res) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("Record added");
-                }
-            });
-            uploads.updateOne(
+    try {
+        const result = await uploads.findOne(record);
+        if (!result) {
+            await Promise.all([
+                uploads.insertOne(record),
+                documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'pdf'})
+            ]);
+            await uploads.updateOne(
                 record,
                 {$set: {"uploads": [{uuid, title, status: 'Not Ready', type: 'pdf'}]}},
                 {upsert: true}
             );
-            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'pdf'});
         } else {
-            // console.log("Record already exists:", result);
-            var currentData = uploads.count({'userid': owner}, {limit: 1})
-            if (currentData && currentData.uploads) {
-                while (currentData.uploads.includes(uuid)) {
-                    uuid = uuidv4();
-                }
-            }
-            uploads.update(record, {
-                $push: {
-                    "uploads": {
-                        $each: [{uuid, title, status: 'Not Ready', type: 'pdf'}],
-                        $position: 0
+            await Promise.all([
+                uploads.update(record, {
+                    $push: {
+                        "uploads": {
+                            $each: [{uuid, title, status: 'Not Ready', type: 'pdf'}],
+                            $position: 0
+                        }
                     }
-                }
-            })
-            documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'pdf'});
+                }),
+                documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'pdf'})
+            ]);
         }
-    });
-    let fullyQualifiedName = uuid;
-    return fullyQualifiedName
+
+    } catch (error) {
+        console.log(error)
+    }
+
+    return uuid;
 }
 
 export default async (req, res) => {
