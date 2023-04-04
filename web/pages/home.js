@@ -39,6 +39,7 @@ function Home() {
     useEffect(() => {
         if (!socket) return;
         const handleNewUpload = (data) => {
+            console.log(data)
             let jsonData = JSON.parse(data)
             setUserUploads(userUploads => [jsonData, ...userUploads])
         }
