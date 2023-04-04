@@ -232,6 +232,13 @@ def process_pdf_embeddings(data):
             print('UPLOADED DOCUMENTS')
             send_progress_update(99, "Finishing Up! 💪🦍")
             send_update(user_id, key,  {'key': 'isReady', 'value': True})
+            update_query = {"$set": {"status": "Ready"}}
+        # Update the document matching the UUID with the new values
+            db_client = get_mongo_client()
+            data_db = db_client["data"]
+            documentsCollection = data_db["SummaryDocuments"]
+            documentsCollection.update_one({"_id": key}, update_query)
+
             print(f'FINISHED EMBEDDINGS for - {key}')
     except Exception as e:
         print(e)
