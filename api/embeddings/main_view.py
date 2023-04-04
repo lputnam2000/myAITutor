@@ -65,7 +65,7 @@ def extension_to_embedding():
             'status': 'Not Ready',
             'type': 'url'
         }
-
+        print('Staring new chrome embeddings')
         send_update( user_id, 'home', new_upload)
 
         thread = threading.Thread(target=run_in_context, args=(data,process_chrome_extension_embeddings, stream_name))
