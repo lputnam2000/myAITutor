@@ -24,7 +24,7 @@ async function generatePreSignedGetUrl(key) {
 const requestHandler = async (req, res) => {
     if (req.method === "GET") {
         const {key} = req.query
-        if (key !== 'f36f637f-1ee6-45dd-ba7b-9b989b5294a5') {
+        if (key !== '136fe416-d18f-4051-9d5c-c2692fdcd50f') {
             res.status(401).json({error: 'Unauthorised'})
             return
         }

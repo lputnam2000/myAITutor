@@ -2,12 +2,13 @@ import Head from 'next/head'
 import styled, {keyframes} from 'styled-components'
 import HomeNavbar from "../components/HomeNavbar";
 // import {FormControl, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
-import { useState} from "react";
+import {useState} from "react";
 import axios from "axios";
 import dynamic from 'next/dynamic';
-const DemoPDFSummary = dynamic(() => import("../components/DemoPDFSummary"), { ssr: false });
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
+
+const DemoPDFSummary = dynamic(() => import("../components/DemoPDFSummary"), {ssr: false});
+import {useSession} from 'next-auth/react';
+import {useRouter} from 'next/router';
 
 
 const Container = styled.div`
@@ -47,15 +48,15 @@ const InfoText = styled.div`
 
 const Submit = styled.div`
   margin-top: 15px;
-  background-color: ${({isDisabled, theme}) => isDisabled ? 'gray': theme.colors.secondary};
+  background-color: ${({isDisabled, theme}) => isDisabled ? 'gray' : theme.colors.secondary};
   color: white;
   display: inline-block;
   padding: 10px;
-  cursor: ${({isDisabled, theme}) => isDisabled ? 'not-allowed': 'pointer'};
+  cursor: ${({isDisabled, theme}) => isDisabled ? 'not-allowed' : 'pointer'};
   font-weight: 500;
 
   &:hover {
-    background-color: ${({isDisabled, theme}) => isDisabled ? 'gray': theme.colors.blue};
+    background-color: ${({isDisabled, theme}) => isDisabled ? 'gray' : theme.colors.blue};
     color: ${({theme}) => theme.colors.secondary};
   }
 `
@@ -99,7 +100,7 @@ const Text = styled.h1`
   font-size: 24px;
 `
 const Underline = styled.span`
-    position: relative;
+  position: relative;
   text-decoration: underline;
 `
 
@@ -116,10 +117,10 @@ const Banner = styled.div`
 
 
 export async function getServerSideProps() {
-    async function  getDemoPdf() {
-        let params = {'key': 'f36f637f-1ee6-45dd-ba7b-9b989b5294a5'}
+    async function getDemoPdf() {
+        let params = {'key': '136fe416-d18f-4051-9d5c-c2692fdcd50f'}
         try {
-            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/user/get_demo_pdf`, { params: params });
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/user/get_demo_pdf`, {params: params});
             return res.data;
         } catch (err) {
             console.log(err);
@@ -144,7 +145,6 @@ export default function Home({demoPDFData}) {
     const session = useSession();
     const router = useRouter();
 
-    
 
     const submitEntry = () => {
         const emailRegex =
