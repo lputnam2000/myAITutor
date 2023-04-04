@@ -93,7 +93,7 @@ def generate_pdf_embeddings():
     try:
         data = request.json
         if data['content_type'] == 'application/pdf':
-            thread = threading.Thread(target=process_pdf_embeddings, args=(data))
+            thread = threading.Thread(target=process_pdf_embeddings, args=(data,))
             thread.start()
             return jsonify({"message": "Request accepted, processing in background"}), HTTPStatus.ACCEPTED
         elif data['content_type'] == 'video/mp4':
