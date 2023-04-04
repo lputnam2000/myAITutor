@@ -8,11 +8,7 @@ RUN apt-get update && apt-get install -y r-base
 
 # Copy the application code and requirements.txt
 
-# Create the 'api' directory inside the container
-RUN mkdir api
 
-# Copy the contents of the current directory (../api/) into the 'api' directory in the container
-COPY . ./api
 COPY requirements.txt .
 COPY credentials ./credentials
 
@@ -27,7 +23,11 @@ RUN python -m nltk.downloader punkt
 # Set the AWS environment variables
 RUN mkdir -p /root/.aws && cp ./credentials /root/.aws/credentials
 
+# Create the 'api' directory inside the container
+RUN mkdir api
 
+# Copy the contents of the current directory (../api/) into the 'api' directory in the container
+COPY . ./api
 
 # Expose the port Gunicorn will run on
 EXPOSE 8000
