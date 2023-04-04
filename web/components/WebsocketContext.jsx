@@ -14,6 +14,7 @@ function WebsocketContextProvider({ children }) {
     const {data: session} = useSession();
     const [callbacks, setCallbacks] = useState([]);
     const socketServerURL = process.env.NEXT_PUBLIC_SOCKET_SERVER_URL
+    console.log("SOCKET SERVER urL IS: ", socketServerURL)
 
 
     const handle_push_to_user = useCallback(
