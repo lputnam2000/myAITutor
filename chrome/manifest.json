@@ -11,11 +11,9 @@
       "128": "icon.png"
     },
     "permissions": [
-        "webRequest",
         "scripting",
         "activeTab",
-        "tabs",
-        "cookies"
+        "tabs"
     ],
     "host_permissions": [
         "https://api.chimpbase.com/*"
