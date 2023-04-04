@@ -7,10 +7,6 @@ redisClient = None
 def getRedisClient():
     global redisClient
     if redisClient == None:
-        print(os.getenv('REDIS_HOST'))
-        print(os.getenv('REDIS_PORT'))
-        print(os.getenv('REDIS_PASSWORD'))
-
         redisClient=redis.Redis(host=os.getenv('REDIS_HOST'), port=os.getenv('REDIS_PORT'), db=os.getenv('REDIS_DB'), password=os.getenv('REDIS_PASSWORD'))
     return redisClient
 
