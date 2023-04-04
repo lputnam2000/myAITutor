@@ -7,12 +7,13 @@ import axios from "axios";
 export const WebsocketContext = createContext({socket: undefined});
 
 
-function WebsocketContextProvider({children}) {
+function WebsocketContextProvider({ children }) {
     const [socket, setSocket] = useState(null);
     const [authToken, setAuthToken] = useState(null);
     const [variableState, setVariableState] = useState(null);
     const {data: session} = useSession();
     const [callbacks, setCallbacks] = useState([]);
+    const socketServerURL = process.env.NEXT_PUBLIC_SOCKET_SERVER_URL
 
 
     const handle_push_to_user = useCallback(
@@ -72,9 +73,8 @@ function WebsocketContextProvider({children}) {
     }, [session, fetchData]);
 
     useEffect(() => {
-
         if (authToken && !socket) {
-            const newSocket = io('wss://sockets.chimpbase.com', {
+            const newSocket = io(socketServerURL, {
                 query: {token: authToken},
                 transports: ['websocket']
             });
