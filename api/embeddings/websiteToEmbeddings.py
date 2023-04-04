@@ -312,7 +312,7 @@ def process_chrome_extension_embeddings(data,  stream_name):
         print(f'3. CREATED CLASS {class_name}')
         send_progress_update(40, "Making Notes! 📝🦍")
         current_app.logger.info(f'3. CREATED CLASS {class_name}')
-        upload_documents_website(documents, client, class_name)
+        upload_documents_website(documents, client, class_name, send_progress_update)
         print("4. UPLOADED DOCUMENTS")
         send_progress_update(99, "Finishing Up! 💪🦍")
         current_app.logger.info("4. UPLOADED DOCUMENTS")
