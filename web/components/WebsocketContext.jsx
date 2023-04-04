@@ -13,8 +13,7 @@ function WebsocketContextProvider({ children }) {
     const [variableState, setVariableState] = useState(null);
     const {data: session} = useSession();
     const [callbacks, setCallbacks] = useState([]);
-    const socketServerURL = process.env.NEXT_PUBLIC_SOCKET_SERVER_URL
-
+    const socketServerURL = "wss://sockets.chimpbase.com"//process.env.NEXT_PUBLIC_SOCKET_SERVER_URL
 
     const handle_push_to_user = useCallback(
         (data) => {
