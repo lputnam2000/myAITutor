@@ -23,6 +23,7 @@ const PageWrapper = styled.div`
 const Container = styled.div`
   //height: 100%;
   display: flex;
+  padding: 1rem 1rem 3rem 1rem;
   flex-direction: column;
   align-items: center;
   background-color: #0A0A0A;
@@ -119,7 +120,35 @@ const Banner = styled.div`
     display: block;
   }
 `
+const TryNowButton = styled.button`
+  margin: 3rem;
+  background-color: #FF1493;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.3);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 5px 10px rgba(0,0,0,0.5);
+  }
 
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.3);
+  }
+
+  @media (max-width: 600px) {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+  }
+`;
 export default function Home({}) {
     const [email, setEmail] = useState('');
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
@@ -163,6 +192,7 @@ export default function Home({}) {
                 <HomeNavbar/>
                 <Container>
                     <HowItWorks/>
+                    <TryNowButton onClick={()=>{router.push("/home")}}>No cost. No risk. Try it now.</TryNowButton>
                 </Container>
             </Main>
         </>
