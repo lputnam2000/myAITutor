@@ -83,7 +83,7 @@ def srt_to_array(srt_text):
     return subtitles
 
 def transcribe_file(model_id, path):
-    url = 'https://api.openai.com/v1/audio/transcriptions'
+    url = 'https://api.openai.com/v1/audio/translations'
     headers = {'Authorization': f'Bearer {OPEN_AI_KEY}'}
     data = {'model': 'whisper-1',}
     print(path)
@@ -146,6 +146,7 @@ def get_video_transcript(url, isMP4, send_progress_update):
     send_progress_update(15, 'Translating hooman-speak to prime chimp-lingo! 👫➡️🦍')
     transcripts = transcribe_file(WHISPER_MODEL_NAME, videoFile)
     os.remove(videoFile)
+    print(transcripts)
     formatted_subtitles = srt_to_array(transcripts)
     print('#Transcripts Generated')
     return formatted_subtitles
