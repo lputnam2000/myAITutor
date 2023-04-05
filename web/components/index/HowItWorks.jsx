@@ -1,7 +1,21 @@
 import styled from 'styled-components';
 
+const MainContainer = styled.div`
+  @media (max-width: 1200px) {
+    font-size: 1em;
+  }
+
+  @media (max-width: 768px) {
+    font-size: .75em;
+  }
+
+  @media (max-width: 550px) {
+    font-size: .65em;
+  }
+`
+
 const HowItWorksTitle = styled.h2`
-  font-size: 2.5rem;
+  font-size: 4em;
   font-weight: bold;
   text-align: center;
   margin-top: 2rem;
@@ -11,7 +25,7 @@ const HowItWorksTitle = styled.h2`
 const GridContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 4rem;
+  gap: 4em;
   max-width: 80%;
   margin: 0 auto;
 
@@ -28,7 +42,7 @@ const StepBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  padding: 2em;
 
   @media (max-width: 1200px) { 
     padding: 1rem 0.4rem 1rem 0.4rem;
@@ -65,17 +79,17 @@ const TextWithGif = styled.div`
 
 
 const Title = styled.h2`
-  font-size: 2rem;
+  font-size: 2em;
   font-weight: bold;
   margin-bottom: 1rem;
 `;
 
 const BigWords = styled.div`
-  font-size: 3rem;
+  font-size: 3em;
 `
 
 const GradientText = styled.span`
-  font-size: 1.4rem;
+  font-size: 1.4em;
   background: rgb(211,131,242);
   background: linear-gradient(90deg, rgba(211,131,242,1) 0%, rgba(226,43,216,1) 100%);
   -webkit-background-clip: text;
@@ -85,7 +99,7 @@ const GradientText = styled.span`
 const BoomText = styled.span`
   display: inline-block;
   padding: 0.5rem 1rem;
-  font-size: 2rem;
+  font-size: 2em;
   font-weight: bold;
   color: white;
   background: linear-gradient(to right, #ff1493, #ff8c00);
@@ -95,7 +109,7 @@ const BoomText = styled.span`
 `;
 const Subtitle = styled.div`
   padding: 1rem 0 0 0;
-  font-size: 1.2rem;
+  font-size: 1.2em;
   text-align: left;
 `;
 const ValueList = styled.ul`
@@ -124,7 +138,7 @@ const GifImage = styled.img`
 
 const StepByStep = () => {
     return (
-        <>
+        <MainContainer>
             <HowItWorksTitle>How It Works</HowItWorksTitle>
             <GridContainer>
                 <StepBox>
@@ -159,7 +173,7 @@ const StepByStep = () => {
                     </TextWithGif>
                 </StepBox>
             </GridContainer>
-        </>
+        </MainContainer>
     );
 };
 

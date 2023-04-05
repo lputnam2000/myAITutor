@@ -9,9 +9,10 @@ import {AiOutlineHome} from "react-icons/ai";
 
 const Container = styled.div`
   background-color: #242933;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   border-bottom: #57657e 2px solid;
   height: 50px;
   @media (max-width: 600px) {
@@ -20,49 +21,39 @@ const Container = styled.div`
   @media (max-width: 400px) {
     height: 60px;
   }
-`
+`;
 
 const Logo = styled(Link)`
+  display: block;
   font-family: var(--font-b);
   font-weight: 700;
   font-size: 30px;
   color: ${props => props.theme.colors.primary};
   cursor: pointer;
-  padding-left: 30px;
-  padding-right: 30px;
+  margin-left: 0;
+  margin-right: 0;
   @media (max-width: 400px) {
-    padding-left: 0px;
-    padding-right: 0px;
     font-size: 24px;
   }
 `;
 
-
-function getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
-
-
-
 const HomeIconButton = styled(IconButton)`
   margin: 4px 10px 4px 10px;
-`
+  width: fit-content;
+
+`;
 
 const LoginButton = styled.button`
   margin-right: 10px;
   font-size: 18px;
   font-weight: 600;
-  margin-left: 20px;
+  margin-left: auto;
   padding: 5px;
   border-radius: 3px;
   background-color: #FFDB58;
   color: #1c2025;
   transition: box-shadow ease-in-out .1s;
+  width: fit-content;
 
   &:hover {
     box-shadow: 4px 4px 0px #776c43;
@@ -81,32 +72,28 @@ const LoginButton = styled.button`
   @media (max-width: 550px) {
     font-size: 14px;
   }
-`
-
+`;
 
 function Navbar(props) {
-    const router = useRouter()
+  const router = useRouter();
 
+  function goToHome() {
+    router.push("/home");
+  }
 
-    function goToHome() {
-        router.push("/home")
-    };
-
-    return (
-        <Container>
-            <HomeIconButton aria-label='Go to Home' icon={<AiOutlineHome size={22} color='#fff'/>}
-                            variant='outline'
-                            borderColor='#57657e'
-                            onClick={goToHome}
-
-            />
-            <Logo href={'/'}>
-                chimpbase
-            </Logo>
-            <LoginButton onClick={goToHome}>Join Now! </LoginButton>
-        </Container>
-    );
+  return (
+    <Container>
+      <HomeIconButton
+        aria-label="Go to Home"
+        icon={<AiOutlineHome size={22} color="#fff" />}
+        variant="outline"
+        borderColor="#57657e"
+        onClick={goToHome}
+      />
+      <Logo href={"/"}>chimpbase</Logo>
+      <LoginButton onClick={goToHome}>Join Now! </LoginButton>
+    </Container>
+  );
 }
-
 
 export default Navbar;
