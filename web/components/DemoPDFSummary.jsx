@@ -63,12 +63,14 @@ const SummaryContainer = styled.div`
 `
 
 function DemoPdfSummary({demoPDFData}) {
-    const [demoKey, setDemoKey] = useState('f36f637f-1ee6-45dd-ba7b-9b989b5294a5');
+    const [demoKey, setDemoKey] = useState('');
     const [pdfFile, setPdfFile] = useState('');
     const [summary, setSummary] = useState([]);
     const [title, setTitle] = useState('');
 
     useEffect(() => {
+        if (!demoPDFData) return
+        setDemoKey(demoPDFData.documentDetails._id)
         setPdfFile(demoPDFData.s3Url)
         setSummary(demoPDFData.documentDetails.summary)
         setTitle(demoPDFData.documentDetails.title)

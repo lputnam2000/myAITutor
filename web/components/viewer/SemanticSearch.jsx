@@ -39,6 +39,11 @@ const LoadingSpinner = styled.div`
 
 `
 
+const demoSearch = new Set([
+    '136fe416-d18f-4051-9d5c-c2692fdcd50f'
+])
+
+
 function SemanticSearch({uploadId}) {
     const {isReady} = useContext(ViewerContext) || {};
     const [searchQuery, setSearchQuery] = useState('');
@@ -69,18 +74,19 @@ function SemanticSearch({uploadId}) {
         })
         return result
     }
-
     return (
         <Container>
             {searchLoading ? <LoadingSpinner><Spinner size="xl" color="blue.500"/></LoadingSpinner> :
                 <SearchInputContainer>
                     <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                            placeholder='Ask a Question'/>
-                    <SearchButton isSearchDisabled={isSearchDisabled || !isReady} onClick={async (e) => {
-                        setSearchLoading(true);
-                        updateSearches(searchQuery, await searchAnswer(e));
-                        setSearchLoading(false)
-                    }}>Search</SearchButton>
+                    <SearchButton
+                        isSearchDisabled={isSearchDisabled && !demoSearch.has(uploadId)}
+                        onClick={async (e) => {
+                            setSearchLoading(true);
+                            updateSearches(searchQuery, await searchAnswer(e));
+                            setSearchLoading(false)
+                        }}>Search</SearchButton>
                 </SearchInputContainer>}
             <PreviousSearches>
 
