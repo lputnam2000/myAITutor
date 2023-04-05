@@ -105,7 +105,7 @@ def make_gpt_summary(text, context=None):
             return json.loads(textResp)
     except Exception as e:
         print(e)
-        make_gpt_summary(text,context)
+        return make_gpt_summary(text,context)
 
 
 def extract_text(page):
@@ -190,6 +190,8 @@ def get_summary(doc, start_page=6, end_page=8, send_summary_update=lambda x:  No
         summary_end_page = cur_page-1 if cur_page==end_page else cur_page
         print(f'{start}-{summary_end_page}')
         generated_summary = make_gpt_summary(input_text, context)
+        if generated_summary == None:
+            continue
         summary.append((start, summary_end_page, generated_summary))
         send_summary_update(summary)
         context = generate_context(generated_summary)

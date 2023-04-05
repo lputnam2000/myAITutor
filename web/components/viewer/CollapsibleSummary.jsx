@@ -105,6 +105,7 @@ function CollapsibleSummary({summaryJson, isOpen, fileType, isStreaming = false}
         let panelOutput = []
         let formattedSummary = summaryJson.formattedSummary
         for (let i = 0; i < formattedSummary.length; i++) {
+            if (!formattedSummary[i][2]) continue
             for (let j = 0; j < formattedSummary[i][2].length; j++) {
                 panelOutput.push(
                     <SummaryEntry key={`number-${i}-${j}`}>

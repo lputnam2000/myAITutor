@@ -106,8 +106,7 @@ function PDFGenerateSummary(props) {
     const [startError, setStartError] = useState(false);
     const [endError, setEndError] = useState(false)
     const [endPage, setEndPage] = useState(1);
-    const {numPages, pdfKey, fileType} = useContext(ViewerContext)
-    const [summaryLoading, setSummaryLoading] = useState(false)
+    const {numPages, pdfKey, setLiveSummary} = useContext(ViewerContext)
 
     const closeOptionsBox = (e) => {
         setShowOption(false)
@@ -134,17 +133,17 @@ function PDFGenerateSummary(props) {
             setEndError(false)
             setStartError(false)
         }
-        // summarize document
-        setShowOption(false)
-        setSummaryLoading(true)
-        setTimeout(() => {
-            setSummaryLoading(false)
-        }, 10000)
         axios.post('/api/user/generate_summary', {
             pdfKey, startPage, endPage
         }).then((res) => {
             console.log(res)
         })
+        setLiveSummary({
+            isSummarizing: true,
+            summaryJson: {formattedSummary: [], startPage: startPage, endPage: endPage}
+        })
+        // summarize document
+        setShowOption(false)
     }
 
     const generateSummaryButton = () => {
@@ -177,14 +176,19 @@ function PDFGenerateSummary(props) {
 }
 
 function YoutubeGenerateSummary(props) {
-    const {pdfKey} = useContext(ViewerContext)
+    const {pdfKey, setLiveSummary} = useContext(ViewerContext)
 
     const generateSummaryButton = () => {
         axios.post('/api/user/generate_summary_youtube', {
             key: pdfKey
         }).then((res) => {
             console.log(res)
+            setLiveSummary({
+                isSummarizing: true,
+                summaryJson: {formattedSummary: []}
+            })
         })
+
     }
 
     return (
@@ -197,13 +201,17 @@ function YoutubeGenerateSummary(props) {
 }
 
 function VideoGenerateSummary(props) {
-    const {pdfKey} = useContext(ViewerContext)
+    const {pdfKey, setLiveSummary} = useContext(ViewerContext)
 
     const generateSummaryButton = () => {
         axios.post('/api/user/generate_summary_video', {
             key: pdfKey
         }).then((res) => {
             console.log(res)
+            setLiveSummary({
+                isSummarizing: true,
+                summaryJson: {formattedSummary: []}
+            })
         })
     }
 
@@ -215,7 +223,7 @@ function VideoGenerateSummary(props) {
 }
 
 function URLGenerateSummary(props) {
-    const {pdfKey} = useContext(ViewerContext)
+    const {pdfKey, setLiveSummary} = useContext(ViewerContext)
     const [summaryLoading, setSummaryLoading] = useState(false)
 
 
@@ -228,6 +236,10 @@ function URLGenerateSummary(props) {
             key: pdfKey
         }).then((res) => {
             console.log(res)
+            setLiveSummary({
+                isSummarizing: true,
+                summaryJson: {formattedSummary: []}
+            })
         })
     }
 

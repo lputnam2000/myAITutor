@@ -78,7 +78,6 @@ const requestHandler = async (req, res) => {
             prompt += '\n[' + (i + 1) + '] ' + matchingText[i].text + '\n';
         }
         console.log(prompt)
-
         prompt += `Q:${query}` + "\nA:"
         getChatGPTAnswer(prompt).then(answer => {
             console.log(answer)

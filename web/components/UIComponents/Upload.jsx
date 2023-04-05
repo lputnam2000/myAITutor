@@ -209,7 +209,7 @@ export default function Upload({handleFile}) {
                         console.log(txt)
                     })
                 })
-        } else if (fileType === 'video') {
+        } else if (fileType === 'mp4') {
             await fetch('/api/getVideoUploadURL', requestObject)
                 .then(res => res.json())
                 .then(data => {
@@ -335,7 +335,7 @@ export default function Upload({handleFile}) {
             console.log(uploadID);
             handleFile(selectedFile, fileType, uploadID);
             closeModal();
-        } else if (fileType === 'video') {
+        } else if (fileType === 'mp4') {
             const uploadID = await sendS3(selectedFile, fileType);
             console.log(uploadID);
             console.log(fileType);
@@ -367,7 +367,7 @@ export default function Upload({handleFile}) {
                         <StyledOption value='pdf'>Document (PDF)</StyledOption>
                         <StyledOption value='url'>Website link</StyledOption>
                         <StyledOption value='youtube'>Youtube Video</StyledOption>
-                        <StyledOption value='video'>MP4 File</StyledOption>
+                        <StyledOption value='mp4'>MP4 File</StyledOption>
                     </StyledSelect>
                     {
                         fileType === 'pdf' && <>
@@ -401,7 +401,7 @@ export default function Upload({handleFile}) {
                         </>
                     }
                     {
-                        fileType === 'video' && <>
+                        fileType === 'mp4' && <>
                             <DropBox onDrop={handleVideoFileDrop} onDragOver={handleDragOver}
                             > <DropText>Drag and drop a MP4 file here or</DropText>
 

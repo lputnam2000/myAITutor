@@ -134,7 +134,6 @@ const TryNowButton = styled.button`
   box-shadow: 0px 2px 5px rgba(0,0,0,0.3);
   transition: all 0.2s ease-in-out;
   cursor: pointer;
-
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0px 5px 10px rgba(0,0,0,0.5);
@@ -150,7 +149,6 @@ const TryNowButton = styled.button`
     font-size: 1.2rem;
   }
 `;
-
 export default function Home({}) {
     const [email, setEmail] = useState('');
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
