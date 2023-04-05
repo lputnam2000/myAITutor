@@ -67,23 +67,20 @@ const BoomText = styled.span`
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 `;
-
-const Subtitle = styled.p`
+const Subtitle = styled.div`
   padding: 1rem 0 0 0;
   font-size: 1.2rem;
   text-align: left;
-
-  ul {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
-
-  li {
-    margin-bottom: 1rem;
-  }
 `;
-
+const ValueList = styled.ul`
+  padding: 0;
+  margin: 0;
+  list-style-image: url('/svg/bananas.svg');
+  list-style-position: inside;
+`
+const ListEntry = styled.li`
+  margin-bottom: 1rem;
+`
 const GifImage = styled.img`
   display: block;
   width: 50%;
@@ -95,7 +92,7 @@ const GifImage = styled.img`
 const StepByStep = () => {
     return (
         <>
-            <HowItWorksTitle>How It Works</HowItWorksTitle></>);/*
+            <HowItWorksTitle>How It Works</HowItWorksTitle>
             <GridContainer>
                 <StepBox>
                     <TextWithGif reverse={true}>
@@ -104,11 +101,11 @@ const StepByStep = () => {
                             <BigWords>Upload Your Content</BigWords>
                             <GradientText>PDFs, Websites, MP4s, Youtube </GradientText>
                             <Subtitle>
-                                <ul>
-                                    <li>Upload the content you would like to summarize or query.</li>
-                                    <li>We even have a Chrome extension if you want to quickly websites to your library with just 2 clicks!</li>
-                                    <li>We even support large content, like textbooks and lecture videos.</li>
-                                </ul>
+                                <ValueList>
+                                    <ListEntry>Upload the content you would like to summarize or query.</ListEntry>
+                                    <ListEntry>We even have a Chrome extension if you want to quickly websites to your library with just 2 clicks!</ListEntry>
+                                    <ListEntry>We even support large content, like textbooks and lecture videos.</ListEntry>
+                                </ValueList>
                             </Subtitle>
                         </StackedLabels>
                     </TextWithGif>
@@ -120,18 +117,17 @@ const StepByStep = () => {
                             <BigWords>Wait a minute or two and...</BigWords>
                             <BoomText>Go Bananas</BoomText>
                             <Subtitle>
-                                <ul>
-                                    <li>Generating comprehensive summaries for your uploaded content is the least we can do.</li>
-                                    <li>Using the power of GPT and some data manipulation techniques we can quickly find exactly what you are looking for, even if you can only give a vague description.</li>
-                                </ul>
+                                <ValueList>
+                                    <ListEntry>Generating comprehensive summaries for your uploaded content is the least we can do.</ListEntry>
+                                    <ListEntry>Using the power of GPT and some data manipulation techniques we can quickly find exactly what you are looking for, even if you can only give a vague description.</ListEntry>
+                                </ValueList>
                             </Subtitle>
-
                         </StackedLabels>
                     </TextWithGif>
                 </StepBox>
             </GridContainer>
         </>
-    );*/
+    );
 };
 
 export default StepByStep;
