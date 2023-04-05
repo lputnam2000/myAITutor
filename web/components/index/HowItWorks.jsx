@@ -14,6 +14,14 @@ const GridContainer = styled.div`
   gap: 4rem;
   max-width: 80%;
   margin: 0 auto;
+
+  @media (max-width: 1200px) {
+    max-width: 90%;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `;
 
 const StepBox = styled.div`
@@ -21,6 +29,10 @@ const StepBox = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 2rem;
+
+  @media (max-width: 1200px) { 
+    padding: 1rem 0.4rem 1rem 0.4rem;
+  }
 `;
 
 const StackedLabels = styled.div`
@@ -28,6 +40,16 @@ const StackedLabels = styled.div`
   flex-direction: column;
   align-items: flex-start;
   height: 100%;
+  margin: 0 2rem 0 2rem;
+
+  @media (max-width: 500px) {
+    margin: 0 0 0 0;
+    padding: 0 1rem 0 1rem;
+  }
+
+  @media (max-width: 1200px) {
+    margin: 0;
+  }
 `
 
 const TextWithGif = styled.div`
@@ -35,6 +57,10 @@ const TextWithGif = styled.div`
   flex-direction: ${({ reverse }) => (reverse ? 'row-reverse' : 'row')};
   align-items: center;
   gap: 2rem;
+
+  @media (max-width: 1200px) {
+    flex-direction: column;
+  }
 `;
 
 
@@ -84,9 +110,16 @@ const ListEntry = styled.li`
 const GifImage = styled.img`
   display: block;
   width: 50%;
-  margin-bottom: 1rem;
   border-radius: 8px;
   box-shadow: 0 0 15px 0px rgba(255, 255, 255, 0.5);
+
+  @media (max-width: 1200px) {
+    width: 60%;
+  }
+
+  @media (max-width: 768px) {
+    width: 90%;
+  }
 `;
 
 const StepByStep = () => {
@@ -114,8 +147,8 @@ const StepByStep = () => {
                     <TextWithGif reverse={false}>
                         <GifImage src="/gifs/step2.gif" alt="Step 1" />
                         <StackedLabels>
-                            <BigWords>Wait a minute or two and...</BigWords>
-                            <BoomText>Go Bananas</BoomText>
+                            <BigWords>We process the content and...</BigWords>
+                            <BoomText>You go bananas</BoomText>
                             <Subtitle>
                                 <ValueList>
                                     <ListEntry>Generating comprehensive summaries for your uploaded content is the least we can do.</ListEntry>

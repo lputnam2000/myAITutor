@@ -162,13 +162,6 @@ export default function Home({}) {
             <Main>
                 <HomeNavbar/>
                 <Container>
-                    <Banner>Please view on a bigger screen for the best experience</Banner>
-                    <HeadlineContainer>
-                        <Text id="text">Don&apos;t Get Lost in the Details: Use <Underline
-                            color={'#000'}>ChimpBase</Underline> to <Underline
-                            color={'#000'}>Simplify&nbsp;</Underline>
-                            and <Underline color={'#000'}>Conquer</Underline></Text>
-                    </HeadlineContainer>
                     <HowItWorks/>
                 </Container>
             </Main>

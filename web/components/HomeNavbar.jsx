@@ -103,7 +103,7 @@ function Navbar(props) {
             <Logo href={'/'}>
                 chimpbase
             </Logo>
-            <LoginButton onClick={goToHome}>Sign In! </LoginButton>
+            <LoginButton onClick={goToHome}>Join Now! </LoginButton>
         </Container>
     );
 }
