@@ -117,6 +117,10 @@ const ValueList = styled.ul`
   margin: 0;
   list-style-image: url('/svg/bananas.svg');
   list-style-position: inside;
+  font-size: 1em;
+  @media (max-width: 768px) {
+    font-size: 1.5em;
+  }
 `
 const ListEntry = styled.li`
   margin-bottom: 1rem;
