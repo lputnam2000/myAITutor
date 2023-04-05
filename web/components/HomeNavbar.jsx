@@ -50,8 +50,8 @@ const LoginButton = styled.button`
   margin-left: auto;
   padding: 5px;
   border-radius: 3px;
-  background-color: #FFDB58;
-  color: #1c2025;
+  background-color: #FFE135;
+  color: #3C2F23;
   transition: box-shadow ease-in-out .1s;
   width: fit-content;
 
@@ -91,7 +91,7 @@ function Navbar(props) {
         onClick={goToHome}
       />
       <Logo href={"/"}>chimpbase</Logo>
-      <LoginButton onClick={goToHome}>Join Now! </LoginButton>
+      <LoginButton onClick={goToHome}>Join Now!&#x1F412;</LoginButton>
     </Container>
   );
 }
