@@ -340,7 +340,6 @@ export default function Upload({handleFile}) {
             console.log(uploadID);
             console.log(fileType);
             handleFile(selectedFile, fileType, uploadID);
-            closeModal()
         } else {
             closeModal()
         }
