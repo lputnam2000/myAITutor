@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 const DemoPDFSummary = dynamic(() => import("../components/DemoPDFSummary"), {ssr: false});
 import {useSession} from 'next-auth/react';
 import {useRouter} from 'next/router';
+import HowItWorks from "../components/index/HowItWorks";
 
 
 const Container = styled.div`
@@ -211,6 +212,7 @@ export default function Home({demoPDFData}) {
                     {/*        Join the Chimp Squad*/}
                     {/*    </Submit>*/}
                     {/*</WaitingListCard>*/}
+                    <HowItWorks/>
                 </Container>
             </Main>
         </>
