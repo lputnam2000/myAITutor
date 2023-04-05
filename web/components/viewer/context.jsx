@@ -16,7 +16,10 @@ function ViewerContextProvider({children}) {
     const [isReady, setIsReady] = useState(false);
     const [isWebsiteReady, setIsWebsiteReady] = useState(false);
     const {socket} = useContext(WebsocketContext);
-    const [liveSummary, setLiveSummary] = useState({isSummarizing: false, summaryJson: {formattedSummary: []}});
+    const [liveSummary, setLiveSummary] = useState({
+        isSummarizing: false,
+        summaryJson: {formattedSummary: [], startPage: 0, endPage: 0}
+    });
 
     useEffect(() => {
         if (!router.isReady) return;
