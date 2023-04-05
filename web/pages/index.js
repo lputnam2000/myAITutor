@@ -1,24 +1,37 @@
 import Head from 'next/head'
 import styled, {keyframes} from 'styled-components'
 import HomeNavbar from "../components/HomeNavbar";
-// import {FormControl, FormHelperText, FormLabel, Input} from "@chakra-ui/react";
-import { useState} from "react";
+import {useState} from "react";
 import axios from "axios";
 import dynamic from 'next/dynamic';
-const DemoPDFSummary = dynamic(() => import("../components/DemoPDFSummary"), { ssr: false });
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
+import {useSession} from 'next-auth/react';
+import {useRouter} from 'next/router';
+import HowItWorks from "../components/index/HowItWorks";
 
-
+const PageWrapper = styled.div`
+  position: relative;
+  background-color: #333333;
+  background-image: radial-gradient(circle at 20% 50%, #7442c8 10%, transparent 20%),
+                    radial-gradient(circle at 80% 30%, #7442c8 10%, transparent 20%),
+                    radial-gradient(circle at 50% 70%, #7442c8 10%, transparent 20%),
+                    radial-gradient(circle at 10% 90%, #7442c8 10%, transparent 20%);
+  background-size: 200px 200px;
+  background-repeat: no-repeat;
+  height: 100%;
+  min-height: 100vh;
+`;
 const Container = styled.div`
   //height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #0A0A0A;
+  background-image: radial-gradient(circle at left 0% bottom 90%, rgba(116, 66, 200, 0.2) 10%, transparent 50%),
+                    radial-gradient(circle at right 10% bottom 10%, rgba(116, 66, 200, 0.3) 10%, transparent 50%);
+                    radial-gradient(circle at right 50% bottom 50%, rgba(116, 66, 200, 0.3) 10%, transparent 50%);
 
   //justify-content: center;
 `
-
 const WaitingListCard = styled.div`
   margin-top: 20px;
   margin-bottom: 40px;
@@ -44,22 +57,20 @@ const JoinWaitingListHeading = styled.h2`
 const InfoText = styled.div`
   margin-bottom: 10px;
 `
-
 const Submit = styled.div`
   margin-top: 15px;
-  background-color: ${({isDisabled, theme}) => isDisabled ? 'gray': theme.colors.secondary};
+  background-color: ${({isDisabled, theme}) => isDisabled ? 'gray' : theme.colors.secondary};
   color: white;
   display: inline-block;
   padding: 10px;
-  cursor: ${({isDisabled, theme}) => isDisabled ? 'not-allowed': 'pointer'};
+  cursor: ${({isDisabled, theme}) => isDisabled ? 'not-allowed' : 'pointer'};
   font-weight: 500;
 
   &:hover {
-    background-color: ${({isDisabled, theme}) => isDisabled ? 'gray': theme.colors.blue};
+    background-color: ${({isDisabled, theme}) => isDisabled ? 'gray' : theme.colors.blue};
     color: ${({theme}) => theme.colors.secondary};
   }
 `
-
 const gradientKeyframes = keyframes`
   0% {
     background-position: 0% 50%;
@@ -71,21 +82,17 @@ const gradientKeyframes = keyframes`
     background-position: 0% 50%;
   }
 `
-
-
 const Main = styled.main`
   min-height: 100vh;
   background-color: #1c2025;
   color: #fff;
 `
-
 const HeadlineContainer = styled.div`
   text-align: center;
 
   font-family: var(--font-b);
 
 `
-
 const Text = styled.h1`
   vertical-align: middle;
   font-family: var(--font-b);
@@ -99,10 +106,9 @@ const Text = styled.h1`
   font-size: 24px;
 `
 const Underline = styled.span`
-    position: relative;
+  position: relative;
   text-decoration: underline;
 `
-
 const Banner = styled.div`
   background-color: black;
   color: white;
@@ -114,37 +120,13 @@ const Banner = styled.div`
   }
 `
 
-
-export async function getServerSideProps() {
-    async function  getDemoPdf() {
-        let params = {'key': 'f36f637f-1ee6-45dd-ba7b-9b989b5294a5'}
-        try {
-            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/user/get_demo_pdf`, { params: params });
-            return res.data;
-        } catch (err) {
-            console.log(err);
-            return null; // Return null in case of an error
-        }
-    }
-
-    const demoPDFData = await getDemoPdf();
-    console.log(demoPDFData)
-    return {
-        props: {
-            demoPDFData,
-        },
-    };
-}
-
-export default function Home({demoPDFData}) {
+export default function Home({}) {
     const [email, setEmail] = useState('');
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
     const [isDisabled, setIsDisabled] = useState(false)
     const [joinedWaitlist, setJoinedWaitlist] = useState(false)
-    const session = useSession();
+    const {data: session} = useSession();
     const router = useRouter();
-
-    
 
     const submitEntry = () => {
         const emailRegex =
@@ -180,37 +162,7 @@ export default function Home({demoPDFData}) {
             <Main>
                 <HomeNavbar/>
                 <Container>
-                    <Banner>Please view on a bigger screen for the best experience</Banner>
-                    <HeadlineContainer>
-                        <Text id="text">Don&apos;t Get Lost in the Details: Use <Underline
-                            color={'#000'}>ChimpBase</Underline> to <Underline
-                            color={'#000'}>Simplify&nbsp;</Underline>
-                            and <Underline color={'#000'}>Conquer</Underline></Text>
-                    </HeadlineContainer>
-                    <DemoPDFSummary demoPDFData={demoPDFData}/>
-                    {/*<WaitingListCard id={'waiting-list'}>*/}
-                    {/*    <JoinWaitingListHeading>*/}
-                    {/*        Join the Waiting list*/}
-                    {/*    </JoinWaitingListHeading>*/}
-                    {/*    <InfoText>*/}
-                    {/*        Say goodbye to information overload, hello to effortless understanding!*/}
-                    {/*    </InfoText>*/}
-                    {/*    <FormControl>*/}
-                    {/*        <FormLabel>Email address</FormLabel>*/}
-                    {/*        <Input isInvalid={emailErrorMessage !== ''} value={email}*/}
-                    {/*               onChange={(e) => setEmail(e.target.value)} borderColor={'black'*/}
-                    {/*        } focusBorderColor={'black'}*/}
-                    {/*               type='email'/>*/}
-                    {/*        {*/}
-                    {/*            joinedWaitlist ?*/}
-                    {/*            <FormHelperText>Thanks for joining the waitlist! We&apos;ll keep you updated via email. Be sure to check your inbox regularly.</FormHelperText>*/}
-                    {/*            : <FormHelperText>We&apos;ll never share your email.</FormHelperText>*/}
-                    {/*        }*/}
-                    {/*    </FormControl>*/}
-                    {/*    <Submit isDisabled={isDisabled} onClick={submitEntry}>*/}
-                    {/*        Join the Chimp Squad*/}
-                    {/*    </Submit>*/}
-                    {/*</WaitingListCard>*/}
+                    <HowItWorks/>
                 </Container>
             </Main>
         </>
