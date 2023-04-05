@@ -145,7 +145,7 @@ def create_youtube_class(key:str, client):
             },
         },
         {
-            "dataType": ["int"],
+            "dataType": ["number"],
             "description": "The start time for the text",
             "name": "start_time",
             "moduleConfig": {
@@ -155,7 +155,7 @@ def create_youtube_class(key:str, client):
             },
         },
         {
-            "dataType": ["int"],
+            "dataType": ["number"],
             "description": "The end time for the text",
             "name": "end_time",
             "moduleConfig": {

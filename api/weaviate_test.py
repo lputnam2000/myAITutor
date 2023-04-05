@@ -23,8 +23,12 @@ def get_client() -> weaviate.Client:
         "X-OpenAI-Api-Key": OPEN_AI_KEY
     }
     )
-
+class_name='Document_1c6be7f2_9aff_49c6_b52d_1f0299c9b18b'
 client = get_client()
+query = {
+    "fields": "text"
+}
+result  = client.query.aggregate(class_name).with_meta_count().do()
 
-schema = client.schema.get()
-print(json.dumps(schema, indent=4))
+
+print(result)
