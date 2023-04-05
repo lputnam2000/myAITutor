@@ -122,7 +122,7 @@ const Banner = styled.div`
 `
 const TryNowButton = styled.button`
   margin: 3rem;
-  background-color: #FF1493;
+  background-color: #FFE135;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -134,6 +134,8 @@ const TryNowButton = styled.button`
   box-shadow: 0px 2px 5px rgba(0,0,0,0.3);
   transition: all 0.2s ease-in-out;
   cursor: pointer;
+  color:#3C2F23;
+
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0px 5px 10px rgba(0,0,0,0.5);

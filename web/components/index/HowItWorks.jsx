@@ -154,7 +154,7 @@ const StepByStep = () => {
                             <Subtitle>
                                 <ValueList>
                                     <ListEntry>Upload the content you would like to summarize or query.</ListEntry>
-                                    <ListEntry>We even have a Chrome extension if you want to quickly websites to your library with just 2 clicks!</ListEntry>
+                                    <ListEntry>We even have a Chrome extension if you want to quickly add websites to your library with just 2 clicks!</ListEntry>
                                     <ListEntry>We even support large content, like textbooks and lecture videos.</ListEntry>
                                 </ValueList>
                             </Subtitle>
@@ -170,7 +170,7 @@ const StepByStep = () => {
                             <Subtitle>
                                 <ValueList>
                                     <ListEntry>Generating comprehensive summaries for your uploaded content is the least we can do.</ListEntry>
-                                    <ListEntry>Using the power of GPT and some data manipulation techniques we can quickly find exactly what you are looking for, even if you can only give a vague description.</ListEntry>
+                                    <ListEntry>Using AI we quickly find the exact answers you are looking for, even if you can only provide a vague description.</ListEntry>
                                 </ValueList>
                             </Subtitle>
                         </StackedLabels>
