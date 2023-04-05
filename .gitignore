@@ -377,3 +377,4 @@ pip-selfcheck.json
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,python,node,nextjs,virtualenv
 api/myenv/share/doc/networkx-2.8.8/examples/graph/plot_napoleon_russian_campaign.py
 api/myenv
+chrome/chimpbase.zip

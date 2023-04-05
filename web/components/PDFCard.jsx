@@ -120,7 +120,9 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
 
     useEffect(() => {
         if (type === 'youtube') {
-            const apiUrl = `https://noembed.com/embed?url=${encodeURIComponent(url)}`;
+            const encodedUrl = encodeURIComponent(url)
+            if (encodedUrl === '') return
+            const apiUrl = `https://noembed.com/embed?url=${encodedUrl}`;
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
