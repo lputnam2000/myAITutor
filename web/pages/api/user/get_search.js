@@ -59,8 +59,8 @@ const requestHandler = async (req, res) => {
         let searchText = String(query);
         if (!searchText) {
             // handle empty query
-            return res.status(400).json({ message: 'Invalid search query' });
-          }
+            return res.status(400).json({message: 'Invalid search query'});
+        }
         const className = getClassName(key)
         let weaviateRes = await client.graphql
             .get()
@@ -69,7 +69,7 @@ const requestHandler = async (req, res) => {
             .withNearText({
                 concepts: [searchText],
                 distance: 0.6,
-              })
+            })
             .withLimit(2)
             .do()
         const matchingText = weaviateRes.data.Get[className]
@@ -78,7 +78,6 @@ const requestHandler = async (req, res) => {
             prompt += '\n[' + (i + 1) + '] ' + matchingText[i].text + '\n';
         }
         console.log(prompt)
-
         prompt += `Q:${query}` + "\nA:"
         getChatGPTAnswer(prompt).then(answer => {
             console.log(answer)
