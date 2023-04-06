@@ -5,7 +5,8 @@ from api.weaviate_embeddings import create_youtube_class, upload_documents_youtu
 from api.utils.aws import get_video_file, upload_video_thumbnail
 from moviepy.editor import *
 from moviepy.video.io.VideoFileClip import VideoFileClip
-import base64
+import math
+from pydub import AudioSegment
 from flask import current_app
 import logging
 from watchtower import CloudWatchLogHandler
@@ -17,6 +18,8 @@ from datetime import datetime, timedelta
 import tiktoken
 from nltk import tokenize
 from ..socket_helper import send_update
+import multiprocessing
+from functools import partial
 
 
 """
@@ -32,8 +35,7 @@ ENCODER = tiktoken.get_encoding("gpt2")
 OPEN_AI_KEY = "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"
 openai.api_key = OPEN_AI_KEY
 WHISPER_MODEL_NAME = 'whisper-1'
-
-
+CHUNKS_SIZE = 25 * 60 * 1000  # 25 minutes in milliseconds
 
 
 def get_weaviate_docs(transcripts):
@@ -63,32 +65,53 @@ def get_weaviate_docs(transcripts):
 
     return to_return
 
-def srt_to_array(srt_text):
+def srt_to_array(arrays_of_srt_text):
     # Split the SRT text into an array of subtitles
-    srt_array = srt_text.strip().split('\n\n')
     subtitles = []
+    for i, srt_text in enumerate(arrays_of_srt_text):
+        srt_array = srt_text.strip().split('\n\n')
 
-    for s in srt_array:
-        # Split each subtitle into its timecodes and text
-        s_parts = s.split('\n')
-        # Extract start and end timecodes and convert to datetime objects
-        start_time = datetime.strptime(s_parts[1].split(' --> ')[0], '%H:%M:%S,%f')
-        end_time = datetime.strptime(s_parts[1].split(' --> ')[1], '%H:%M:%S,%f')
-        # Calculate start and end times in seconds
-        start_time_seconds = (start_time - datetime(1900, 1, 1)).total_seconds()
-        end_time_seconds = (end_time - datetime(1900, 1, 1)).total_seconds()
-        # Create a dictionary object with start and end times in seconds and text
-        subtitle = {'start': start_time_seconds, 'end': end_time_seconds, 'text': s_parts[2]}
-        subtitles.append(subtitle)
+        for s in srt_array:
+            # Split each subtitle into its timecodes and text
+            s_parts = s.split('\n')
+            # Extract start and end timecodes and convert to datetime objects
+            start_time = datetime.strptime(s_parts[1].split(' --> ')[0], '%H:%M:%S,%f')
+            end_time = datetime.strptime(s_parts[1].split(' --> ')[1], '%H:%M:%S,%f')
+            # Add offset to start and end times:
+            start_time += timedelta(milliseconds=CHUNKS_SIZE*i)
+            end_time += timedelta(milliseconds=CHUNKS_SIZE*i)
+            # Calculate start and end times in seconds
+            start_time_seconds = (start_time - datetime(1900, 1, 1)).total_seconds()
+            end_time_seconds = (end_time - datetime(1900, 1, 1)).total_seconds()
+            # Create a dictionary object with start and end times in seconds and text
+            subtitle = {'start': start_time_seconds, 'end': end_time_seconds, 'text': s_parts[2]}
+            subtitles.append(subtitle)
     return subtitles
 
-def transcribe_file(model_id, path):
+def batch_transcribe_file(model_id, path):
+    # Split audio file into chunks
+    audio = AudioSegment.from_file(path)
+    segments = []
+    for i in range(0, len(audio), CHUNKS_SIZE):
+        segment = audio[i:i+CHUNKS_SIZE]
+        segments.append(segment)
+
+    pool = multiprocessing.Pool()
+    transcribe_func = partial(transcribe_file, model_id)
+    transcripts = pool.map(transcribe_func, [(i, segment, path) for i, segment in enumerate(segments)])
+
+    return transcripts  
+
+def transcribe_file(model_id, segment_info):
+    i, segment, path = segment_info
+    segment_path = f"{path}_{i}.mp3"
+    segment.export(segment_path, format="mp3", tags={"timecode": str(i*CHUNKS_SIZE)})
     url = 'https://api.openai.com/v1/audio/translations'
     headers = {'Authorization': f'Bearer {OPEN_AI_KEY}'}
     data = {'model': 'whisper-1',}
-    print(path)
+    print(segment_path)
     files = {
-        'file': open(path, 'rb'),
+        'file': open(segment_path, 'rb'),
         'model': (None, 'whisper-1'),
         'response_format': (None, 'srt')
     }
@@ -124,8 +147,6 @@ def get_video_transcript(url, isMP4, send_progress_update):
     print('#Downloading Video')
     videoFile = ''
     if isMP4:
-        # download video from s3
-        # videoFile = get_video_file(bucket,key)
         send_progress_update(0, 'Watching the Video! ▶️🦍🍌')
 
         # convert to s3
@@ -144,20 +165,9 @@ def get_video_transcript(url, isMP4, send_progress_update):
         videoFile = download_video(url)
     print('#Video Downloaded')
     send_progress_update(15, 'Translating hooman-speak to prime chimp-lingo! 👫➡️🦍')
-    transcripts = transcribe_file(WHISPER_MODEL_NAME, videoFile)
+    transcripts = batch_transcribe_file(WHISPER_MODEL_NAME, videoFile)
     os.remove(videoFile)
     print(transcripts)
-    formatted_subtitles = srt_to_array(transcripts)
-    print('#Transcripts Generated')
-    return formatted_subtitles
-
-def upload_to_weaviate(formatted_transcripts):
-    embedding_docs = get_weaviate_docs(formatted_transcripts)
-
-    print('#Downloading Video')
-    videoFile = download_video(url)
-    print('#Video Downloaded')
-    transcripts = transcribe_file(WHISPER_MODEL_NAME, videoFile)
     formatted_subtitles = srt_to_array(transcripts)
     print('#Transcripts Generated')
     return formatted_subtitles
@@ -168,7 +178,6 @@ def create_thumbnail(bucket, key):
     thumbnail = clip.get_frame(0)
     upload_video_thumbnail(thumbnail,key)
     return videoFile
-
 
 if __name__ == "__main__":
     url = "https://www.youtube.com/watch?v=XALBGkjkUPQ"        
