@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {ViewerContext} from "./context";
 import axios from "axios";
 import styled from 'styled-components'
@@ -20,7 +20,8 @@ const Container = styled.div`
 
 function VideoViewer() {
     const [url, setUrl] = useState('');
-    const {setSummary, setTitle, setFileType, pdfKey, setIsReady} = useContext(ViewerContext);
+    const {setSummary, setTitle, setFileType, pdfKey, setIsReady, setGoToContextVideo} = useContext(ViewerContext);
+    const playerRef = useRef();
 
     const getDocumentDetails = (pdfKey) => {
         let params = {'key': pdfKey}
@@ -48,9 +49,19 @@ function VideoViewer() {
             timer = null
         }
     }, [pdfKey, setIsReady, setFileType, setUrl, setSummary, setTitle])
+
+
+    useEffect(() => {
+        if (playerRef.current) {
+            setGoToContextVideo(() => (seconds) => {
+                playerRef.current.seekTo(seconds, 'seconds')
+            })
+        }
+    }, [playerRef, setGoToContextVideo, playerRef.current]);
+
     return (
         <Container>
-            {url && <ReactPlayer width={'100%'} height={'100%'} controls={true} url={url}/>}
+            {url && <ReactPlayer ref={playerRef} width={'100%'} height={'100%'} controls={true} url={url}/>}
         </Container>
     );
 }

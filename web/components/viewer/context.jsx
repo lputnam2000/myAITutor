@@ -1,4 +1,4 @@
-import {createContext, useContext, useEffect, useState} from "react";
+import {createContext, useCallback, useContext, useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
 export const ViewerContext = createContext();
@@ -20,6 +20,22 @@ function ViewerContextProvider({children}) {
         isSummarizing: false,
         summaryJson: {formattedSummary: [], startPage: 0, endPage: 0}
     });
+    const [goToContextYoutube, setGoToContextYoutube] = useState(() => (time) => {
+    });
+    const [goToContextVideo, setGoToContextVideo] = useState(() => (time) => {
+    });
+
+    const goToContext = useCallback(
+        (context) => {
+            if (fileType === 'mp4') {
+                goToContextVideo(context.start_time)
+            } else if (fileType === 'youtube') {
+                goToContextYoutube(context.start_time)
+            }
+        },
+        [goToContextVideo, goToContextYoutube, fileType],
+    );
+
 
     useEffect(() => {
         if (!router.isReady) return;
@@ -80,7 +96,10 @@ function ViewerContextProvider({children}) {
             isWebsiteReady,
             setIsWebsiteReady,
             liveSummary,
-            setLiveSummary
+            setLiveSummary,
+            goToContext,
+            setGoToContextYoutube,
+            setGoToContextVideo
         }}>
             {children}
         </ViewerContext.Provider>
