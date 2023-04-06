@@ -240,7 +240,6 @@ export default function SignIn({ csrfToken, providers }) {
                 {formLoading ?
                     <>
                         <LargeSpinner />
-                        <object className={styles.monkeyIcon} data={"/svg/monkey1.svg"} />
                     </>
                     :
                     <>
