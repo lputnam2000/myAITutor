@@ -107,7 +107,9 @@ def batch_transcribe_file(model_id, path):
 def transcribe_file(model_id, segment_info):
     i, segment, path = segment_info
     segment_path = f"{path}_{i}.mp3"
-    segment.export(segment_path, format="mp3", tags={"timecode": str(i*CHUNKS_SIZE)})
+    with open(segment_path, 'wb') as f:
+        segment.export(f, format="mp3", tags={"timecode": str(i*CHUNKS_SIZE)})
+
     url = 'https://api.openai.com/v1/audio/translations'
     headers = {'Authorization': f'Bearer {OPEN_AI_KEY}'}
     data = {'model': 'whisper-1',}
