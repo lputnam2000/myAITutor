@@ -100,7 +100,8 @@ def batch_transcribe_file(model_id, path):
     pool = multiprocessing.Pool()
     transcribe_func = partial(transcribe_file, model_id)
     transcripts = pool.map(transcribe_func, [(i, segment, path) for i, segment in enumerate(segments)])
-
+    pool.close()
+    pool.join()
     return transcripts  
 
 def transcribe_file(model_id, segment_info):
@@ -110,13 +111,13 @@ def transcribe_file(model_id, segment_info):
     url = 'https://api.openai.com/v1/audio/translations'
     headers = {'Authorization': f'Bearer {OPEN_AI_KEY}'}
     data = {'model': 'whisper-1',}
-    print(segment_path)
-    files = {
-        'file': open(segment_path, 'rb'),
-        'model': (None, 'whisper-1'),
-        'response_format': (None, 'srt')
-    }
-    response = requests.post(url, headers=headers, files=files)
+    with open(segment_path, 'rb') as f:
+        files = {
+            'file': f,
+            'model': (None, 'whisper-1'),
+            'response_format': (None, 'srt')
+        }
+        response = requests.post(url, headers=headers, files=files)
     if response.ok:
         return response.text
     else:
