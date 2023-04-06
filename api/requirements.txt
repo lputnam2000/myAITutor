@@ -6,13 +6,11 @@ attrs==22.2.0
 Authlib==1.2.0
 aws-lambda-builders==1.26.0
 aws-sam-translator==1.59.0
-awscli==1.27.74
 backports.zoneinfo==0.2.1
 bidict==0.22.1
 binaryornot==0.4.4
 blobfile==2.0.1
 boto3==1.26.20
-botocore==1.29.84
 certifi==2022.12.7
 cffi==1.15.1
 cfn-lint==0.72.2
@@ -101,7 +99,6 @@ python-slugify==8.0.0
 python-socketio==5.8.0
 pytube==12.1.2
 pytz==2022.7.1
-PyYAML==6.0
 readability==0.3.1
 readability-lxml==0.8.1
 redis==4.5.1
@@ -113,7 +110,6 @@ ruamel.yaml==0.17.21
 ruamel.yaml.clib==0.2.7
 s3transfer==0.6.0
 sarif-om==1.0.4
-serverlessrepo==0.1.10
 six==1.16.0
 SQLAlchemy==1.4.46
 text-unidecode==1.3
