@@ -4,8 +4,7 @@ FROM python:3.8-slim-buster
 WORKDIR /app
 
 # Install R
-RUN apt-get update && apt-get install -y r-base
-
+RUN apt-get update && apt-get install -y r-base ffmpeg
 # Copy the application code and requirements.txt
 
 
