@@ -23,8 +23,8 @@ const client = weaviate.client({
 });
 
 
-async function getChatGPTAnswer(prompt) {
-
+async function getChatGPTAnswer(prompt, fileType) {
+    let isDocument = fileType === 'mp4' || fileType === 'youtube'
     try {
         let response = await openai.createChatCompletion(
             {
@@ -32,7 +32,9 @@ async function getChatGPTAnswer(prompt) {
                 messages: [
                     {
                         "role": "system",
-                        "content": "You are an Al assistant that is designed to quickly find answers given context and cite the context in your answers, making you incredibly helpful at answering questions."
+                        "content": "You are an AI assistant that can provide answers to questions based on the provided context, which consists of chunks of text from a document or video transcripts. When answering the question, make sure to indicate the source of the information by including the chunk's reference number in brackets, like {1} or {2}. If the context comes from a video, the references should include timestamps, such as {1} or {2}, {3}.  Your answers must include the appropriate indicators for each chunk of context used to compose your response.\n" +
+                            "\n" +
+                            "Craft a well-structured, informative which may include bullet points, numbered lists, and other formatting elements to enhance readability and presentation. Insert a &nbsp; after each bullet point or numbered list or paragraph. Focus on providing a clear, concise response that effectively addresses the user's query while making use of the provided context."
                     },
                     {"role": "user", "content": prompt}
                 ],
@@ -52,9 +54,22 @@ const getClassName = (key) => {
     return `Document_${key.replaceAll('-', '_')}`
 }
 
+function formatSeconds(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = Math.round(seconds % 60);
+    let formattedTime = '';
+    if (hours > 0) {
+        formattedTime += `${hours}:`;
+    }
+    formattedTime += `${minutes.toString().padStart(1, '0')}:`;
+    formattedTime += `${remainingSeconds.toString().padStart(2, '0')}`;
+    return formattedTime;
+}
+
 const requestHandler = async (req, res) => {
     if (req.method === "GET") {
-        const {query, key} = req.query
+        const {query, key, fileType} = req.query
         console.log(key)
         let searchText = String(query);
         if (!searchText) {
@@ -62,10 +77,16 @@ const requestHandler = async (req, res) => {
             return res.status(400).json({message: 'Invalid search query'});
         }
         const className = getClassName(key)
+        let properties = ['text']
+        if (fileType === 'mp4' || fileType === 'youtube') {
+            properties.push('start_time')
+            properties.push('end_time')
+        }
+
         let weaviateRes = await client.graphql
             .get()
             .withClassName(className)
-            .withFields('text')
+            .withFields(properties)
             .withNearText({
                 concepts: [searchText],
                 distance: 0.6,
@@ -73,13 +94,17 @@ const requestHandler = async (req, res) => {
             .withLimit(2)
             .do()
         const matchingText = weaviateRes.data.Get[className]
-        let prompt = "Answer the question using the provided chunks of context. Each chunk of context comes with a number in brackets before it. If you use a particular chunk to compose a particular part of your answer, finish that part of your answer by indicating the chunk used. Do this by including the chunks bracketed number. So if you want to indicate you used chunk 1, do [1]. Any answer you provide must have indicators of which chunks you used.\n\nContext:\n"
+        let prompt = "Context: "
         for (let i = 0; i < matchingText.length; i++) {
-            prompt += '\n[' + (i + 1) + '] ' + matchingText[i].text + '\n';
+            let index = i + 1
+            // if (fileType === 'mp4' || fileType === 'youtube') {
+            //     index = formatSeconds(matchingText[i].start_time)
+            // }
+            prompt += '\n[' + index + '] ' + matchingText[i].text + '\n';
         }
         console.log(prompt)
-        prompt += `Q:${query}` + "\nA:"
-        getChatGPTAnswer(prompt).then(answer => {
+        prompt += `Question: ${query}` + "\nAnswer:\n"
+        getChatGPTAnswer(prompt, fileType).then(answer => {
             console.log(answer)
             return res.status(200).json({'answer': answer, 'contexts': matchingText})
         })

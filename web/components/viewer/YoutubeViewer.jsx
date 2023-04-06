@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useRef} from 'react';
 import {ViewerContext} from "./context";
 import axios from "axios";
 import styled from 'styled-components'
@@ -28,7 +28,8 @@ const PlayerWrapper = styled.div`
 
 function YoutubeViewer() {
     const [url, setUrl] = useState('');
-    const {setSummary, setTitle, setFileType, pdfKey, setIsReady} = useContext(ViewerContext);
+    const {setSummary, setTitle, setFileType, pdfKey, setIsReady, setGoToContextYoutube} = useContext(ViewerContext);
+    const playerRef = useRef();
 
     useEffect(() => {
         if (!pdfKey) return
@@ -44,10 +45,20 @@ function YoutubeViewer() {
         })
 
     }, [setSummary, setTitle, setFileType, pdfKey, setIsReady])
+
+    useEffect(() => {
+        if (playerRef.current) {
+            setGoToContextYoutube(() => (seconds) => {
+                playerRef.current.seekTo(seconds, 'seconds')
+            })
+        }
+    }, [playerRef, setGoToContextYoutube, playerRef.current]);
+
+
     return (
         <Container>
             {url && <PlayerWrapper>
-                <ReactPlayer width={'100%'} height={'100%'} controls={true} url={url}/>
+                <ReactPlayer ref={playerRef} width={'100%'} height={'100%'} controls={true} url={url}/>
             </PlayerWrapper>
             }
 

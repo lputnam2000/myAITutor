@@ -45,7 +45,6 @@ const Title = styled.span`
   font-size: 40px;
   white-space: nowrap;
   text-overflow: ellipsis;
-  border-bottom: 2px solid #48fdce;
 
   overflow: hidden;
   @media (max-width: 900px) {
@@ -112,7 +111,6 @@ function ViewerWithSummary({href}) {
     const copyUrl = () => {
         navigator.clipboard.writeText(window.location.href);
     }
-
 
 
     return (
