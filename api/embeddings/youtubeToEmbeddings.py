@@ -90,6 +90,7 @@ def srt_to_array(arrays_of_srt_text):
 
 def batch_transcribe_file(model_id, path):
     # Split audio file into chunks
+    print(path)
     audio = AudioSegment.from_file(path)
     segments = []
     for i in range(0, len(audio), CHUNKS_SIZE):
