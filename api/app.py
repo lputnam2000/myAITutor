@@ -289,7 +289,7 @@ def process_summary_websites(data,stream_name):
             websites_collection = data_db["SummaryWebsites"]
             website_doc = websites_collection.find_one({'_id': key})
             website_text = website_doc['content']
-            s = get_summary_string(website_text, send_summary_update)
+            s = get_summary_string(website_text, send_summary_update, 'url')
             summaryDict['formattedSummary'] = s
             websites_collection.update_one({"_id": key}, {"$push": {"summary":  {"$each": [summaryDict], "$position": 0}}})
 
@@ -353,7 +353,7 @@ def process_summary_youtube(data,stream_name):
             video_collection = data_db["SummaryYoutube"]
             video_doc = video_collection.find_one({'_id': key})
             video_text = [t["text"] for t in video_doc['transcript']]
-            s = get_summary_string(video_text, send_summary_update)
+            s = get_summary_string(video_text, send_summary_update, 'youtube')
             
             summaryDict['formattedSummary'] = s
             video_collection.update_one({"_id": key}, {"$push": {"summary":  {"$each": [summaryDict], "$position": 0}}})
@@ -403,11 +403,18 @@ def process_summary_video(data,stream_name):
             video_collection = data_db["SummaryVideos"]
             video_doc = video_collection.find_one({'_id': key})
             video_text = [t["text"] for t in video_doc['transcript']]
-            s = get_summary_string(video_text)
             summaryDict = {}
             summaryDict['startPage'] = -1
             summaryDict['endPage'] = -1
             summaryDict['formattedSummary'] = s
+            
+            def send_summary_update(latest_summary, isSummarizing=True):
+                summaryDict['formattedSummary'] = latest_summary
+                send_update(user_id, f'{key}:summary', {"isSummarizing": isSummarizing, "summaryJson": summaryDict})
+
+            s = get_summary_string(video_text, send_summary_update, 'mp4')
+
+
             video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
             # result = jsonify(s)
             send_notification_to_client(user_id, key, f'Summary complete for:{key}')

@@ -3,13 +3,20 @@ import styled, {keyframes} from 'styled-components'
 import {IconButton, Spinner} from "@chakra-ui/react";
 import {ChevronDownIcon, ChevronRightIcon, TriangleDownIcon, TriangleUpIcon} from "@chakra-ui/icons";
 import {ViewerContext} from "./context";
-
+import ReactMarkdown from 'react-markdown';
+import {InlineMath, BlockMath} from 'react-katex';
+import rehypeKatex from 'rehype-katex';
+import remarkMath from 'remark-math';
+import remarkGfm from 'remark-gfm';
 
 const Container = styled.div`
   padding: 5px;
   display: grid;
   grid-template-columns: min-content 1fr;
-  color: #ececf1;
+  color: #DADADA;
+  background-color: #29323C;
+  margin: 5px 5px 10px 5px;
+  border-radius: 3px;
 `
 
 const Heading = styled.div`
@@ -97,6 +104,97 @@ function LoadingSpinner() {
     )
 }
 
+const MarkdownWrapper = styled.div`
+  position: relative;
+  color: #DADADA;
+  max-width: 100%;
+  font-weight: 400;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #29323C;
+
+  h1, h2, h3 {
+    font-size: 22px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #C6A9F6;
+  }
+
+  strong {
+    color: #F7D592;
+    padding: 1px 4px;
+    font-weight: 500;
+  }
+
+  code {
+    color: #7BF15B;
+    background-color: #1E2732;
+    padding: 0.1em 0.3em;
+    border-radius: 3px;
+  }
+
+  pre {
+    background-color: #1E2732;
+    padding: 1em;
+    border-radius: 5px;
+  }
+
+  ul {
+    margin-left: 20px;
+    list-style-type: disc;
+  }
+
+  ol {
+    margin-left: 20px;
+    list-style-type: decimal;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    border: 1px solid #536877;
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #39434C;
+  }
+
+  tr:nth-child(even) {
+    background-color: #2E3541;
+  }
+
+  @media (max-width: 900px) {
+    padding: 10px;
+    height: 450px;
+  }
+  @media (max-width: 550px) {
+    padding: 10px;
+    height: 300px;
+    font-size: 14px;
+    h1, h2, h3 {
+      font-size: 20px;
+    }
+  }
+`;
+
+const renderers = {
+    inlineMath: ({value}) => <InlineMath math={value}/>,
+    math: ({value}) => <BlockMath math={value}/>,
+    code: ({language, value}) => (
+        <pre>
+      <code>
+        {value}
+      </code>
+    </pre>
+    ),
+};
+
 
 function CollapsibleSummary({summaryJson, isOpen, fileType, isStreaming = false}) {
     const [open, setOpen] = useState(isOpen);
@@ -105,19 +203,20 @@ function CollapsibleSummary({summaryJson, isOpen, fileType, isStreaming = false}
         let panelOutput = []
         let formattedSummary = summaryJson.formattedSummary
         for (let i = 0; i < formattedSummary.length; i++) {
-            if (!formattedSummary[i][2]) continue
-            for (let j = 0; j < formattedSummary[i][2].length; j++) {
-                panelOutput.push(
-                    <SummaryEntry key={`number-${i}-${j}`}>
-                        <SubHeading key={`${i}-${j}-0`}>
-                            {formattedSummary[i][2][j][0]}
-                        </SubHeading>
-                        <SummaryText key={`${i}-${j}-1`}>
-                            {formattedSummary[i][2][j][1]}
-                        </SummaryText>
-                    </SummaryEntry>
-                )
-            }
+            if (!formattedSummary[i][2]) continue;
+            panelOutput.push(
+                <SummaryEntry key={`number-${i}`}>
+                    <MarkdownWrapper>
+                        <ReactMarkdown
+                            remarkPlugins={[remarkMath, remarkGfm]}
+                            rehypePlugins={[rehypeKatex]}
+                            components={renderers}
+                        >
+                            {formattedSummary[i][2]}
+                        </ReactMarkdown>
+                    </MarkdownWrapper>
+                </SummaryEntry>
+            )
         }
         return panelOutput
     }, [summaryJson]);

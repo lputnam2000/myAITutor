@@ -5,50 +5,26 @@ from langchain import PromptTemplate
 import os
 import openai
 import json
-from api.utils.ocr import ocr_the_page
-
 
 
 OPEN_AI_KEY = "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"
 openai.api_key = OPEN_AI_KEY
 ENCODER = tiktoken.get_encoding("gpt2")
-WITHOUT_CONTEXT_TEMPLATE = """Please read the following text and create a study guide summarizing and presenting the key points for students. Your study guide should be clear, concise, and organized, and written in easy-to-read language.
-
-Organize the study guide as a JSON array of arrays. Each subarray should contain two elements:
-
-The first element should be the heading or subheading, represented as a string.
-The second element should be a clear and succinct summary of the key points for the heading, including relevant technical terms and concepts, and structured for easy understanding and recall. Provide the necessary context required to understand the key points, and use examples and analogies where appropriate.
-Use active voice and avoid using complex or jargon-laden language. Make sure that the study guide is well-structured and easy to navigate, with a logical progression of ideas and concepts.
-
+WITHOUT_CONTEXT_TEMPLATE = """
 Here is the text to be summarized:
 {text}
-After reading the text, please provide your study guide in the following JSON array format:
-[[ "Heading or subheading 1", "Clear and succinct summary of the key points for this heading"],
-  ["Heading or subheading 2", "Clear and succinct summary of the key points for this heading"],
-  ...]
-Please make sure that your study guide is well-organized and easy to navigate, with a logical progression of ideas and concepts. Keep in mind that this study guide will be used by students, so use language that is easy to understand and examples that are relevant to their level of knowledge.
-Study Guide:
+Study Guide in Markdown:
 ["""
 PROMPT_WITHOUT_CONTEXT = PromptTemplate(input_variables=["text"], template=WITHOUT_CONTEXT_TEMPLATE)
 
-WITH_CONTEXT_TEMPLATE = """Please read the following text and create a study guide summarizing and presenting the key points for students. Your study guide should be clear, concise, and organized, and written in easy-to-read language.
-
-Organize the study guide as a JSON array of arrays. Each subarray should contain two elements:
-
-The first element should be the heading or subheading, represented as a string.
-The second element should be a clear and succinct summary of the key points for the heading, including relevant technical terms and concepts, and structured for easy understanding and recall. Provide the necessary context required to understand the key points, and use examples and analogies where appropriate.
-Use active voice and avoid using complex or jargon-laden language. Make sure that the study guide is well-structured and easy to navigate, with a logical progression of ideas and concepts.
-Here is some context to better understand the text. Build off this text:
+WITH_CONTEXT_TEMPLATE = """
+Use the provided context to ensure a smooth transition between sections
+Previous Summary Context:
 {context}
 Here is the text to be summarized:
 {text}
-After reading the text, please provide your study guide in the following JSON array format:
-[[ "Heading or subheading 1", "Clear and succinct summary of the key points for this heading"],
-  ["Heading or subheading 2", "Clear and succinct summary of the key points for this heading"],
-  ...]
-Please make sure that your study guide is well-organized and easy to navigate, with a logical progression of ideas and concepts. Keep in mind that this study guide will be used by students, so use language that is easy to understand and examples that are relevant to their level of knowledge.
-Study Guide:
-["""
+Study Guide in Markdown:
+"""
 PROMPT_WITH_CONTEXT = PromptTemplate(input_variables=["text", "context"], template=WITH_CONTEXT_TEMPLATE)
 
 
@@ -75,8 +51,16 @@ def format_for_gpt3(text_list):
     return to_return
     
 
-def make_gpt_summary(text, context=None):
+def make_gpt_summary(fileType, text, context=None):
     print('called')
+    label = ''
+    if fileType == 'mp4' or fileType == 'youtube':
+        label = 'Transcripts of a Video'
+    elif fileType == 'url':
+        label = 'Website data'
+    else:
+        label = 'Text from a PDF' 
+
     try:
         if context == None:
             prompt = PROMPT_WITHOUT_CONTEXT.format(text=text)
@@ -84,28 +68,27 @@ def make_gpt_summary(text, context=None):
             response = openai.ChatCompletion.create(
                 model='gpt-3.5-turbo',
                 messages=[
-                    {"role": "system", "content":"You are an AI assistant that is the best at creating study guides because you possess an exceptional ability to synthesize complex information into easily understandable and actionable steps, which makes your study guides incredibly effective and valuable for learners. Your attention to detail and commitment to providing comprehensive and accurate information also make you stand out as the best study guide creator."},
+                    {"role": "system", "content":f'You are an AI assistant that is the best at creating the most comprehensive, engaging, and easy-to-understand notes of the given {label}. Your ultimate goal is to make these notes the go-to resource for anyone wishing to learn about the topic, surpassing the need to watch the video itself. Follow these Instructions to create the best notes. Instructions: Use active voice: Write in an active voice to make the summary more engaging and easier to understand. Format using markdown: Organize the summary with appropriate headings, subheadings, tables, math equations, bullet points, and numbered lists. Highlight crucial keywords and special terms: Ensure that all essential keywords and terms from the {label} are included and emphasized. Break down complex concepts: Simplify difficult concepts by breaking them into smaller, more manageable sections. Provide examples or analogies: Include relevant examples or analogies to clarify concepts and make the material more relatable. Maintain a logical flow: Organize the content in a logical order to help readers follow along and understand the progression of ideas. Be concise: Keep the summary brief and to the point, focusing on the most important information from the {label}.'},
                     {"role": "user", "content":prompt}
                 ]
             )
-            textResp = '[' + response.choices[0]['message']['content']
-            return json.loads(textResp)
+            textResp =   response.choices[0]['message']['content']
+            return textResp
         else:
             prompt = PROMPT_WITH_CONTEXT.format(text=text, context=context)
             num_tokens = len(ENCODER.encode(prompt))
             response = openai.ChatCompletion.create(
                 model='gpt-3.5-turbo',
                 messages=[
-                    {"role": "system", "content":"You are an AI assistant that is the best at creating study guides because you possess an exceptional ability to synthesize complex information into easily understandable and actionable steps, which makes your study guides incredibly effective and valuable for learners. Your attention to detail and commitment to providing comprehensive and accurate information also make you stand out as the best study guide creator."},
+                    {"role": "system", "content":f'You are an AI assistant that is the best at creating the most comprehensive, engaging, and easy-to-understand notes of the given {label}. Your ultimate goal is to make these notes the go-to resource for anyone wishing to learn about the topic, surpassing the need to watch the video itself. Follow these Instructions to create the best notes. Instructions: Use active voice: Write in an active voice to make the summary more engaging and easier to understand. Format using markdown: Organize the summary with appropriate headings, subheadings, tables, math equations, bullet points, and numbered lists. Highlight crucial keywords and special terms: Ensure that all essential keywords and terms from the {label} are included and emphasized. Break down complex concepts: Simplify difficult concepts by breaking them into smaller, more manageable sections. Provide examples or analogies: Include relevant examples or analogies to clarify concepts and make the material more relatable. Maintain a logical flow: Organize the content in a logical order to help readers follow along and understand the progression of ideas. Be concise: Keep the summary brief and to the point, focusing on the most important information from the {label}.'},
                     {"role": "user", "content":prompt}
                 ]
             )
-            textResp = '[' + response.choices[0]['message']['content']
-            jsonResp = json.loads(textResp)
-            return json.loads(textResp)
+            textResp = response.choices[0]['message']['content']
+            return textResp
     except Exception as e:
         print(e)
-        return make_gpt_summary(text,context)
+        return make_gpt_summary(fileType, text,context)
 
 
 def extract_text(page):
@@ -129,6 +112,9 @@ def extract_text_ocr(blocks):
     return format_for_gpt3(final_text)
 
 def generate_context(summary):
+    words = summary.split()
+    last_350_words = " ".join(words[-400:])
+    return last_350_words
     last_el = summary[len(summary)-1]
     summary_text = last_el[0] + '. ' + last_el[1]
     text_split = tokenize.sent_tokenize(summary_text)
@@ -159,7 +145,6 @@ def get_summary(doc, start_page=6, end_page=8, send_summary_update=lambda x:  No
         page = doc.load_page(i)
         extracted_text[i] = extract_text(page)
     print('FINISHED EXTRACTING TEXT')
-
     if needs_ocr(extracted_text):
         print('OCRing PDF')
         for i in range(start_page-1, end_page):
@@ -189,7 +174,7 @@ def get_summary(doc, start_page=6, end_page=8, send_summary_update=lambda x:  No
                     page_blocks = extracted_text[cur_page]
         summary_end_page = cur_page-1 if cur_page==end_page else cur_page
         print(f'{start}-{summary_end_page}')
-        generated_summary = make_gpt_summary(input_text, context)
+        generated_summary = make_gpt_summary('pdf', input_text, context)
         if generated_summary == None:
             continue
         summary.append((start, summary_end_page, generated_summary))
@@ -200,7 +185,7 @@ def get_summary(doc, start_page=6, end_page=8, send_summary_update=lambda x:  No
     print('FINISHED SUMMARISING TEXT')
     return summary
 
-def get_summary_string(content_arr:str, send_summary_update):
+def get_summary_string(content_arr:str, send_summary_update, fileType='youtube'):
     summary = []
     # extract the text and clean it up
     print('STARTED FORMATTING TEXT')
@@ -219,7 +204,7 @@ def get_summary_string(content_arr:str, send_summary_update):
             idx += 1
             if idx == len(formatted_text):
                 break
-        generated_summary = make_gpt_summary(input_text, context)
+        generated_summary = make_gpt_summary(fileType, input_text, context)
         summary.append((-1, -1, generated_summary))
         send_summary_update(summary)
         context = generate_context(generated_summary)
