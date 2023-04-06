@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import styled from 'styled-components'
-import {Input} from '@chakra-ui/react'
+import {Textarea} from '@chakra-ui/react'
 import axios from "axios";
 import AnswerBox from "./Answer"
 import {Spinner} from "@chakra-ui/react";
@@ -16,8 +16,13 @@ const SearchButton = styled.button`
   background-color: ${({isSearchDisabled, theme}) => isSearchDisabled ? 'gray' : theme.colors.secondary};
   cursor: ${({isSearchDisabled, theme}) => isSearchDisabled ? 'not-allowed' : 'pointer'};
   color: white;
-  padding: 5px;
+  padding: 5px 10px;
+  border-radius: 4px;
   margin-top: 10px;
+
+  &:focus {
+    background-color: #464846;
+  }
 `
 
 const AnswerContainer = styled.div`
@@ -45,7 +50,7 @@ const demoSearch = new Set([
 
 
 function SemanticSearch({uploadId}) {
-    const {isReady} = useContext(ViewerContext) || {};
+    const {isReady, fileType} = useContext(ViewerContext);
     const [searchQuery, setSearchQuery] = useState('');
     const [answers, setAnswers] = useState([]);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false)
@@ -63,7 +68,7 @@ function SemanticSearch({uploadId}) {
     }
 
     const searchAnswer = async () => {
-        let params = {'key': uploadId, query: searchQuery}
+        let params = {'key': uploadId, query: searchQuery, fileType: fileType}
         let result;
         setIsSearchDisabled(true)
         await axios.get('/api/user/get_search', {params: params}).then(res => {
@@ -78,8 +83,9 @@ function SemanticSearch({uploadId}) {
         <Container>
             {searchLoading ? <LoadingSpinner><Spinner size="xl" color="blue.500"/></LoadingSpinner> :
                 <SearchInputContainer>
-                    <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                           placeholder='Ask a Question'/>
+                    <Textarea style={{borderColor: '#57657e'}} value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              placeholder='Ask a Question'/>
                     <SearchButton
                         isSearchDisabled={isSearchDisabled && !demoSearch.has(uploadId)}
                         onClick={async (e) => {
@@ -91,7 +97,8 @@ function SemanticSearch({uploadId}) {
             <PreviousSearches>
 
                 {answers.map((elem, key) => {
-                    return <AnswerBox key={key} question={elem.query} answer={elem.answer} contexts={elem.contexts}/>
+                    return <AnswerBox key={key} question={elem.query} answer={elem.answer} contexts={elem.contexts}
+                                      fileType={fileType}/>
                 })}
             </PreviousSearches>
 
