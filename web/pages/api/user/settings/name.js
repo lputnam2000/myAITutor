@@ -15,7 +15,7 @@ const requestHandler = async (req, res) => {
                 const userIDObject = new ObjectId(session.user.id);
                 const userRecord = await usersCollection.findOne({"_id": userIDObject});
                 if (userRecord !== null) {
-                    const {newName} = req.query;
+                    const {newName} = req.body;
                     console.log(`Updating Name for User: ${session.user.id} - ${newName}`);
                     const r = await usersCollection.updateOne({_id: userIDObject}, {$set: {name: newName}});
                     res.status(200).json({message: "Name updated successfully"});

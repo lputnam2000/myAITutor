@@ -8,7 +8,6 @@ export const config = {
             sizeLimit: '4mb' // Set desired value here
         }
     },
-    runtime: 'edge',
 }
 
 async function secretToUser(secret) {

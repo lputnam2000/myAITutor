@@ -10,7 +10,6 @@ import {
 import {EditIcon, CheckIcon, CloseIcon} from '@chakra-ui/icons';
 import styled from 'styled-components'
 import {SettingsContext} from "../context";
-import axios from "axios";
 
 const Container = styled.div`
   font-weight: 300;
@@ -39,10 +38,21 @@ const UserInformation = () => {
         let params = {
             'newName': tempFullName
         }
-        axios
-            .patch("/api/user/settings/name", {}, {params: params})
+        fetch('/api/user/settings/name', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(params),
+        })
             .then((res) => {
-
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
+            .then((data) => {
+                // Handle the response data here
             })
             .catch((err) => {
                 console.log(err);

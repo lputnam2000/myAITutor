@@ -1,10 +1,4 @@
 import clientPromise from "../../../lib/mongodb";
-import {getServerSession} from "next-auth/next"
-import {authOptions} from "pages/api/auth/[...nextauth]";
-
-export const config = {
-    runtime: 'edge',
-}
 
 const requestHandler = async (req, res) => {
     if (req.method === "GET") {

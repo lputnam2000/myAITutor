@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Viewer, Worker} from "@react-pdf-viewer/core";
-import {dropPlugin} from '@react-pdf-viewer/drop';
 import '@react-pdf-viewer/drop/lib/styles/index.css';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import {toolbarPlugin} from '@react-pdf-viewer/toolbar';
@@ -10,7 +9,8 @@ import readingIndicatorPlugin from "./ReadingIndicatorPlugin"
 import {ViewerContext} from "./context";
 import axios from "axios";
 import {defaultLayoutPlugin} from "@react-pdf-viewer/default-layout";
-
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 const Container = styled.div`
   border: 2px black solid;

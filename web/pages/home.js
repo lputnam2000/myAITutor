@@ -5,6 +5,7 @@ import Upload from "../components/UIComponents/Upload";
 import PDFCard from "../components/PDFCard";
 import Layout from "../Layouts/basicLayout"
 import {WebsocketContext} from "../components/WebsocketContext";
+import LargeLoadingSpinner from "../components/LargeLoadingSpinner";
 
 const HomeContainer = styled.div`
   padding: 30px;
@@ -35,6 +36,7 @@ function Home() {
     const [cardsPerRow, setCardsPerRow] = useState(8);
     const filesContainerRef = useRef(null);
     const {socket} = useContext(WebsocketContext)
+    const [isFetchingUploads, setIsFetchingUploads] = useState(true);
 
     useEffect(() => {
         if (!socket) return;
@@ -120,6 +122,7 @@ function Home() {
     useEffect(() => {
         axios.get('/api/user/uploads').then((res) => {
             setUserUploads(res.data['uploads'])
+            setIsFetchingUploads(false)
         }).catch((err) => {
             console.log(err)
         })
@@ -138,7 +141,10 @@ function Home() {
         }
     }
 
-
+    if (isFetchingUploads) {
+        return <LargeLoadingSpinner/>
+    }
+    
     return (
         <Container>
             <HomeContainer>

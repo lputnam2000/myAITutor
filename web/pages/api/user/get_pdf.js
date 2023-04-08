@@ -1,11 +1,5 @@
 import clientPromise from "../../../lib/mongodb";
-import {getServerSession} from "next-auth/next"
-import {authOptions} from "pages/api/auth/[...nextauth]";
 import AWS from 'aws-sdk'
-
-export const config = {
-    runtime: 'edge',
-}
 
 const S3_BUCKET = process.env.CB_AWS_UPLOAD_BUCKET;
 const REGION = process.env.CB_AWS_REGION;

@@ -2,10 +2,6 @@ import clientPromise from "../../../lib/mongodb";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "/pages/api/auth/[...nextauth]";
 
-export const config = {
-    runtime: 'edge',
-}
-
 const requestHandler = async (req, res) => {
     const session = await getServerSession(req, res, authOptions);
     const body = req.body;
