@@ -67,6 +67,9 @@ const StyledSelect = styled(Select)`
 const PreviewButton = styled(Button)`
   margin-top: 20px;
 `
+const ChromeTag = styled.a`
+  color: orange;
+`
 
 const WebsiteInput = ({url, setUrl}) => {
     const handleInputChange = (e) => setUrl(e.target.value)
@@ -74,8 +77,12 @@ const WebsiteInput = ({url, setUrl}) => {
         <FormControl>
             <FormLabel>Website URL</FormLabel>
             <Input type='url' value={url} onChange={handleInputChange}/>
-            <FormHelperText color={'#f4fdf9'}>
-                Please make sure the website you enter is publicly accessible.
+            <FormHelperText color={'#f4fdf9'}>or Try our&nbsp;
+                <ChromeTag target="_blank"
+                           href="https://chrome.google.com/webstore/detail/chimpbase-page-collector/igcljiaagpkbcamaceaekidclckkmnkp">Chrome
+                    extension</ChromeTag> for an enhanced experience. The extension ensures
+                that all visible content is
+                transcribed accurately and bypasses any firewall restrictions
             </FormHelperText>
         </FormControl>
     )
