@@ -26,12 +26,9 @@ const Container = styled.div`
 const Logo = styled(Link)`
   font-family: var(--font-b);
   font-weight: 700;
-  margin-left: 30px;
   font-size: 30px;
   color: ${props => props.theme.colors.primary};
   cursor: pointer;
-  padding-left: 30px;
-  padding-right: 30px;
   @media (max-width: 400px) {
     padding-left: 0px;
     padding-right: 0px;
@@ -115,10 +112,33 @@ const ProfileDropdown = styled.div`
 const IconContainer = styled.div`
 `
 
+const BetaText = styled.div`
+  display: inline-block;
+  background-color: #570f95;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  translate: 0 2px;
+  color: brown;
+  span {
+    background-image: radial-gradient(circle at center, #d397de, #c862d3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`;
 const HomeIconButton = styled(IconButton)`
   margin: 4px 10px 4px 10px;
 `
-
+const LogoFlexRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: .5em;
+`
 
 function Navbar(props) {
     const {data: session} = useSession()
@@ -151,9 +171,7 @@ function Navbar(props) {
                             onClick={goToHome}
 
             />
-            <Logo href={'/'}>
-                chimpbase
-            </Logo>
+            <LogoFlexRow><Logo href={"/home"}>chimpbase</Logo><BetaText><span>Beta</span></BetaText></LogoFlexRow>
             <ButtonsContainer>
                 <ProfileDropdown>
                     <IconContainer>
