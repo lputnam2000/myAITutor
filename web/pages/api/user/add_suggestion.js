@@ -2,7 +2,7 @@ import clientPromise from "../../../lib/mongodb";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "/pages/api/auth/[...nextauth]";
 
-const requestHandler = async (req, res) => {
+const addSuggestion = async (req, res) => {
     const session = await getServerSession(req, res, authOptions);
     const body = req.body;
 
@@ -36,4 +36,4 @@ const requestHandler = async (req, res) => {
     }
 };
 
-export default requestHandler;
+export default addSuggestion;

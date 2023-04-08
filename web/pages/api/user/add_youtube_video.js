@@ -65,7 +65,7 @@ async function generateRecord(session, url, title) {
     return uuid;
 }
 
-export default async (req, res) => {
+async function addYoutubeVideo(req, res) {
     const session = await getServerSession(req, res, authOptions)
     if (session) {
         // Signed in
@@ -106,3 +106,4 @@ export default async (req, res) => {
     res.end()
 }
 
+export default addYoutubeVideo

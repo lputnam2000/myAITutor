@@ -3,7 +3,7 @@ import {getServerSession} from "next-auth/next";
 import {authOptions} from "/pages/api/auth/[...nextauth]";
 import {ObjectId} from "mongodb";
 
-const requestHandler = async (req, res) => {
+const updateName = async (req, res) => {
     const session = await getServerSession(req, res, authOptions);
     const body = req.body;
     if (req.method === "PATCH") {
@@ -35,4 +35,4 @@ const requestHandler = async (req, res) => {
     }
 };
 
-export default requestHandler;
+export default updateName;

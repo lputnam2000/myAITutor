@@ -1,7 +1,7 @@
 import {getServerSession} from "next-auth/next"
 import {authOptions} from "pages/api/auth/[...nextauth]";
 
-const requestHandler = async (req, res) => {
+const generateSummary = async (req, res) => {
     if (req.method === "POST") {
         const {pdfKey, startPage, endPage} = req.body
         console.log(pdfKey)
@@ -26,4 +26,4 @@ const requestHandler = async (req, res) => {
     }
 };
 
-export default requestHandler;
+export default generateSummary;

@@ -57,7 +57,7 @@ async function generateRecord(session, url) {
     return uuid;
 }
 
-export default async (req, res) => {
+async function addWebsiteDocument(req, res) {
     const session = await getServerSession(req, res, authOptions)
     if (session) {
         // Signed in
@@ -93,3 +93,4 @@ export default async (req, res) => {
     res.end()
 }
 
+export default addWebsiteDocument
