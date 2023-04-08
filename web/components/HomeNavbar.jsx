@@ -24,7 +24,8 @@ const Container = styled.div`
 `;
 
 const Logo = styled(Link)`
-  display: block;
+  display: flex-column;
+  align-items: center;
   font-family: var(--font-b);
   font-weight: 700;
   font-size: 30px;
@@ -74,6 +75,31 @@ const LoginButton = styled.button`
   }
 `;
 
+const BetaText = styled.div`
+  display: inline-block;
+  background-color: #570f95;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  translate: 0 2px;
+  color: brown;
+  span {
+    background-image: radial-gradient(circle at center, #d397de, #c862d3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`;
+const LogoFlexRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: .5em;
+`
+
 function Navbar(props) {
   const router = useRouter();
 
@@ -90,7 +116,7 @@ function Navbar(props) {
         borderColor="#57657e"
         onClick={goToHome}
       />
-      <Logo href={"/"}>chimpbase</Logo>
+      <LogoFlexRow><Logo href={"/"}>chimpbase</Logo><BetaText><span>Beta</span></BetaText></LogoFlexRow>
       <LoginButton onClick={goToHome}>Join Now!&#x1F412;</LoginButton>
     </Container>
   );
