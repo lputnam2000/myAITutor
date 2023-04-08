@@ -21,7 +21,7 @@ async function generatePreSignedGetUrl(key) {
     })
 }
 
-const requestHandler = async (req, res) => {
+const getDemoPdf = async (req, res) => {
     if (req.method === "GET") {
         const {key} = req.query
         if (key !== '136fe416-d18f-4051-9d5c-c2692fdcd50f') {
@@ -43,4 +43,4 @@ const requestHandler = async (req, res) => {
     }
 };
 
-export default requestHandler;
+export default getDemoPdf;

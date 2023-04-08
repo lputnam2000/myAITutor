@@ -87,7 +87,7 @@ async function generateRecord(user_id, html, title) {
     return uuid;
 }
 
-export default async function handler(req, res) {
+export default async function CollectWebHandler(req, res) {
     cors({
         origin: '*'
     })(req, res, async () => {

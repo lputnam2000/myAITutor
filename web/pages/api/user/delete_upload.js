@@ -2,7 +2,7 @@ import clientPromise from "../../../lib/mongodb";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "/pages/api/auth/[...nextauth]";
 
-const requestHandler = async (req, res) => {
+const deleteUpload = async (req, res) => {
     const session = await getServerSession(req, res, authOptions)
     const body = req.body;
     if (req.method === "DELETE") {
@@ -47,4 +47,4 @@ const requestHandler = async (req, res) => {
     res.end();
 };
 
-export default requestHandler;
+export default deleteUpload;

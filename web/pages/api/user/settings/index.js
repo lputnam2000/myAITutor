@@ -4,7 +4,7 @@ import {authOptions} from "pages/api/auth/[...nextauth]";
 import {v4 as uuidv4} from 'uuid';
 import {ObjectId} from 'mongodb';
 
-const requestHandler = async (req, res) => {
+const getSettings = async (req, res) => {
     const session = await getServerSession(req, res, authOptions)
     const body = req.body;
     if (req.method === "GET") {
@@ -48,4 +48,4 @@ const requestHandler = async (req, res) => {
     res.end();
 };
 
-export default requestHandler;
+export default getSettings;

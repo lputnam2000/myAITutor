@@ -1,7 +1,7 @@
 import {getServerSession} from "next-auth/next"
 import {authOptions} from "pages/api/auth/[...nextauth]";
 
-const requestHandler = async (req, res) => {
+const generateSummaryVideo = async (req, res) => {
     const session = await getServerSession(req, res, authOptions)
     const user_id = session.user.id
     if (req.method === "POST") {
@@ -24,4 +24,4 @@ const requestHandler = async (req, res) => {
     }
 };
 
-export default requestHandler;
+export default generateSummaryVideo;
