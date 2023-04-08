@@ -7,7 +7,8 @@ export const config = {
         bodyParser: {
             sizeLimit: '4mb' // Set desired value here
         }
-    }
+    },
+    runtime: 'edge',
 }
 
 async function secretToUser(secret) {

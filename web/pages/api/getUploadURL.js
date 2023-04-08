@@ -30,6 +30,10 @@ function generatePreSignedPutUrl(fileName, fileType, userid) {
     return result
 }
 
+export const config = {
+    runtime: 'edge',
+}
+
 /**
  * Return a uuid to store the object in s3 under while also keeping track of who owns the object
  * **/
