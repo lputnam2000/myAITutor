@@ -4,6 +4,10 @@ import {authOptions} from "pages/api/auth/[...nextauth]";
 import {v4 as uuidv4} from 'uuid';
 import {ObjectId} from 'mongodb';
 
+export const config = {
+    runtime: 'edge',
+}
+
 const requestHandler = async (req, res) => {
     const session = await getServerSession(req, res, authOptions)
     const body = req.body;

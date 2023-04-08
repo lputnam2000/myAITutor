@@ -8,6 +8,10 @@ const {Configuration, OpenAIApi} = require("openai");
 const configuration = new Configuration({
     apiKey: OPEN_AI_KEY,
 });
+export const config = {
+    runtime: 'edge',
+}
+
 const openai = new OpenAIApi(configuration);
 const client = weaviate.client({
     scheme: "https",

@@ -2,6 +2,10 @@ import {getServerSession} from 'next-auth/next';
 import jwt from 'jsonwebtoken';
 import {authOptions} from 'pages/api/auth/[...nextauth]';
 
+export const config = {
+    runtime: 'edge',
+}
+
 /**
  * Handles GET requests to generate a JWT for a logged-in user.
  * @param {object} req - The HTTP request object.

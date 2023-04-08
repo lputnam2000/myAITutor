@@ -31,6 +31,9 @@ async function generatePreSignedGetUrl(bucket, key) {
     return result
 }
 
+export const config = {
+    runtime: 'edge',
+}
 
 const requestHandler = async (req, res) => {
     const session = await getServerSession(req, res, authOptions)
