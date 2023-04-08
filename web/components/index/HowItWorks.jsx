@@ -44,7 +44,7 @@ const StepBox = styled.div`
   align-items: center;
   padding: 2em;
 
-  @media (max-width: 1200px) { 
+  @media (max-width: 1200px) {
     padding: 1rem 0.4rem 1rem 0.4rem;
   }
 `;
@@ -68,7 +68,7 @@ const StackedLabels = styled.div`
 
 const TextWithGif = styled.div`
   display: flex;
-  flex-direction: ${({ reverse }) => (reverse ? 'row-reverse' : 'row')};
+  flex-direction: ${({reverse}) => (reverse ? 'row-reverse' : 'row')};
   align-items: center;
   gap: 2rem;
 
@@ -78,20 +78,14 @@ const TextWithGif = styled.div`
 `;
 
 
-const Title = styled.h2`
-  font-size: 2em;
-  font-weight: bold;
-  margin-bottom: 1rem;
-`;
-
 const BigWords = styled.div`
   font-size: 3em;
 `
 
 const GradientText = styled.span`
   font-size: 1.4em;
-  background: rgb(211,131,242);
-  background: linear-gradient(90deg, rgba(211,131,242,1) 0%, rgba(226,43,216,1) 100%);
+  background: rgb(211, 131, 242);
+  background: linear-gradient(90deg, rgba(211, 131, 242, 1) 0%, rgba(226, 43, 216, 1) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 `;
@@ -147,7 +141,7 @@ const StepByStep = () => {
             <GridContainer>
                 <StepBox>
                     <TextWithGif reverse={true}>
-                        <GifImage src="/gifs/step1.gif" alt="Step 1" />
+                        <GifImage src="/gifs/step1.gif" alt="Step 1"/>
                         <StackedLabels>
                             <BigWords>Upload Your Content</BigWords>
                             <GradientText>PDFs, Websites, MP4s, Youtube </GradientText>
@@ -155,7 +149,8 @@ const StepByStep = () => {
                                 <ValueList>
                                     <ListEntry>Upload the content you would like to summarize or query.</ListEntry>
                                     <ListEntry>Use our Chrome extension to quickly upload pages you visit!</ListEntry>
-                                    <ListEntry>We even support large content, like textbooks and lecture videos.</ListEntry>
+                                    <ListEntry>We even support large content, like textbooks and lecture
+                                        videos.</ListEntry>
                                     <ListEntry>Automatic language detection and translation</ListEntry>
 
                                 </ValueList>
@@ -165,14 +160,16 @@ const StepByStep = () => {
                 </StepBox>
                 <StepBox>
                     <TextWithGif reverse={false}>
-                        <GifImage src="/gifs/step2.gif" alt="Step 1" />
+                        <GifImage src="/gifs/step2.gif" alt="Step 1"/>
                         <StackedLabels>
                             <BigWords>We process the content and...</BigWords>
                             <BoomText>You go bananas</BoomText>
                             <Subtitle>
                                 <ValueList>
-                                    <ListEntry>Generating comprehensive summaries for your uploaded content is the least we can do.</ListEntry>
-                                    <ListEntry>Quickly find the exact answers you are looking for, even if you can only provide a vague description.</ListEntry>
+                                    <ListEntry>Generating comprehensive summaries for your uploaded content is the least
+                                        we can do.</ListEntry>
+                                    <ListEntry>Quickly find the exact answers you are looking for, even if you can only
+                                        provide a vague description.</ListEntry>
                                 </ValueList>
                             </Subtitle>
                         </StackedLabels>

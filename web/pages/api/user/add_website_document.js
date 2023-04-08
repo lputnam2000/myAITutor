@@ -2,11 +2,6 @@ import {getServerSession} from "next-auth/next"
 import {authOptions} from 'pages/api/auth/[...nextauth]'
 import clientPromise from "/lib/mongodb"
 import {v4 as uuidv4} from 'uuid';
-import axios from "axios";
-
-export const config = {
-    runtime: 'edge',
-}
 
 /**
  * Return a uuid to store the object in s3 under while also keeping track of who owns the object

@@ -1,6 +1,5 @@
 import AWS from 'aws-sdk'
 import {getServerSession} from "next-auth/next"
-import {getSession} from "next-auth/react"
 import {authOptions} from 'pages/api/auth/[...nextauth]'
 import clientPromise from "/lib/mongodb"
 import {v4 as uuidv4} from 'uuid';
@@ -28,10 +27,6 @@ function generatePreSignedPutUrl(fileName, fileType, userid) {
         return url
     })
     return result
-}
-
-export const config = {
-    runtime: 'edge',
 }
 
 /**

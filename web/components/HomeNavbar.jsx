@@ -1,11 +1,5 @@
-import React, {useEffect} from "react";
-import Link from "next/link";
-import {useRouter} from 'next/router';
-import {IconButton} from '@chakra-ui/react'
+import React from "react";
 import styled from 'styled-components'
-
-import {AiOutlineHome} from "react-icons/ai";
-
 
 const Container = styled.div`
   background-color: #242933;
@@ -23,7 +17,7 @@ const Container = styled.div`
   }
 `;
 
-const Logo = styled(Link)`
+const Logo = styled.a`
   display: flex-column;
   align-items: center;
   font-family: var(--font-b);
@@ -38,13 +32,8 @@ const Logo = styled(Link)`
   }
 `;
 
-const HomeIconButton = styled(IconButton)`
-  margin: 4px 10px 4px 10px;
-  width: fit-content;
 
-`;
-
-const LoginButton = styled.button`
+const LoginButton = styled.a`
   margin-right: 10px;
   font-size: 18px;
   font-weight: 600;
@@ -87,6 +76,7 @@ const BetaText = styled.div`
   letter-spacing: 0.05em;
   translate: 0 2px;
   color: brown;
+
   span {
     background-image: radial-gradient(circle at center, #d397de, #c862d3);
     -webkit-background-clip: text;
@@ -101,25 +91,16 @@ const LogoFlexRow = styled.div`
 `
 
 function Navbar(props) {
-  const router = useRouter();
 
-  function goToHome() {
-    router.push("/home");
-  }
-
-  return (
-    <Container>
-      <HomeIconButton
-        aria-label="Go to Home"
-        icon={<AiOutlineHome size={22} color="#fff" />}
-        variant="outline"
-        borderColor="#57657e"
-        onClick={goToHome}
-      />
-      <LogoFlexRow><Logo href={"/"}>chimpbase</Logo><BetaText><span>Beta</span></BetaText></LogoFlexRow>
-      <LoginButton onClick={goToHome}>Join Now!&#x1F412;</LoginButton>
-    </Container>
-  );
+    return (
+        <Container>
+            <div>
+            </div>
+            <LogoFlexRow><Logo
+                href={'https://www.chimpbase.com/'}>chimpbase</Logo><BetaText><span>Beta</span></BetaText></LogoFlexRow>
+            <LoginButton href={'https://www.chimpbase.com/home'}>Join Now!&#x1F412;</LoginButton>
+        </Container>
+    );
 }
 
 export default Navbar;

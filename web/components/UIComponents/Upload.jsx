@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components"
 import {
     Modal,
@@ -9,7 +9,7 @@ import {
     ModalBody,
     useDisclosure,
     Image,
-    Button, FormControl, FormLabel, Input, FormHelperText, FormErrorMessage,
+    Button, FormControl, FormLabel, Input, FormHelperText,
 } from '@chakra-ui/react'
 import {Select, Progress} from '@chakra-ui/react'
 import axios from "axios";

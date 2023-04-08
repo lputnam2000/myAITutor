@@ -2,8 +2,6 @@ import {ChakraProvider} from '@chakra-ui/react'
 import {ThemeProvider} from 'styled-components'
 import GlobalStyle from '../components/globalstyles'
 import {Open_Sans, Buenard} from '@next/font/google'
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 
 const openSans = Open_Sans({subsets: ['latin'], variable: '--font-open'},)

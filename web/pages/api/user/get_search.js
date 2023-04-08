@@ -1,17 +1,9 @@
-import clientPromise from "../../../lib/mongodb";
-import {getServerSession} from "next-auth/next"
-import {authOptions} from "pages/api/auth/[...nextauth]";
-
 const weaviate = require("weaviate-client");
 const OPEN_AI_KEY = "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"
 const {Configuration, OpenAIApi} = require("openai");
 const configuration = new Configuration({
     apiKey: OPEN_AI_KEY,
 });
-export const config = {
-    runtime: 'edge',
-}
-
 const openai = new OpenAIApi(configuration);
 const client = weaviate.client({
     scheme: "https",
