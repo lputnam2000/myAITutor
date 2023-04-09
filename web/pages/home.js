@@ -42,16 +42,29 @@ function Home() {
     useEffect(() => {
         if (!socket) return;
         const handleNewUpload = (data) => {
-            console.log(data)
             let jsonData = JSON.parse(data)
-            let uploadId = jsonData.uuid
-            setUserUploads(userUploads => [uploadId, ...userUploads])
-            setUserUploadsObject(curUploads => {
-                return {
-                    ...curUploads,
-                    [uploadId]: jsonData,
-                }
-            })
+            if (jsonData.type === 'new_upload') {
+                let uploadId = jsonData.value.uuid
+                setUserUploads(userUploads => [uploadId, ...userUploads])
+                setUserUploadsObject(curUploads => {
+                    return {
+                        ...curUploads,
+                        [uploadId]: jsonData.value,
+                    }
+                })
+            } else if (jsonData.type === 'progress') {
+                console.log(jsonData)
+                let uploadId = jsonData.key
+                setUserUploadsObject(curUploads => {
+                    return {
+                        ...curUploads,
+                        [uploadId]: {
+                            ...curUploads[uploadId],
+                            'progress': jsonData.value,
+                        },
+                    }
+                })
+            }
         }
 
         socket.on('home', handleNewUpload);

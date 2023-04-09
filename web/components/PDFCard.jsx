@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components'
-import Link from 'next/link'
 import {
     Button, IconButton, Menu, MenuButton, MenuItem, MenuList,
     Modal,
@@ -12,13 +11,13 @@ import {
     ModalFooter,
     Input,
     FormControl,
-    FormLabel,
+    FormLabel, Progress,
 } from "@chakra-ui/react";
 import {HiDotsVertical} from 'react-icons/hi'
 import {useRouter} from "next/router";
 import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import {AnimatePresence, motion,} from 'framer-motion';
-import Image from "next/image";
+import {IoIosCloudDone} from 'react-icons/io'
 
 const Container = styled.div`
   display: flex;
@@ -81,6 +80,11 @@ const typeToLabel = {
     'youtube': 'YouTube',
     'mp4': 'Video'
 }
+
+const TagContainer = styled.div`
+  display: flex;
+  align-items: center;
+`
 
 function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = '', progress}) {
     // ...
@@ -171,9 +175,19 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
                         }}/>
                     </ImageContainer>}
                     <CardInformation>
-                        <CenteredText fileType={type}>{title}</CenteredText></CardInformation>
+                        <CenteredText fileType={type}>{title}</CenteredText>
+                        {
+                            progress !== 100 &&
+                            <Progress size='xs' value={progress} colorScheme='green'/>
+                        }
+                    </CardInformation>
                     <TagList>
-                        <Tag>{typeToLabel[type]}</Tag>
+                        <TagContainer>
+                            <Tag>{typeToLabel[type]}</Tag>
+                            {progress === 100 &&
+                                <IoIosCloudDone/>
+                            }
+                        </TagContainer>
                         <Menu>
                             <MenuButton
                                 as={IconButton}

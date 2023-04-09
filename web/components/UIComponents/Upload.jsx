@@ -102,7 +102,7 @@ const YoutubeInput = ({url, setUrl, title, setTitle, fileType}) => {
                 setTitle(data.title)
             })
             .catch(error => {
-                
+
             });
     }, [url, fileType])
     const handleInputChange = (e) => {
@@ -163,7 +163,7 @@ const StyledOption = styled.option`
 
 const ProgressContainer = styled.div`
   margin-top: 10px;
-  padding: 5px
+  padding: 5px;
   display: flex;
   flex-direction: column;
 `
