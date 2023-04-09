@@ -7,7 +7,7 @@ import os
 import openai
 from api.embeddings.main_view import embeddings_bp
 from api.summary import get_summary, get_summary_string
-from api.utils.utils import require_api_key, get_mongo_client, send_notification_to_client
+from api.utils.utils import require_api_key, get_mongo_client, update_mongo_progress, send_notification_to_client
 from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_pdf_class
 from api.utils.aws import get_pdf
 from api.embeddings.youtubeToEmbeddings import process_mp4_embeddings
@@ -216,12 +216,15 @@ def process_pdf_embeddings(data):
             key = data['key']
             print(f'Started EMBEDDINGS for - {key}')
             user_id = data['user_id']
+            db_client = get_mongo_client()
+            data_db = db_client["data"]
 
-            def send_progress_update(value, text):
+            def send_progress_update(value, text, key=key):
                 send_update(user_id, f'{key}:progress',  {'value': value, 'text': text})
+                send_update( user_id, f'home', {'type':'progress', 'key': key, 'value': value})
+                update_mongo_progress(data_db, user_id, key, value, text, 'SummaryDocuments')
 
-
-            send_notification_to_client(user_id, key, f'Upload complete for:{key}')
+                send_notification_to_client(user_id, key, f'Upload complete for:{key}')
             send_progress_update(0, 'Reading the book! 📖🦍')
             pdf = get_pdf(bucket, key)            
             documents = get_documents(pdf)
@@ -232,10 +235,8 @@ def process_pdf_embeddings(data):
             print('UPLOADED DOCUMENTS')
             send_progress_update(99, "Finishing Up! 💪🦍")
             send_update(user_id, key,  {'key': 'isReady', 'value': True})
-            update_query = {"$set": {"status": "Ready"}}
+            update_query = {"$set": {"progress": 100, "progressMessage": '',}}
         # Update the document matching the UUID with the new values
-            db_client = get_mongo_client()
-            data_db = db_client["data"]
             documentsCollection = data_db["SummaryDocuments"]
             documentsCollection.update_one({"_id": key}, update_query)
 
