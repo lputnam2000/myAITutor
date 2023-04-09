@@ -91,11 +91,10 @@ const WebsiteInput = ({url, setUrl}) => {
 const YoutubeThumbnail = styled.div`
   margin-bottom: 5px;
 `
-const YoutubeInput = ({url, setUrl, title, setTitle}) => {
+const YoutubeInput = ({url, setUrl, title, setTitle, fileType}) => {
     const [thumbnailUrl, setThumbnailUrl] = useState('')
-    const handleInputChange = (e) => {
-        setUrl(e.target.value)
-        const apiUrl = `https://noembed.com/embed?url=${encodeURIComponent(e.target.value)}`;
+    useEffect(()=> {
+        const apiUrl = `https://noembed.com/embed?url=${encodeURIComponent(url)}`;
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
@@ -103,6 +102,9 @@ const YoutubeInput = ({url, setUrl, title, setTitle}) => {
                 setTitle(data.title)
             })
             .catch(error => console.error(error));
+    }, [url, fileType])
+    const handleInputChange = (e) => {
+        setUrl(e.target.value)
     }
 
     const setNewTitle = (e) => {
@@ -404,7 +406,7 @@ export default function Upload({handleFile}) {
                     {
                         fileType === 'youtube' &&
                         <>
-                            <YoutubeInput url={url} setUrl={setUrl} title={title} setTitle={setTitle}/>
+                            <YoutubeInput fileType={fileType} url={url} setUrl={setUrl} title={title} setTitle={setTitle}/>
                         </>
                     }
                     {
