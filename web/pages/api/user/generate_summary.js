@@ -7,7 +7,7 @@ const generateSummary = async (req, res) => {
         console.log(pdfKey)
         const session = await getServerSession(req, res, authOptions)
         const user_id = session.user.id
-        fetch(process.env.BACKEND_URL + '/summaries/', {
+        await fetch(process.env.BACKEND_URL + '/summaries/', {
             method: 'POST',
             body: JSON.stringify({
                 pdfKey,
