@@ -16,7 +16,7 @@ import {
 import {HiDotsVertical} from 'react-icons/hi'
 import {useRouter} from "next/router";
 import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
-import {AnimatePresence, motion,} from 'framer-motion';
+import {motion,} from 'framer-motion';
 import {IoIosCloudDone} from 'react-icons/io'
 
 const Container = styled.div`
@@ -27,7 +27,6 @@ const Container = styled.div`
   border-radius: 4px;
   cursor: pointer;
   padding: 5px;
-  //border: 3px solid #515757;
   overflow: hidden;
   transition: box-shadow ease-in-out .1s;
   background-color: #242933;
@@ -88,8 +87,7 @@ const TagContainer = styled.div`
   align-items: center;
 `
 
-function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = '', progress}) {
-    // ...
+function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = '', progress, exit}) {
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
     const [newTitle, setNewTitle] = useState(title);
     const openRenameModal = (e) => {
@@ -102,26 +100,15 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
     };
     const renameUpload = (e) => {
         e.stopPropagation();
-        console.log("New title:", newTitle);
-        // Perform your API call or other logic to update the title
         onRename(uploadId, type, newTitle)
         closeRenameModal();
     };
     const removeUpload = (e) => {
         e.stopPropagation();
-
-        // Hide the card with the animation
-        setIsVisible(false);
-
-        // Remove the card after the animation duration
-        setTimeout(() => {
-            onRemove(uploadId, type);
-        }, exitAnimation.transition.duration * 1000);
+        onRemove(uploadId, type);
     };
-    // ...
     const router = useRouter()
     const [thumbnailUrl, setThumbnailUrl] = useState('')
-    const [isVisible, setIsVisible] = useState(true);
 
 
     useEffect(() => {
@@ -140,105 +127,89 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
 
     const openSummary = () => {
         router.push(`/summary?uploadId=${uploadId}&fileType=${type}`)
-        console.log('called')
     }
     const MotionContainer = motion(Container);
 
-    const exitAnimation = {
-        scale: 0,
-        opacity: 0,
-        transition: {
-            duration: 0.3,
-            ease: "easeInOut",
-        },
-    };
-
-
-    return (<>
-        {isVisible && (
-            <AnimatePresence>
-                <MotionContainer
-                    onClick={openSummary}
-                    exit={exitAnimation}
-                >
-                    {type === 'pdf' && <ImageContainer>
-                        <img src={thumbnail} alt="" onError={(e) => {
-                            e.target.style.display = "none"
-                        }}/>
-                    </ImageContainer>}
-                    {type === 'mp4' && <ImageContainer>
-                        <img src={thumbnail} alt="" onError={(e) => {
-                            e.target.style.display = "none"
-                        }}/>
-                    </ImageContainer>}
-                    {type === 'youtube' && <ImageContainer>
-                        <img src={thumbnailUrl} alt="" onError={(e) => {
-                            e.target.style.display = "none"
-                        }}/>
-                    </ImageContainer>}
-                    <CardInformation>
-                        <CenteredText fileType={type}>{title}</CenteredText>
-                        {
-                            progress !== 100 &&
-                            <Progress size='xs' value={progress} colorScheme='green'/>
-                        }
-                    </CardInformation>
-                    <TagList>
-                        <TagContainer>
-                            <Tag>{typeToLabel[type]}</Tag>
-                            {progress === 100 &&
-                                <IoIosCloudDone/>
-                            }
-                        </TagContainer>
-                        <Menu>
-                            <MenuButton
-                                as={IconButton}
-                                aria-label='Options'
-                                icon={<HiDotsVertical size={17}/>}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                }}
-                                variant='filled'
+    return (
+        <MotionContainer
+            onClick={openSummary}
+            exit={exit}
+        >
+            {type === 'pdf' && <ImageContainer>
+                <img src={thumbnail} alt="" onError={(e) => {
+                    e.target.style.display = "none"
+                }}/>
+            </ImageContainer>}
+            {type === 'mp4' && <ImageContainer>
+                <img src={thumbnail} alt="" onError={(e) => {
+                    e.target.style.display = "none"
+                }}/>
+            </ImageContainer>}
+            {type === 'youtube' && <ImageContainer>
+                <img src={thumbnailUrl} alt="" onError={(e) => {
+                    e.target.style.display = "none"
+                }}/>
+            </ImageContainer>}
+            <CardInformation>
+                <CenteredText fileType={type}>{title}</CenteredText>
+                {
+                    progress !== 100 &&
+                    <Progress size='xs' value={progress} colorScheme='green'/>
+                }
+            </CardInformation>
+            <TagList>
+                <TagContainer>
+                    <Tag>{typeToLabel[type]}</Tag>
+                    {progress === 100 &&
+                        <IoIosCloudDone size={22}/>
+                    }
+                </TagContainer>
+                <Menu>
+                    <MenuButton
+                        as={IconButton}
+                        aria-label='Options'
+                        icon={<HiDotsVertical size={17}/>}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                        }}
+                        variant='filled'
+                    />
+                    <MenuList borderColor={'#57657e'} bg='#1c2025'>
+                        <MenuItem bg='#1c2025' icon={<EditIcon/>} onClick={openRenameModal}>
+                            Rename
+                        </MenuItem>
+                        <MenuItem bg='#1c2025' onClick={removeUpload} icon={<DeleteIcon/>}>
+                            Remove
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
+            </TagList>
+            <Modal isOpen={isRenameModalOpen} onClose={closeRenameModal}>
+                <ModalOverlay/>
+                <ModalContent backgroundColor='#242933'>
+                    <ModalHeader color={'#fff'}>Rename Title</ModalHeader>
+                    <ModalCloseButton/>
+                    <ModalBody>
+                        <FormControl>
+                            <FormLabel color={'#fff'}>New Title</FormLabel>
+                            <Input
+                                borderColor={'#57657e'}
+                                color={'#fff'}
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}
                             />
-                            <MenuList borderColor={'#57657e'} bg='#1c2025'>
-                                <MenuItem bg='#1c2025' icon={<EditIcon/>} onClick={openRenameModal}>
-                                    Rename
-                                </MenuItem>
-                                <MenuItem bg='#1c2025' onClick={removeUpload} icon={<DeleteIcon/>}>
-                                    Remove
-                                </MenuItem>
-                            </MenuList>
-                        </Menu>
-                    </TagList>
-                </MotionContainer>
-            </AnimatePresence>
-        )
-        }
-        <Modal isOpen={isRenameModalOpen} onClose={closeRenameModal}>
-            <ModalOverlay/>
-            <ModalContent backgroundColor='#242933'>
-                <ModalHeader color={'#fff'}>Rename Title</ModalHeader>
-                <ModalCloseButton/>
-                <ModalBody>
-                    <FormControl>
-                        <FormLabel color={'#fff'}>New Title</FormLabel>
-                        <Input
-                            borderColor={'#57657e'}
-                            color={'#fff'}
-                            value={newTitle}
-                            onChange={(e) => setNewTitle(e.target.value)}
-                        />
-                    </FormControl>
-                </ModalBody>
-                <ModalFooter>
-                    <Button colorScheme="blue" mr={3} onClick={renameUpload}>
-                        Submit
-                    </Button>
-                    <Button onClick={closeRenameModal}>Cancel</Button>
-                </ModalFooter>
-            </ModalContent>
-        </Modal>
-    </>);
+                        </FormControl>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="blue" mr={3} onClick={renameUpload}>
+                            Submit
+                        </Button>
+                        <Button onClick={closeRenameModal}>Cancel</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </MotionContainer>
+    );
 }
 
 export default React.memo(PdfCard);
