@@ -261,8 +261,9 @@ def process_web_embeddings(data,  stream_name):
         data_db = db_client["data"]
         user_id = data['user_id']
 
-        def send_progress_update(value, text):
+        def send_progress_update(value, text, key=key):
             send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
+            send_update( user_id, f'home', {'type':'progress', 'key': key, 'value': value})
             update_mongo_progress(data_db, user_id, key, value, text, 'SummaryWebsites')
 
         send_progress_update(0, 'Surfing the Web! 🍌🦍🌊')
@@ -302,8 +303,9 @@ def process_chrome_extension_embeddings(data,  stream_name):
         data_db = db_client["data"]
         websitesCollection = data_db["SummaryWebsites"]
 
-        def send_progress_update(value, text):
+        def send_progress_update(value, text, key=key):
             send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
+            send_update( user_id, f'home', {'type':'progress', 'key': key, 'value': value})
             update_mongo_progress(data_db, user_id, key, value, text, 'SummaryWebsites')
 
         print(f'1. PROCESSING REQ IN THREAD: {key}')

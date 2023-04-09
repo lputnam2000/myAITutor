@@ -208,8 +208,9 @@ def process_mp4_embeddings(data, stream_name):
         db_client = get_mongo_client()
         data_db = db_client["data"]
 
-        def send_progress_update(value, text):
+        def send_progress_update(value, text, key=key):
             send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
+            send_update( user_id, f'home', {'type':'progress', 'key': key, 'value': value})
             update_mongo_progress(data_db, user_id, key, value, text, 'SummaryVideos')
 
 
@@ -261,8 +262,9 @@ def process_youtube_embeddings(data, stream_name):
         youtube_collection = data_db["SummaryYoutube"]
 
 
-        def send_progress_update(value, text):
+        def send_progress_update(value, text, key=key):
             send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
+            send_update( user_id, f'home', {'type':'progress', 'key': key, 'value': value})
             update_mongo_progress(data_db, user_id, key, value, text, 'SummaryYoutube')
 
 
