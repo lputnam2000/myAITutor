@@ -52,3 +52,20 @@ def update_mongo_progress(data_db, user_id, key, progress, progressMessage, coll
         {"_id": key},
         {"$set": {"progress": progress, "progressMessage": progressMessage}},
     )
+
+def update_mongo_summary(data_db, key, summaryDict, collectionType, isSummarizing):
+    if isSummarizing:
+        result2 = data_db[collectionType].update_one(
+            {"_id": key},
+            {"$set": {"liveSummary": summaryDict}},
+        )
+
+    else:
+        result2 = data_db[collectionType].update_one(
+            {"_id": key},
+            {"$set": {"liveSummary": {}}},
+        )
+        result2 = data_db[collectionType].update_one(
+            {"_id": key},
+            {"$push": {"summary":  {"$each": [summaryDict], "$position": 0}}},
+        )
