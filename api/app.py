@@ -7,7 +7,7 @@ import os
 import openai
 from api.embeddings.main_view import embeddings_bp
 from api.summary import get_summary, get_summary_string
-from api.utils.utils import require_api_key, get_mongo_client, update_mongo_progress, send_notification_to_client
+from api.utils.utils import require_api_key, get_mongo_client, update_mongo_summary, update_mongo_progress, send_notification_to_client
 from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_pdf_class
 from api.utils.aws import get_pdf
 from api.embeddings.youtubeToEmbeddings import process_mp4_embeddings
@@ -151,20 +151,23 @@ def process_summary_pdf(data,stream_name):
             summaryDict = {}
             summaryDict['startPage'] = startPage
             summaryDict['endPage'] = endPage
-            def send_summary_update(latest_summary, isSummarizing=True):
+
+            db_client = get_mongo_client()
+            data_db = db_client["data"]
+
+            def send_summary_update(latest_summary, isSummarizing=True, key=pdfKey):
                 summaryDict['formattedSummary'] = latest_summary
-                send_update( user_id, f'{pdfKey}:summary', {"isSummarizing": isSummarizing, "summaryJson": summaryDict})
-           
+                send_update( user_id, f'{key}:summary', {'summary':summaryDict, 'isSummarizing': isSummarizing})
+                update_mongo_summary(data_db, key, summaryDict, 'SummaryDocuments', isSummarizing)
+
+            send_summary_update([], True)                
+
             s3 = get_s3_client()
             response = s3.get_object(Bucket=BUCKET_NAME, Key=pdfKey)
             pdf_bytes = response['Body'].read()
             doc = fitz.open(stream=pdf_bytes, filetype="pdf")
             s = get_summary(doc,startPage, endPage, send_summary_update)
             summaryDict['formattedSummary'] = s
-            db_client = get_mongo_client()
-            data_db = db_client["data"]
-            summariesCollection = data_db["SummaryDocuments"]
-            summariesCollection.update_one({"_id": pdfKey}, {"$push": {"summary":  {"$each": [summaryDict], "$position": 0}}})
                         # result = jsonify(s)
 
             logger.info(f'FINISHED Processing PDF summaries for {pdfKey}')
@@ -280,20 +283,22 @@ def process_summary_websites(data,stream_name):
             summaryDict = {}
             summaryDict['startPage'] = -1
             summaryDict['endPage'] = -1
-            
-            def send_summary_update(latest_summary, isSummarizing=True):
-                summaryDict['formattedSummary'] = latest_summary
-                send_update(user_id, f'{key}:summary', {"isSummarizing": isSummarizing, "summaryJson": summaryDict})
-           
             db_client = get_mongo_client()
             data_db = db_client["data"]
             websites_collection = data_db["SummaryWebsites"]
+
+            def send_summary_update(latest_summary, isSummarizing=True, key=key):
+                summaryDict['formattedSummary'] = latest_summary
+                send_update( user_id, f'{key}:summary', {'summary':summaryDict, 'isSummarizing': isSummarizing})
+                update_mongo_summary(data_db, key, summaryDict, 'SummaryWebsites', isSummarizing)
+
+            send_summary_update([], True)                
+
+
             website_doc = websites_collection.find_one({'_id': key})
             website_text = website_doc['content']
             s = get_summary_string(website_text, send_summary_update, 'url')
             summaryDict['formattedSummary'] = s
-            websites_collection.update_one({"_id": key}, {"$push": {"summary":  {"$each": [summaryDict], "$position": 0}}})
-
             # result = jsonify(s)
             send_notification_to_client(user_id, key, f'Summary complete for:{key}')
             send_summary_update(s, False)   
@@ -343,21 +348,22 @@ def process_summary_youtube(data,stream_name):
             summaryDict['startPage'] = -1
             summaryDict['endPage'] = -1
             user_id = data['user_id']
-
-            def send_summary_update(latest_summary, isSummarizing=True):
-                summaryDict['formattedSummary'] = latest_summary
-                send_update(user_id, f'{key}:summary', {"isSummarizing": isSummarizing, "summaryJson": summaryDict})
-            
-            
             db_client = get_mongo_client()
             data_db = db_client["data"]
             video_collection = data_db["SummaryYoutube"]
+            
+            def send_summary_update(latest_summary, isSummarizing=True, key=key):
+                summaryDict['formattedSummary'] = latest_summary
+                send_update( user_id, f'{key}:summary', {'summary':summaryDict, 'isSummarizing': isSummarizing})
+                update_mongo_summary(data_db, key, summaryDict, 'SummaryYoutube', isSummarizing)
+            
+            send_summary_update([], True)                
+
             video_doc = video_collection.find_one({'_id': key})
             video_text = [t["text"] for t in video_doc['transcript']]
             s = get_summary_string(video_text, send_summary_update, 'youtube')
             
             summaryDict['formattedSummary'] = s
-            video_collection.update_one({"_id": key}, {"$push": {"summary":  {"$each": [summaryDict], "$position": 0}}})
             # result = jsonify(s)
             send_summary_update(s, False)
             logger.info(f'FINISHED Processing video summaries for {key}')
@@ -407,19 +413,18 @@ def process_summary_video(data,stream_name):
             summaryDict = {}
             summaryDict['startPage'] = -1
             summaryDict['endPage'] = -1
-            summaryDict['formattedSummary'] = s
             
-            def send_summary_update(latest_summary, isSummarizing=True):
+            def send_summary_update(latest_summary, isSummarizing=True, key=key):
                 summaryDict['formattedSummary'] = latest_summary
-                send_update(user_id, f'{key}:summary', {"isSummarizing": isSummarizing, "summaryJson": summaryDict})
+                send_update( user_id, f'{key}:summary', {'summary':summaryDict, 'isSummarizing': isSummarizing})
+                update_mongo_summary(data_db, key, summaryDict, 'SummaryVideos', isSummarizing)
+            send_summary_update([], True)                
 
             s = get_summary_string(video_text, send_summary_update, 'mp4')
-
-
-            video_collection.update_one({"_id": key}, {"$push": {"summary": summaryDict}})
-            # result = jsonify(s)
             send_notification_to_client(user_id, key, f'Summary complete for:{key}')
             logger.info(f'FINISHED Processing video summaries for {key}')
+            
+            send_summary_update(s, False)
             # return result
     except Exception as e:
         print(e)

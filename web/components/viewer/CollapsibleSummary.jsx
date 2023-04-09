@@ -199,7 +199,9 @@ const renderers = {
 function CollapsibleSummary({summaryJson, isOpen, fileType, isStreaming = false}) {
     const [open, setOpen] = useState(isOpen);
     const {liveSummary} = useContext(ViewerContext)
+    console.log(liveSummary)
     const SummaryPanel = useMemo(() => {
+        console.log('json', summaryJson)
         let panelOutput = []
         let formattedSummary = summaryJson.formattedSummary
         for (let i = 0; i < formattedSummary.length; i++) {
@@ -258,7 +260,7 @@ function CollapsibleSummary({summaryJson, isOpen, fileType, isStreaming = false}
                 </CloseBorderContainer>
                 <SummaryText>
                     {SummaryPanel}
-                    {isStreaming && liveSummary.isSummarizing && <LoadingSpinner/>}
+                    {isStreaming && <LoadingSpinner/>}
                 </SummaryText>
             </>}
         </Container>

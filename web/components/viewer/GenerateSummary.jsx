@@ -136,11 +136,7 @@ function PDFGenerateSummary(props) {
         axios.post('/api/user/generate_summary', {
             pdfKey, startPage, endPage
         }).then((res) => {
-            console.log(res)
-        })
-        setLiveSummary({
-            isSummarizing: true,
-            summaryJson: {formattedSummary: [], startPage: startPage, endPage: endPage}
+            setLiveSummary({formattedSummary: [], startPage: startPage, endPage: endPage})
         })
         // summarize document
         setShowOption(false)
@@ -183,10 +179,7 @@ function YoutubeGenerateSummary(props) {
             key: pdfKey
         }).then((res) => {
             console.log(res)
-            setLiveSummary({
-                isSummarizing: true,
-                summaryJson: {formattedSummary: []}
-            })
+            setLiveSummary({formattedSummary: [], startPage: -1, endPage: -1})
         })
 
     }
@@ -208,10 +201,7 @@ function VideoGenerateSummary(props) {
             key: pdfKey
         }).then((res) => {
             console.log(res)
-            setLiveSummary({
-                isSummarizing: true,
-                summaryJson: {formattedSummary: []}
-            })
+            setLiveSummary({formattedSummary: [], startPage: -1, endPage: -1})
         })
     }
 
@@ -229,17 +219,11 @@ function URLGenerateSummary(props) {
 
     const generateSummaryButton = () => {
         setSummaryLoading(true)
-        setTimeout(() => {
-            setSummaryLoading(false)
-        }, 10000)
         axios.post('/api/user/generate_summary_web', {
             key: pdfKey
         }).then((res) => {
-            console.log(res)
-            setLiveSummary({
-                isSummarizing: true,
-                summaryJson: {formattedSummary: []}
-            })
+            setSummaryLoading(false)
+            setLiveSummary({formattedSummary: [], startPage: -1, endPage: -1})
         })
     }
 

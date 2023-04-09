@@ -157,9 +157,9 @@ function Summary({}) {
                             <SummaryContainer>
                                 <GenerateSummary/>
                                 {
-                                    liveSummary.isSummarizing &&
+                                    (liveSummary && Object.keys(liveSummary).length !== 0) &&
                                     <CollapsibleSummary fileType={fileType} isOpen={true}
-                                                        summaryJson={liveSummary.summaryJson} isStreaming={true}/>
+                                                        summaryJson={liveSummary} isStreaming={true}/>
                                 }
                                 {
                                     summary.map((s, idx) => <CollapsibleSummary fileType={fileType} isOpen={idx === 0}

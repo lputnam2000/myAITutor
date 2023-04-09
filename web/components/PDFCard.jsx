@@ -59,6 +59,7 @@ const CenteredText = styled.div`
   white-space: ${props => props.fileType === 'url' ? 'normal' : 'nowrap'};
   overflow: hidden;
   text-overflow: ${props => props.fileType === 'url' ? 'none' : 'ellipsis'};
+  margin-bottom: 4px;
 `
 
 const TagList = styled.div`

@@ -18,10 +18,7 @@ function ViewerContextProvider({children}) {
     const [progressMessage, setProgressMessage] = useState('');
 
     const {socket} = useContext(WebsocketContext);
-    const [liveSummary, setLiveSummary] = useState({
-        isSummarizing: false,
-        summaryJson: {formattedSummary: [], startPage: 0, endPage: 0}
-    });
+    const [liveSummary, setLiveSummary] = useState({});
     const [goToContextYoutube, setGoToContextYoutube] = useState(() => (time) => {
     });
     const [goToContextVideo, setGoToContextVideo] = useState(() => (time) => {
@@ -60,11 +57,12 @@ function ViewerContextProvider({children}) {
 
         const handleLiveSummary = (data) => {
             let jsonData = JSON.parse(data)
-            if (!jsonData.isSummarizing && jsonData.summaryJson !== {}) {
-                setSummary(summary => [jsonData.summaryJson, ...summary])
+            if (jsonData.isSummarizing) {
+                setLiveSummary(jsonData.summary)
+            } else {
+                setLiveSummary({})
+                setSummary(prevState => [jsonData.summary, ...prevState])
             }
-            setLiveSummary(jsonData)
-
             console.log('Received data', data)
         }
 
