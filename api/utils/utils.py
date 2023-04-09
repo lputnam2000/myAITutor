@@ -42,3 +42,13 @@ def get_mongo_client():
     if db is None:
         db = g.db = pymongo.MongoClient(os.getenv('MONGODB_URI'))
     return db
+
+def update_mongo_progress(data_db, user_id, key, progress, progressMessage, collectionType):
+    result1 = data_db.UserUploads.update_one(
+        {"userid": user_id, "uploads.uuid": key},
+        {"$set": {"uploads.$.progress": progress}},
+    )
+    result2 = data_db[collectionType].update_one(
+        {"_id": key},
+        {"$set": {"progress": progress, "progressMessage": progressMessage}},
+    )

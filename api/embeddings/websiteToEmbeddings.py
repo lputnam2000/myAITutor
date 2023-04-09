@@ -8,7 +8,7 @@ import time
 from flask import app, current_app
 from watchtower import CloudWatchLogHandler
 import logging
-from api.utils.utils import  get_mongo_client, send_notification_to_client
+from api.utils.utils import  get_mongo_client, send_notification_to_client, update_mongo_progress
 from ..weaviate_embeddings import upload_documents_website, create_website_class
 from ..socket_helper import send_update
 
@@ -257,10 +257,13 @@ def process_web_embeddings(data,  stream_name):
         key = data['key']
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
         user_id = data['user_id']
 
         def send_progress_update(value, text):
             send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
+            update_mongo_progress(data_db, user_id, key, value, text, 'SummaryWebsites')
 
         send_progress_update(0, 'Surfing the Web! 🍌🦍🌊')
         documents = get_documents_from_url(url)
@@ -275,10 +278,8 @@ def process_web_embeddings(data,  stream_name):
         print("4. UPLOADED DOCUMENTS")
         current_app.logger.info("4. UPLOADED DOCUMENTS")
         send_progress_update(99, "Finishing Up! 💪🦍")
-        db_client = get_mongo_client()
-        data_db = db_client["data"]
         websitesCollection = data_db["SummaryWebsites"]
-        update_query = {"$set": {"status": "Ready", "documents": documents}}
+        update_query = {"$set": {"progress": 100, "progressMessage": '', "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
         send_update( user_id, key, {'key': 'isReady', 'value': True})
@@ -297,9 +298,13 @@ def process_chrome_extension_embeddings(data,  stream_name):
         html = data['content']
         user_id = data['user_id']
         key = data['key']
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        websitesCollection = data_db["SummaryWebsites"]
 
         def send_progress_update(value, text):
             send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
+            update_mongo_progress(data_db, user_id, key, value, text, 'SummaryWebsites')
 
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
@@ -316,10 +321,7 @@ def process_chrome_extension_embeddings(data,  stream_name):
         print("4. UPLOADED DOCUMENTS")
         send_progress_update(99, "Finishing Up! 💪🦍")
         current_app.logger.info("4. UPLOADED DOCUMENTS")
-        db_client = get_mongo_client()
-        data_db = db_client["data"]
-        websitesCollection = data_db["SummaryWebsites"]
-        update_query = {"$set": {"status": "Ready", "documents": documents}}
+        update_query = {"$set": {"progress": 100, "progressMessage": '', "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
         send_update( user_id, key, {'key': 'isReady', 'value': True})

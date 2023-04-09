@@ -1,5 +1,5 @@
 from pytube import YouTube
-from api.utils.utils import  get_mongo_client, send_notification_to_client
+from api.utils.utils import  get_mongo_client, update_mongo_progress
 from .websiteToEmbeddings import get_client, create_class, upload_documents
 from api.weaviate_embeddings import create_youtube_class, upload_documents_youtube
 from api.utils.aws import get_video_file, upload_video_thumbnail
@@ -193,6 +193,7 @@ if __name__ == "__main__":
     formatted_subtitles = srt_to_array(transcripts)
     print('#Transcripts Generated')
 
+
 def process_mp4_embeddings(data, stream_name):
     new_handler = CloudWatchLogHandler(log_group_name='your-log-group-ashank', log_stream_name=stream_name)
     new_handler.setFormatter(FORMATTER)
@@ -204,9 +205,13 @@ def process_mp4_embeddings(data, stream_name):
         print(f'1. Downloading VIDEO for - {key}')
         current_app.logger.info(f'1. Downloading VIDEO for - {key}')
         user_id = data['user_id']
-        
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+
         def send_progress_update(value, text):
             send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
+            update_mongo_progress(data_db, user_id, key, value, text, 'SummaryVideos')
+
 
         print(f'CREATING THUMBNAIL FOR: {key}')
         videoFile = create_thumbnail(bucket, key)
@@ -228,13 +233,13 @@ def process_mp4_embeddings(data, stream_name):
         print("4. UPLOADED DOCUMENTS")
         current_app.logger.info("4. UPLOADED DOCUMENTS")
         send_progress_update(99, "Finishing Up! 💪🦍")
-        db_client = get_mongo_client()
-        data_db = db_client["data"]
-        youtube_collection = data_db["SummaryVideos"]
-        update_query = {"$set": {"status": "Ready", "transcript": formatted_subtitles}}
+
+        videos_collection = data_db["SummaryVideos"]
+        update_query = {"$set": {"progress": 100, "progressMessage": '', "transcript": formatted_subtitles}}
         # Update the document matching the UUID with the new values
-        youtube_collection.update_one({"_id": key}, update_query)
+        videos_collection.update_one({"_id": key}, update_query)
         send_update( user_id, key,  {'key': 'isReady', 'value': True})
+
         # send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
         current_app.logger.removeHandler(new_handler)
     except Exception as e:
@@ -251,8 +256,16 @@ def process_youtube_embeddings(data, stream_name):
         url = data['url']
         user_id = data['user_id']
         key = data['key']
+        db_client = get_mongo_client()
+        data_db = db_client["data"]
+        youtube_collection = data_db["SummaryYoutube"]
+
+
         def send_progress_update(value, text):
             send_update( user_id, f'{key}:progress',  {'value': value, 'text': text})
+            update_mongo_progress(data_db, user_id, key, value, text, 'SummaryYoutube')
+
+
 
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
@@ -269,12 +282,11 @@ def process_youtube_embeddings(data, stream_name):
         print("4. UPLOADED DOCUMENTS")
         current_app.logger.info("4. UPLOADED DOCUMENTS")
         send_progress_update(99, "Finishing Up! 💪🦍")
-        db_client = get_mongo_client()
-        data_db = db_client["data"]
-        youtube_collection = data_db["SummaryYoutube"]
-        update_query = {"$set": {"status": "Ready", "transcript": formatted_subtitles}}
+        update_query = {"$set": {"progress": 100, "progressMessage": '', "transcript": formatted_subtitles}}
         # Update the document matching the UUID with the new values
         youtube_collection.update_one({"_id": key}, update_query)
+
+
         send_update( user_id, key,  {'key': 'isReady', 'value': True})
         # send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
         current_app.logger.removeHandler(new_handler)
