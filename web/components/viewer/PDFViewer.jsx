@@ -48,7 +48,7 @@ function PdfViewer() {
     const readingIndicatorPluginInstance = readingIndicatorPlugin();
     const {ReadingIndicator} = readingIndicatorPluginInstance;
     const [pdfFile, setPdfFile] = useState('');
-    const {pdfKey, setSummary, setTitle, setFileType, setIsReady} = useContext(ViewerContext);
+    const {pdfKey, setSummary, setTitle, setFileType, setProgress, setProgressMessage} = useContext(ViewerContext);
 
     useEffect(() => {
         if (!pdfKey) return
@@ -59,12 +59,13 @@ function PdfViewer() {
             setSummary(res.data.documentDetails.summary)
             setTitle(res.data.documentDetails.title)
             setFileType(res.data.documentDetails.type)
-            setIsReady(res.data.documentDetails.status === 'Ready')
+            setProgress(res.data.documentDetails.progress)
+            setProgressMessage(res.data.documentDetails.progressMessage)
         }).catch(err => {
             console.log(err)
         })
 
-    }, [pdfKey, setPdfFile, setSummary, setTitle, setFileType, setIsReady])
+    }, [pdfKey, setPdfFile, setSummary, setTitle, setFileType, setProgress, setProgressMessage])
 
 
     const transformToolbar = (slot) => ({

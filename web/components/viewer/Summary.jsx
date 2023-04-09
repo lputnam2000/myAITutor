@@ -79,11 +79,10 @@ const ProgressContainer = styled.div`
 `
 
 function LoadingContainer({}) {
-    const {pdfKey} = useContext(ViewerContext)
+    const {pdfKey, progress, setProgress, progressMessage, setProgressMessage} = useContext(ViewerContext)
 
     const [jokeNumber, setJokeNumber] = useState(0);
     const [fade, setFade] = useState(true);
-    const [progress, setProgress] = useState(undefined);
     const {socket} = useContext(WebsocketContext);
 
     useEffect(() => {
@@ -92,7 +91,8 @@ function LoadingContainer({}) {
 
         const handleProgress = (data) => {
             let jsonData = JSON.parse(data)
-            setProgress(jsonData)
+            setProgress(jsonData.value)
+            setProgressMessage(jsonData.text)
             console.log('Received data', data)
         }
 
@@ -125,29 +125,24 @@ function LoadingContainer({}) {
     return (<LoadingDiv>
             <LoadingText>Chewing through the info jungle, hang tight! 🌿🦍 &nbsp;
                 <Joke fade={fade}>{loadingTexts[jokeNumber]}</Joke></LoadingText>
-            {
-                progress &&
-                <>
-                    <ProgressMessage>
-                        {progress.text}
-                    </ProgressMessage>
-                    <ProgressContainer>
-                        <Progress size='xs' width={'100%'} value={progress.value} backgroundColor={"gray.500"}
-                                  colorScheme='pink'/>
-                    </ProgressContainer>
-                </>
-            }
+            <ProgressMessage>
+                {progressMessage}
+            </ProgressMessage>
+            <ProgressContainer>
+                <Progress size='xs' width={'100%'} value={progress} backgroundColor={"gray.500"}
+                          colorScheme='pink'/>
+            </ProgressContainer>
         </LoadingDiv>
     )
 }
 
 function Summary({}) {
-    const {summary, pdfKey, fileType, isReady, liveSummary} = useContext(ViewerContext)
+    const {summary, pdfKey, fileType, liveSummary, progress} = useContext(ViewerContext)
 
 
     return (
         <Container>
-            {!isReady ? (
+            {progress !== 100 ? (
                     <LoadingContainer/>
                 ) :
 

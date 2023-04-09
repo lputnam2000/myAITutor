@@ -20,18 +20,13 @@ const Container = styled.div`
 
 function VideoViewer() {
     const [url, setUrl] = useState('');
-    const {setSummary, setTitle, setFileType, pdfKey, setIsReady, setGoToContextVideo} = useContext(ViewerContext);
+    const {
+        setSummary, setTitle, setFileType, pdfKey,
+        setProgress,
+        setProgressMessage, setGoToContextVideo
+    } = useContext(ViewerContext);
     const playerRef = useRef();
 
-    const getDocumentDetails = (pdfKey) => {
-        let params = {'key': pdfKey}
-        axios.get('/api/user/get_video', {params: params}).then(res => {
-            setSummary(res.data.documentDetails.summary)
-            setIsReady(res.data.documentDetails.status === 'Ready')
-        }).catch(err => {
-            console.log(err)
-        })
-    }
     useEffect(() => {
         if (!pdfKey) return
         let params = {'key': pdfKey}
@@ -40,15 +35,12 @@ function VideoViewer() {
             setSummary(res.data.documentDetails.summary)
             setTitle(res.data.documentDetails.title)
             setFileType(res.data.documentDetails.type)
-            setIsReady(res.data.documentDetails.status === 'Ready')
+            setProgress(res.data.documentDetails.progress)
+            setProgressMessage(res.data.documentDetails.progressMessage)
         }).catch(err => {
             console.log(err)
         })
-        let timer = setInterval(() => getDocumentDetails(pdfKey), 3000);
-        return () => {
-            timer = null
-        }
-    }, [pdfKey, setIsReady, setFileType, setUrl, setSummary, setTitle])
+    }, [pdfKey, setFileType, setUrl, setSummary, setTitle, setProgress, setProgressMessage])
 
 
     useEffect(() => {

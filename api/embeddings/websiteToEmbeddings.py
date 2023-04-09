@@ -283,7 +283,7 @@ def process_web_embeddings(data,  stream_name):
         update_query = {"$set": {"progress": 100, "progressMessage": '', "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
-        send_update( user_id, key, {'key': 'isReady', 'value': True})
+        send_progress_update(100, "")
         current_app.logger.removeHandler(new_handler)
         send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
     except Exception as e:
@@ -326,7 +326,7 @@ def process_chrome_extension_embeddings(data,  stream_name):
         update_query = {"$set": {"progress": 100, "progressMessage": '', "documents": documents}}
         # Update the document matching the UUID with the new values
         websitesCollection.update_one({"_id": key}, update_query)
-        send_update( user_id, key, {'key': 'isReady', 'value': True})
+        send_progress_update(100, "")
         current_app.logger.removeHandler(new_handler)
         send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
     except Exception as e:

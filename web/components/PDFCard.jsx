@@ -50,6 +50,7 @@ const CardInformation = styled.div`
   text-overflow: ellipsis;
   padding: 15px 10px;
   overflow: hidden;
+  gap: 2px;
 `
 
 const CenteredText = styled.div`

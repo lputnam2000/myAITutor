@@ -239,7 +239,7 @@ def process_mp4_embeddings(data, stream_name):
         update_query = {"$set": {"progress": 100, "progressMessage": '', "transcript": formatted_subtitles}}
         # Update the document matching the UUID with the new values
         videos_collection.update_one({"_id": key}, update_query)
-        send_update( user_id, key,  {'key': 'isReady', 'value': True})
+        send_progress_update(100, "")
 
         # send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
         current_app.logger.removeHandler(new_handler)
@@ -289,7 +289,7 @@ def process_youtube_embeddings(data, stream_name):
         youtube_collection.update_one({"_id": key}, update_query)
 
 
-        send_update( user_id, key,  {'key': 'isReady', 'value': True})
+        send_progress_update(100, "")
         # send_notification_to_client(user_id, key, f'Embeddings complete for:{key}')
         current_app.logger.removeHandler(new_handler)
     except Exception as e:
