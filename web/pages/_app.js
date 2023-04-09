@@ -2,7 +2,7 @@ import {ChakraProvider} from '@chakra-ui/react'
 import {ThemeProvider} from 'styled-components'
 import GlobalStyle from '../components/globalstyles'
 import {Open_Sans, Buenard} from '@next/font/google'
-
+import { Analytics } from '@vercel/analytics/react';
 
 const openSans = Open_Sans({subsets: ['latin'], variable: '--font-open'},)
 const buenard = Buenard({weight: "700", variable: '--font-b', subsets: ['latin'],})
@@ -45,6 +45,7 @@ function MyApp({
                             <Component {...pageProps} />
                         )}
                     </main>
+                    <Analytics/>
                 </SessionProvider>
             </ThemeProvider>
         </ChakraProvider>
