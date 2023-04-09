@@ -48,11 +48,14 @@ async function generateRecord(session, fileName) {
         if (!result) {
             await Promise.all([
                 uploads.insertOne(record),
-                videosCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'mp4'})
+                videosCollection.insertOne({
+                    _id: uuid, owner, title, progress: 0,
+                    progressMessage: '', summary: [], type: 'mp4'
+                })
             ]);
             await uploads.updateOne(
                 record,
-                {$set: {"uploads": [{uuid, title, status: 'Not Ready', type: 'mp4'}]}},
+                {$set: {"uploads": [{uuid, title, progress: 0, type: 'mp4'}]}},
                 {upsert: true}
             );
         } else {
@@ -60,12 +63,15 @@ async function generateRecord(session, fileName) {
                 uploads.update(record, {
                     $push: {
                         "uploads": {
-                            $each: [{uuid, title, status: 'Not Ready', type: 'mp4'}],
+                            $each: [{uuid, title, progress: 0, type: 'mp4'}],
                             $position: 0
                         }
                     }
                 }),
-                videosCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'mp4'})
+                videosCollection.insertOne({
+                    _id: uuid, owner, title, progress: 0,
+                    progressMessage: '', summary: [], type: 'mp4'
+                })
             ]);
         }
     } catch (error) {

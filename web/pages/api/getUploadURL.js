@@ -48,11 +48,19 @@ async function generateRecord(session, fileName) {
         if (!result) {
             await Promise.all([
                 uploads.insertOne(record),
-                documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'pdf'})
+                documentsCollection.insertOne({
+                    _id: uuid,
+                    owner,
+                    title,
+                    progress: 0,
+                    progressMessage: '',
+                    summary: [],
+                    type: 'pdf'
+                })
             ]);
             await uploads.updateOne(
                 record,
-                {$set: {"uploads": [{uuid, title, status: 'Not Ready', type: 'pdf'}]}},
+                {$set: {"uploads": [{uuid, title, progress: 0, type: 'pdf'}]}},
                 {upsert: true}
             );
         } else {
@@ -60,12 +68,15 @@ async function generateRecord(session, fileName) {
                 uploads.update(record, {
                     $push: {
                         "uploads": {
-                            $each: [{uuid, title, status: 'Not Ready', type: 'pdf'}],
+                            $each: [{uuid, title, progress: 0, type: 'pdf'}],
                             $position: 0
                         }
                     }
                 }),
-                documentsCollection.insertOne({_id: uuid, owner, title, status: 'Not Ready', summary: [], type: 'pdf'})
+                documentsCollection.insertOne({
+                    _id: uuid, owner, title, progress: 0,
+                    progressMessage: '', summary: [], type: 'pdf'
+                })
             ]);
         }
 
