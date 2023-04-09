@@ -2,6 +2,7 @@ import clientPromise from "../../../lib/mongodb";
 import {getServerSession} from "next-auth/next"
 import {authOptions} from "pages/api/auth/[...nextauth]";
 import AWS from 'aws-sdk';
+import logger from '../../../logger/logger'
 
 const REGION = process.env.CB_AWS_REGION;
 const URL_EXPIRATION_TIME = 300; // in seconds
