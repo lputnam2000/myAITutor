@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
 import styled from 'styled-components'
 import axios from "axios";
 import Upload from "../components/UIComponents/Upload";
@@ -32,6 +32,7 @@ const EmptyCard = styled.div`
 
 function Home() {
     const [userUploads, setUserUploads] = useState([]);
+    const [userUploadsObject, setUserUploadsObject] = useState({});
 
     const [cardsPerRow, setCardsPerRow] = useState(8);
     const filesContainerRef = useRef(null);
@@ -43,7 +44,14 @@ function Home() {
         const handleNewUpload = (data) => {
             console.log(data)
             let jsonData = JSON.parse(data)
-            setUserUploads(userUploads => [jsonData, ...userUploads])
+            let uploadId = jsonData.uuid
+            setUserUploads(userUploads => [uploadId, ...userUploads])
+            setUserUploadsObject(curUploads => {
+                return {
+                    ...curUploads,
+                    [uploadId]: jsonData,
+                }
+            })
         }
 
         socket.on('home', handleNewUpload);
@@ -88,16 +96,14 @@ function Home() {
         axios
             .patch("/api/user/update_title", {}, {params: params})
             .then((res) => {
-                setUserUploads((userUploads) => {
-                    return userUploads.map((item) => {
-                        if (item.uuid === uploadId) {
-                            return {
-                                ...item,
-                                title: newTitle // Replace newTitle with the variable containing the new title value
-                            };
+                setUserUploadsObject((prevState) => {
+                    return {
+                        ...prevState,
+                        [uploadId]: {
+                            ...prevState[uploadId],
+                            title: newTitle
                         }
-                        return item;
-                    });
+                    }
                 });
             })
             .catch((err) => {
@@ -111,8 +117,17 @@ function Home() {
             .delete("/api/user/delete_upload", {params: params})
             .then((res) => {
                 setUserUploads((userUploads) => {
-                    return userUploads.filter((item) => item.uuid !== uploadId);
+                    return userUploads.filter((item) => item !== uploadId);
                 });
+                setUserUploadsObject((oldVal) => {
+                    const newVal = Object.keys(oldVal).reduce((acc, key) => {
+                        if (key !== uploadId) {
+                            acc[key] = oldVal[key];
+                        }
+                        return acc;
+                    }, {});
+                    return newVal
+                })
             })
             .catch((err) => {
                 console.log(err);
@@ -121,46 +136,68 @@ function Home() {
 
     useEffect(() => {
         axios.get('/api/user/uploads').then((res) => {
-            setUserUploads(res.data['uploads'])
+            let uploadsObject = res.data['uploads'].reduce((acc, document) => {
+                acc[document.uuid] = document;
+                return acc;
+            }, {});
+            setUserUploads(res.data['uploads'].map(document => document.uuid))
+            setUserUploadsObject(uploadsObject)
             setIsFetchingUploads(false)
         }).catch((err) => {
             console.log(err)
         })
     }, []);
-    useEffect(() => {
-    }, [userUploads])
 
     const handleFileUpload = (file, type, uploadID, url) => {
+        let newValue = {}
         if (type === 'pdf' || type === 'mp4') {
-            console.log(file, type, uploadID, url)
-            let newValue = {uuid: uploadID, title: file.name, status: 'Not Ready', type: type}
-            setUserUploads(oldArray => [newValue, ...oldArray])
+            newValue = {uuid: uploadID, title: file.name, progress: 0, type: type}
         } else {
-            let newValue = {uuid: uploadID, title: file, status: 'Not Ready', type: type, url}
-            setUserUploads(oldArray => [newValue, ...oldArray,])
+            newValue = {uuid: uploadID, title: file, progress: 0, type: type, url}
         }
+        setUserUploadsObject(curUploads => {
+            return {
+                ...curUploads,
+                [uploadID]: newValue
+            }
+        })
+        setUserUploads(oldArray => [uploadID, ...oldArray])
     }
+
+    const pdfCards = useMemo(() => {
+        return userUploads.map((uploadId, i) => {
+            let upload = userUploadsObject[uploadId];
+            if (!upload) {
+                return <></>
+            }
+            return (
+                <PDFCard
+                    key={`${upload.uuid}-${i}`}
+                    uploadId={upload.uuid}
+                    title={upload.title}
+                    url={upload.url ? upload.url : ''}
+                    thumbnail={upload.thumbnail}
+                    type={upload.type}
+                    progress={upload.progress}
+                    onRename={renameTitle}
+                    onRemove={removeUpload}
+                />
+            );
+        });
+    }, [userUploads, userUploadsObject]);
+
 
     if (isFetchingUploads) {
         return <LargeLoadingSpinner/>
     }
-    
+
     return (
         <Container>
             <HomeContainer>
                 <UserFilesContainer ref={filesContainerRef}>
                     <Upload handleFile={handleFileUpload}></Upload>
                     {
-                        userUploads.map((upload, i) => {
-                                return (
-                                    <PDFCard key={`${upload.uuid}-${i}`} uploadId={upload.uuid}
-                                             title={upload.title}
-                                             url={upload.url ? upload.url : ''}
-                                             thumbnail={upload.thumbnail} type={upload.type} onRename={renameTitle}
-                                             onRemove={removeUpload}
-                                    />);
-                            }
-                        )
+                        pdfCards
                     }
                     {Array(cardsPerRow)
                         .fill(0)

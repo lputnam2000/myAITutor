@@ -82,7 +82,7 @@ const typeToLabel = {
     'mp4': 'Video'
 }
 
-function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''}) {
+function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = '', progress}) {
     // ...
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
     const [newTitle, setNewTitle] = useState(title);
