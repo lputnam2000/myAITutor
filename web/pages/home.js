@@ -6,6 +6,7 @@ import PDFCard from "../components/PDFCard";
 import Layout from "../Layouts/basicLayout"
 import {WebsocketContext} from "../components/WebsocketContext";
 import LargeLoadingSpinner from "../components/LargeLoadingSpinner";
+import {AnimatePresence} from 'framer-motion';
 
 const HomeContainer = styled.div`
   padding: 30px;
@@ -53,7 +54,6 @@ function Home() {
                     }
                 })
             } else if (jsonData.type === 'progress') {
-                console.log(jsonData)
                 let uploadId = jsonData.key
                 setUserUploadsObject(curUploads => {
                     return {
@@ -69,7 +69,6 @@ function Home() {
 
         socket.on('home', handleNewUpload);
 
-        // Clean up the listener when the component is unmounted
         return () => {
             socket.off('home', handleNewUpload);
         };
@@ -77,8 +76,8 @@ function Home() {
 
     useEffect(() => {
         const calculateCardsPerRow = () => {
-            const cardWidth = 200; // The width of your cards
-            const gapWidth = 10; // The gap between cards
+            const cardWidth = 200;
+            const gapWidth = 10;
             const containerWidth = filesContainerRef.current.clientWidth;
 
             return Math.floor((containerWidth + gapWidth) / (cardWidth + gapWidth)) - 1;
@@ -91,7 +90,6 @@ function Home() {
                 } else {
                     setCardsPerRow(calculateCardsPerRow());
                 }
-                console.log(numCards)
             }
         };
         handleResize()
@@ -105,7 +103,6 @@ function Home() {
 
     const renameTitle = (uploadId, type, newTitle) => {
         let params = {key: uploadId, fileType: type, newTitle: newTitle};
-        console.log(params)
         axios
             .patch("/api/user/update_title", {}, {params: params})
             .then((res) => {
@@ -176,8 +173,17 @@ function Home() {
         })
         setUserUploads(oldArray => [uploadID, ...oldArray])
     }
+    const exitAnimation = {
+        scale: 0,
+        opacity: 0,
+        transition: {
+            duration: 0.2,
+            ease: "easeInOut",
+        },
+    };
 
     const pdfCards = useMemo(() => {
+
         return userUploads.map((uploadId, i) => {
             let upload = userUploadsObject[uploadId];
             if (!upload) {
@@ -185,7 +191,7 @@ function Home() {
             }
             return (
                 <PDFCard
-                    key={`${upload.uuid}-${i}`}
+                    key={upload.uuid}
                     uploadId={upload.uuid}
                     title={upload.title}
                     url={upload.url ? upload.url : ''}
@@ -194,6 +200,7 @@ function Home() {
                     progress={upload.progress}
                     onRename={renameTitle}
                     onRemove={removeUpload}
+                    exit={exitAnimation}
                 />
             );
         });
@@ -209,9 +216,10 @@ function Home() {
             <HomeContainer>
                 <UserFilesContainer ref={filesContainerRef}>
                     <Upload handleFile={handleFileUpload}></Upload>
-                    {
-                        pdfCards
-                    }
+                    <AnimatePresence>
+                        {pdfCards}
+                    </AnimatePresence>
+
                     {Array(cardsPerRow)
                         .fill(0)
                         .map((_, i) => <EmptyCard key={`empty-${i}`}/>)

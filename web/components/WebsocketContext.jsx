@@ -7,7 +7,7 @@ import axios from "axios";
 export const WebsocketContext = createContext({socket: undefined});
 
 
-function WebsocketContextProvider({ children }) {
+function WebsocketContextProvider({children}) {
     const [socket, setSocket] = useState(null);
     const [authToken, setAuthToken] = useState(null);
     const [variableState, setVariableState] = useState(null);
@@ -63,7 +63,6 @@ function WebsocketContextProvider({ children }) {
     }, [setAuthToken, authToken])
 
     useEffect(() => {
-        console.log('called here too')
         if (session) {
             fetchData();
         } else {
