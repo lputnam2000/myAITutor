@@ -25,7 +25,8 @@ async function generateRecord(session, url, title) {
                     _id: uuid,
                     owner,
                     title,
-                    status: 'Not Ready',
+                    progress: 0,
+                    progressMessage: '',
                     summary: [],
                     type: 'youtube',
                     transcript: [],
@@ -34,7 +35,7 @@ async function generateRecord(session, url, title) {
             ]);
             await uploads.updateOne(
                 record,
-                {$set: {"uploads": [{uuid, title, status: 'Not Ready', type: 'youtube', url}]}},
+                {$set: {"uploads": [{uuid, title, progress: 0, type: 'youtube', url}]}},
                 {upsert: true}
             );
         } else {
@@ -42,7 +43,7 @@ async function generateRecord(session, url, title) {
                 uploads.update(record, {
                     $push: {
                         "uploads": {
-                            $each: [{uuid, title, status: 'Not Ready', type: 'youtube', url}],
+                            $each: [{uuid, title, progress: 0, type: 'youtube', url}],
                             $position: 0
                         }
                     }
@@ -50,7 +51,8 @@ async function generateRecord(session, url, title) {
                     _id: uuid,
                     owner,
                     title,
-                    status: 'Not Ready',
+                    progress: 0,
+                    progressMessage: '',
                     summary: [],
                     type: 'youtube',
                     transcript: [],
