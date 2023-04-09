@@ -37,6 +37,7 @@ const requestHandler = async (req, res) => {
     const session = await getServerSession(req, res, authOptions)
     const body = req.body;
     if (req.method === "GET") {
+        logger.info('called')
         if (session) {
             try {
                 const client = await clientPromise;
