@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from "next/server";
-import {authOptions} from "./pages/api/auth/[...nextauth]"
+import { NextResponse } from 'next/server'
 import {getToken} from "next-auth/jwt";
 
 const requireAuth: string[] = ["/home", "/getyourapikey", "/settings", "/summary"];
@@ -36,5 +36,8 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(url);
         }
     }
-    return res;
+    const response = NextResponse.next()
+    console.log(request);
+    console.log(response);
+    return response;
 }
