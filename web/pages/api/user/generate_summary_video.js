@@ -6,7 +6,7 @@ const generateSummaryVideo = async (req, res) => {
     const user_id = session.user.id
     if (req.method === "POST") {
         const {key} = req.body
-        fetch(process.env.BACKEND_URL + '/summaries/videos/', {
+        await fetch(process.env.BACKEND_URL + '/summaries/videos/', {
             method: 'POST',
             body: JSON.stringify({
                 key,

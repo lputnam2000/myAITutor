@@ -75,7 +75,7 @@ async function addYoutubeVideo(req, res) {
             //S3
             let user_id = session.user.id
             let fullyQualifiedName = await generateRecord(session, url, title)
-            fetch(process.env.BACKEND_URL + '/embeddings/youtube_video/', {
+            await fetch(process.env.BACKEND_URL + '/embeddings/youtube_video/', {
                 method: 'POST',
                 body: JSON.stringify({
                     key: fullyQualifiedName,

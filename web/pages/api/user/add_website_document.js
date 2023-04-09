@@ -67,7 +67,7 @@ async function addWebsiteDocument(req, res) {
             //S3
             let user_id = session.user.id
             let fullyQualifiedName = await generateRecord(session, url)
-            fetch(process.env.BACKEND_URL + '/embeddings/websites/', {
+            await fetch(process.env.BACKEND_URL + '/embeddings/websites/', {
                 method: 'POST',
                 body: JSON.stringify({
                     key: fullyQualifiedName,
