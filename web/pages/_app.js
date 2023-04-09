@@ -4,7 +4,6 @@ import GlobalStyle from '../components/globalstyles'
 import {Open_Sans, Buenard} from '@next/font/google'
 import {Analytics} from '@vercel/analytics/react';
 
-export {reportWebVitals} from 'next-axiom';
 
 const openSans = Open_Sans({subsets: ['latin'], variable: '--font-open'},)
 const buenard = Buenard({weight: "700", variable: '--font-b', subsets: ['latin'],})

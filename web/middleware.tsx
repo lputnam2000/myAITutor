@@ -3,7 +3,6 @@ import {getToken} from "next-auth/jwt";
 
 const requireAuth: string[] = ["/home", "/getyourapikey", "/settings", "/summary"];
 const redirectAuth: string[] = [];
-import {log} from 'next-axiom'
 
 export async function middleware(request: NextRequest) {
     const res = NextResponse.next();
@@ -36,8 +35,11 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(url);
         }
     }
-    const response = NextResponse.next()
-    log.info('Request: ', request)
-    log.info('Response: ', response)
-    return response;
+    return res;
+}
+
+export const config = {
+    matcher: [
+        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    ],
 }
