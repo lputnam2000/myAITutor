@@ -28,7 +28,15 @@ const PlayerWrapper = styled.div`
 
 function YoutubeViewer() {
     const [url, setUrl] = useState('');
-    const {setSummary, setTitle, setFileType, pdfKey, setIsReady, setGoToContextYoutube} = useContext(ViewerContext);
+    const {
+        setSummary,
+        setTitle,
+        setProgress,
+        setProgressMessage,
+        setFileType,
+        pdfKey,
+        setGoToContextYoutube
+    } = useContext(ViewerContext);
     const playerRef = useRef();
 
     useEffect(() => {
@@ -39,12 +47,13 @@ function YoutubeViewer() {
             setSummary(res.data.documentDetails.summary)
             setTitle(res.data.documentDetails.title)
             setFileType(res.data.documentDetails.type)
-            setIsReady(res.data.documentDetails.status === 'Ready')
+            setProgress(res.data.documentDetails.progress)
+            setProgressMessage(res.data.documentDetails.progressMessage)
         }).catch(err => {
             console.log(err)
         })
 
-    }, [setSummary, setTitle, setFileType, pdfKey, setIsReady])
+    }, [setSummary, setTitle, setFileType, pdfKey, setProgress, setProgressMessage])
 
     useEffect(() => {
         if (playerRef.current) {

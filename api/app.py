@@ -234,11 +234,11 @@ def process_pdf_embeddings(data):
             upload_documents_pdf(documents, client, class_name, send_progress_update)
             print('UPLOADED DOCUMENTS')
             send_progress_update(99, "Finishing Up! 💪🦍")
-            send_update(user_id, key,  {'key': 'isReady', 'value': True})
             update_query = {"$set": {"progress": 100, "progressMessage": '',}}
         # Update the document matching the UUID with the new values
             documentsCollection = data_db["SummaryDocuments"]
             documentsCollection.update_one({"_id": key}, update_query)
+            send_progress_update(100, "")
 
             print(f'FINISHED EMBEDDINGS for - {key}')
     except Exception as e:

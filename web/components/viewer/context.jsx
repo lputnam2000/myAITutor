@@ -13,8 +13,10 @@ function ViewerContextProvider({children}) {
     const [summary, setSummary] = useState([])
     const [title, setTitle] = useState('');
     const [fileType, setFileType] = useState('');
-    const [isReady, setIsReady] = useState(false);
     const [isWebsiteReady, setIsWebsiteReady] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [progressMessage, setProgressMessage] = useState('');
+
     const {socket} = useContext(WebsocketContext);
     const [liveSummary, setLiveSummary] = useState({
         isSummarizing: false,
@@ -50,9 +52,7 @@ function ViewerContextProvider({children}) {
         // Listen for specific messages
         const handleMessage = (data) => {
             let jsonData = JSON.parse(data)
-            if (jsonData['key'] === 'isReady') {
-                setIsReady(jsonData['value'])
-            } else if (jsonData['key'] === 'isWebsiteReady') {
+            if (jsonData['key'] === 'isWebsiteReady') {
                 setIsWebsiteReady(jsonData['value'])
             }
             console.log('Message received:', data);
@@ -91,8 +91,10 @@ function ViewerContextProvider({children}) {
             setTitle,
             fileType,
             setFileType,
-            isReady,
-            setIsReady,
+            progress,
+            setProgress,
+            progressMessage,
+            setProgressMessage,
             isWebsiteReady,
             setIsWebsiteReady,
             liveSummary,

@@ -106,8 +106,9 @@ function WebsiteViewer() {
         setTitle,
         setFileType,
         pdfKey,
-        setIsReady,
         setIsWebsiteReady,
+        setProgress,
+        setProgressMessage,
         isWebsiteReady
     } = useContext(ViewerContext);
 
@@ -120,12 +121,13 @@ function WebsiteViewer() {
             setFileType(res.data.documentDetails.type)
             setMarkdown(res.data.documentDetails.content)
             setIsWebsiteReady(res.data.documentDetails.isWebsiteReady)
-            setIsReady(res.data.documentDetails.status === 'Ready')
+            setProgress(res.data.documentDetails.progress)
+            setProgressMessage(res.data.documentDetails.progressMessage)
 
         }).catch(err => {
             console.log(err)
         })
-    }, [pdfKey, setSummary, setTitle, setFileType, setMarkdown, setIsWebsiteReady, setIsReady])
+    }, [pdfKey, setSummary, setTitle, setFileType, setMarkdown, setIsWebsiteReady, setProgress, setProgressMessage])
     return (
         <MarkdownWrapper>
             <ContentWrapper>
