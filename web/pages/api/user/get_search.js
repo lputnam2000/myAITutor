@@ -28,13 +28,13 @@ async function getChatGPTAnswer(prompt, fileType) {
                 messages: [
                     {
                         "role": "system",
-                        "content": "You are an AI assistant that can provide answers to questions based on the provided context, which consists of chunks of text from a document or video transcripts. When answering the question, make sure to indicate the source of the information by including the chunk's reference number in brackets, like {1} or {2}. If the context comes from a video, the references should include timestamps, such as {1} or {2}, {3}.  Your answers must include the appropriate indicators for each chunk of context used to compose your response.\n" +
+                        "content": "You are an AI assistant that can provide answers to questions based on the provided context, which consists of chunks of text from a document or video transcripts. When answering the question, make sure to indicate the source of the information by including the chunk's reference number in brackets, like {1} or {2}. If you are citing multiple contexts for one sentence use the following format {1}{2}{3}.  Your answers must include the appropriate indicators for each chunk of context used to compose your response.\n" +
                             "\n" +
                             "Craft a well-structured, informative which may include bullet points, numbered lists, and other formatting elements to enhance readability and presentation. Insert a &nbsp; after each bullet point or numbered list or paragraph. Focus on providing a clear, concise response that effectively addresses the user's query while making use of the provided context."
                     },
                     {"role": "user", "content": prompt}
                 ],
-                temperature: 0.3
+                temperature: 0
             }
         )
         console.log(response)
@@ -48,26 +48,26 @@ async function getChatGPTAnswer(prompt, fileType) {
 
 async function getEmbedding(searchText) {
     try {
-      const response = await fetch(process.env.BACKEND_URL + '/query_to_embedding', {
-        method: 'POST',
-        body: JSON.stringify({
-          query: searchText
-        }),
-        headers: {
-          'X-API-Key': process.env.CB_API_SECRET,
-          'Content-Type': 'application/json'
-        }
-      });
-      const data = await response.json(); // Parse the JSON response
-      const embeddingString = data.embedding; // Extract the `embedding` value from the response
-      const embeddingArray = Array.from(embeddingString); // Parse the embedding string to an array
-      return embeddingArray;
+        const response = await fetch(process.env.BACKEND_URL + '/query_to_embedding', {
+            method: 'POST',
+            body: JSON.stringify({
+                query: searchText
+            }),
+            headers: {
+                'X-API-Key': process.env.CB_API_SECRET,
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json(); // Parse the JSON response
+        const embeddingString = data.embedding; // Extract the `embedding` value from the response
+        const embeddingArray = Array.from(embeddingString); // Parse the embedding string to an array
+        return embeddingArray;
     } catch (error) {
-      console.error('API request error:', error);
-      return null; // Return null if an error occurred
+        console.error('API request error:', error);
+        return null; // Return null if an error occurred
     }
-  }
-  
+}
+
 
 const getClassName = (key) => {
     return `Document_${key.replaceAll('-', '_')}`
@@ -129,7 +129,7 @@ const requestHandler = async (req, res) => {
                 vector: embedding
                 // distance: 0.6,
             })
-            .withLimit(2)
+            .withLimit(4)
             .do()
         const matchingText = weaviateRes.data.Get[className]
         let prompt = "Context: "

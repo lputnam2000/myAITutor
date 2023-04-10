@@ -212,10 +212,10 @@ def configure_batch(client, batch_size: int, batch_target_rate: int, send_progre
     def callback(batch_results: dict) -> None:
         # you could print batch errors here
         send_progress_update()
-        time_took_to_create_batch = batch_size * (client.batch.creation_time/client.batch.recommended_num_objects)
-        time.sleep(
-            max(batch_size/batch_target_rate - time_took_to_create_batch + 1, 0)
-        )
+        # time_took_to_create_batch = batch_size * (client.batch.creation_time/client.batch.recommended_num_objects)
+        # time.sleep(
+        #     max(batch_size/batch_target_rate - time_took_to_create_batch + 1, 0)
+        # )
     client.batch.batch_size = batch_size
     client.batch.configure(
         batch_size=batch_size,
