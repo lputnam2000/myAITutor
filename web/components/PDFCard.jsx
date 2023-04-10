@@ -64,6 +64,7 @@ const CenteredText = styled.div`
 const TagList = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-left: 10px;
 `
 const Tag = styled.div`
   margin: 10px;
@@ -159,10 +160,11 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
             </CardInformation>
             <TagList>
                 <TagContainer>
-                    <Tag>{typeToLabel[type]}</Tag>
                     {progress === 100 &&
                         <IoIosCloudDone size={22}/>
                     }
+                    <Tag>{typeToLabel[type]}</Tag>
+
                 </TagContainer>
                 <Menu>
                     <MenuButton
