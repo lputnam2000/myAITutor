@@ -2,12 +2,13 @@ import React, {useContext, useEffect, useState} from 'react';
 import styled from "styled-components";
 import {ViewerContext} from "./context";
 import Summary from "./Summary";
-import PDFViewer from "./PDFViewer";
+import dynamic from 'next/dynamic';
 import {BsLink45Deg} from 'react-icons/bs'
-import WebsiteViewer from "./WebsiteViewer";
-import YoutubeViewer from "./YoutubeViewer";
-import VideoViewer from './VideoViewer';
 
+const PDFViewer = dynamic(() => import('./PDFViewer'));
+const WebsiteViewer = dynamic(() => import('./WebsiteViewer'));
+const YoutubeViewer = dynamic(() => import('./YoutubeViewer'));
+const VideoViewer = dynamic(() => import('./VideoViewer'));
 
 const Container = styled.div`
   display: flex;
@@ -104,7 +105,6 @@ const SummaryContainer = styled.div`
 
 
 function ViewerWithSummary({href}) {
-
     const {title, fileType} = useContext(ViewerContext);
 
 
