@@ -1,7 +1,7 @@
 import {getProviders, signIn, getCsrfToken} from "next-auth/react"
 import {getServerSession} from "next-auth/next"
 import {authOptions} from "./api/auth/[...nextauth]";
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import {FcGoogle} from "react-icons/fc";
 import {AiOutlineMail} from "react-icons/ai"
 import styles from "/styles/signin.module.scss"
@@ -159,6 +159,17 @@ export default function SignIn({csrfToken, providers}) {
     const toastIdRef = React.useRef()
     const router = useRouter();
     const [formLoading, setFormLoading] = useState(false)
+
+    const { error, callbackUrl } = router.query;
+
+    useEffect(()=>{
+        if (error=="OAuthAccountNotLinked") {
+            toastIdRef.current = toast({
+                position: 'top',
+                description: "We apologize for the inconvenience, please sign in using email instead."
+            })
+        }
+    }, [error])
 
     const googleSignIn = async (e) => {
         e.preventDefault()
