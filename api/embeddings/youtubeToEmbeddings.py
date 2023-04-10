@@ -1,6 +1,6 @@
 from pytube import YouTube
 from api.utils.utils import  get_mongo_client, update_mongo_progress
-from .websiteToEmbeddings import get_client, create_class, upload_documents
+from .websiteToEmbeddings import get_client, clean_text, sentences_to_embeddings
 from api.weaviate_embeddings import create_youtube_class, upload_documents_youtube
 from api.utils.aws import get_video_file, upload_video_thumbnail
 from moviepy.editor import *
@@ -49,7 +49,7 @@ def get_weaviate_docs(transcripts):
         doc_text = tracripts_string[i]
         start_time = transcripts[i]["start"]
         
-        while doc_length < 300 and i+1 < len(encodings):
+        while doc_length < 250 and i+1 < len(encodings):
             i += 1
             doc_length += len(encodings[i]) 
             doc_text += ' ' + tracripts_string[i]
@@ -63,7 +63,16 @@ def get_weaviate_docs(transcripts):
             "end_time": end_time
         })
 
-    return to_return
+    text_to_clean = [dic['text'] for dic in to_return]
+    clean_text = text_to_clean
+    embeddings = sentences_to_embeddings(clean_text)
+
+    def add_embeddings_to_formatted_text(document, embedding):
+        document['embedding'] = embedding
+        return document
+    
+    final_data = [add_embeddings_to_formatted_text(document, embedding) for (document, embedding) in zip(to_return, embeddings)]
+    return final_data
 
 def srt_to_array(arrays_of_srt_text):
     # Split the SRT text into an array of subtitles
