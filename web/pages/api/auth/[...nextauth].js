@@ -39,24 +39,26 @@ export const authOptions = {
                 try {
                     const client = await clientPromise;
                     let userUploads = client.db("data").collection("UserUploads");
+
+                    const DEMO_UPLOADS = [
+                        {
+                            "uuid": "103db47b-e6a7-4c5a-a543-e9f40062b0dc",
+                            "title": "Bitcoin Whitepaper - Demo PDF",
+                            "progress": 100,
+                            "type": "pdf"
+                        },
+                        {
+                            "uuid": "d6190bcb-0bc6-4464-89c8-a1431db4546a",
+                            "title": "Our Planet - Demo Youtube",
+                            "progress": 100,
+                            "type": "youtube"
+                        }
+                    ];
                     const result = await userUploads.updateOne(
                         {userid: user_id},
                         {
                             $push: {
-                                uploads: [
-                                    {
-                                        "uuid": "103db47b-e6a7-4c5a-a543-e9f40062b0dc",
-                                        "title": "Bitcoin Whitepaper - Demo PDF",
-                                        "progress": 100,
-                                        "type": "pdf"
-                                    },
-                                    {
-                                        "uuid": "d6190bcb-0bc6-4464-89c8-a1431db4546a",
-                                        "title": "Our Planet - Demo Youtube",
-                                        "progress": 100,
-                                        "type": "youtube"
-                                    }
-                                ]
+                                uploads: {$each: DEMO_UPLOADS}
                             },
                         },
                         {upsert: true}
