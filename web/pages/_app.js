@@ -10,6 +10,7 @@ const buenard = Buenard({weight: "700", variable: '--font-b', subsets: ['latin']
 
 import '/styles/globals.css'
 import {SessionProvider} from "next-auth/react"
+import Head from "next/head";
 
 const theme = {
     colors: {
@@ -29,6 +30,9 @@ function MyApp({
 
     return (
         <ChakraProvider>
+            <Head>
+                <link rel="icon" href="/svg/bananas.svg"/>
+            </Head>
             <ThemeProvider theme={theme}>
                 <SessionProvider session={session}>
                     <GlobalStyle/>
