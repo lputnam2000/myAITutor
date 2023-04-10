@@ -93,45 +93,22 @@ def create_youtube_class(key:str, client):
     class_obj = {
         "class": class_name,
         "description": f'Document Embeddings class for {key}',
-        "vectorizer": "text2vec-openai",
-        "moduleConfig": {
-            "text2vec-openai": {
-            "model": "ada",
-            "modelVersion": "002",
-            "type": "text"
-            }
-        },
+        "vectorizer": "none",
         "properties": [
         {
             "dataType": ["text"],
             "description": "The text for the document",
             "name": "text",
-            "moduleConfig": {
-                "text2vec-openai": {
-                "skip": False,
-                "vectorizePropertyName": False
-                }
-            },
         },
         {
             "dataType": ["number"],
             "description": "The start time for the text",
             "name": "start_time",
-            "moduleConfig": {
-                "text2vec-openai": {
-                "skip": True
-                }
-            },
         },
         {
             "dataType": ["number"],
             "description": "The end time for the text",
             "name": "end_time",
-            "moduleConfig": {
-                "text2vec-openai": {
-                "skip": True
-                }
-            },
         }
         ]
     }
@@ -272,15 +249,16 @@ def upload_documents_website(documents, embeddings, client, class_name, send_pro
             print(i)
             client.batch.add_data_object(properties, class_name, vector=embeddings[i])
 
-def upload_documents_youtube(documents, client, class_name, send_progress_update):
-    configure_batch(client, 1000, 30, send_batch_update_progress(send_progress_update, 40, calculate_increment_value(len(documents))))
+def upload_documents_youtube(formatted_docs_with_embeddings, client, class_name, send_progress_update):
+    configure_batch(client, 1000, 30, send_batch_update_progress(send_progress_update, 40, calculate_increment_value(len(formatted_docs_with_embeddings))))
     with client.batch as batch:
         # Batch import all Questions
-        for i in range(len(documents)):
+        for i in range(len(formatted_docs_with_embeddings)):
             # print(documents[i])
-            properties = documents[i]
-            # print(i)
-            client.batch.add_data_object(properties, class_name)
+            properties = {'text':formatted_docs_with_embeddings[i]['text'],'start_time':formatted_docs_with_embeddings[i]['start_time'], 'end_time': formatted_docs_with_embeddings[i]['end_time']}
+            embedding = formatted_docs_with_embeddings[i]['embedding']
+            print(i)
+            client.batch.add_data_object(properties, class_name, vector=embedding)
 
 # documents = get_documents(fitz.open('ex2.pdf'))
 # client = get_client()
