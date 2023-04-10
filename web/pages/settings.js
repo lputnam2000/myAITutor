@@ -6,6 +6,7 @@ import Section from "../components/settings/Section";
 import UserInformation from "../components/settings/sections/UserInformation";
 import ExtensionInformation from "../components/settings/sections/ExtensionInformation";
 import SettingsContextProvider from "../components/settings/context";
+import {NextSeo} from "next-seo";
 
 const Container = styled.div`
   display: flex;
@@ -40,11 +41,15 @@ const Settings = () => {
 
     return (
         <Container>
+            <NextSeo
+                title="Settings"
+                description="Chimpbase Settings Page - Chimpbase is a game-changing information discovery platform, leveraging advanced AI technologies such as semantic search and chatGPT to deliver accurate, efficient and comprehensive insights from various sources including videos, documents, and websites. With AI-powered summarization and intuitive interfaces, Chimpbase is the ultimate solution for users seeking to deepen their understanding and knowledge."
+            />
             <SettingsContextProvider>
                 <SidebarWrapper>
                     <Sidebar
-                    onUserInfoClick={() => scrollToSection(userInfoRef)}
-                    onExtensionKeyClick={() => scrollToSection(extensionKeyRef)}/>
+                        onUserInfoClick={() => scrollToSection(userInfoRef)}
+                        onExtensionKeyClick={() => scrollToSection(extensionKeyRef)}/>
                 </SidebarWrapper>
                 <Content>
                     <Section
