@@ -68,7 +68,7 @@ export default function Home({}) {
                 <meta name="description"
                       content="Chimpbase is revolutionizing the way people consume information. Our innovative software extracts key details from large pieces of text, video and PDFs to create smart notes that help users understand and retain information quickly and easily. Join the waitlist today and join the Chimp Squad to simplify your information overload "/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <link rel="icon" href="/favicon.ico"/>
+                <link rel="icon" href="/svg/bananas.svg"/>
             </Head>
             <Main>
                 <HomeNavbar/>

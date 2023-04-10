@@ -12,18 +12,20 @@ export default function Home() {
         <>
             <Head>
                 <title>ChimpBase</title>
-                <meta name="description"
+                <meta name="Terms of Service"
                       content="Chimpbase is revolutionizing the way people consume information. Our innovative software extracts key details from large pieces of text, video and PDFs to create smart notes that help users understand and retain information quickly and easily. Join the waitlist today and join the Chimp Squad to simplify your information overload "/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <link rel="icon" href="/favicon.ico"/>
+                <link rel="icon" href="/svg/bananas.svg"/>
             </Head>
             <Main>
                 Terms of Service Agreement
                 Last Updated: 3/26/2023
                 <br/>
 
-                Welcome to Chimpbase! This is an agreement between you (&quotyou&quot or &quotuser&quot) and Chimpbase, LLC
-                (&quotChimpbase,&quot &quotwe,&quot or &quotus&quot) regarding your use of the website, chimpbase.vercel.app (the &quotSite&quot).
+                Welcome to Chimpbase! This is an agreement between you (&quotyou&quot or &quotuser&quot) and Chimpbase,
+                LLC
+                (&quotChimpbase,&quot &quotwe,&quot or &quotus&quot) regarding your use of the website,
+                chimpbase.vercel.app (the &quotSite&quot).
 
                 <br/>
 
@@ -71,8 +73,10 @@ export default function Home() {
 
                 Disclaimer of Warranties <br/>
 
-                The Site and all content, materials, and features available on the Site are provided &quotas is&quot and &quotas
-                available&quot without any warranties, express or implied. Chimpbase disclaims all warranties of any kind,
+                The Site and all content, materials, and features available on the Site are provided &quotas is&quot and
+                &quotas
+                available&quot without any warranties, express or implied. Chimpbase disclaims all warranties of any
+                kind,
                 whether express or implied, including but not limited to the implied warranties of merchantability,
                 fitness for a particular purpose, and non-infringement.
                 <br/>
