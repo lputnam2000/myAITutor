@@ -44,25 +44,12 @@ def create_website_class(key:str, client):
     class_obj = {
         "class": class_name,
         "description": f'Document Embeddings class for {key}',
-        "vectorizer": "text2vec-openai",
-        "moduleConfig": {
-            "text2vec-openai": {
-            "model": "ada",
-            "modelVersion": "002",
-            "type": "text"
-            }
-        },
+        "vectorizer": "none",
         "properties": [
         {
             "dataType": ["text"],
             "description": "The text for the document",
             "name": "text",
-            "moduleConfig": {
-                "text2vec-openai": {
-                "skip": False,
-                "vectorizePropertyName": False
-                }
-            },
         },
         ]
     }
@@ -274,17 +261,16 @@ def upload_documents_pdf(formatted_docs_with_embeddings, client, class_name, sen
             print(i)
             client.batch.add_data_object(properties, class_name, vector=embedding)
 
-def upload_documents_website(documents, client, class_name, send_progress_update):
+def upload_documents_website(documents, embeddings, client, class_name, send_progress_update):
     configure_batch(client, 1000, 30, send_batch_update_progress(send_progress_update, 40, calculate_increment_value(len(documents))))
     with client.batch as batch:
         # Batch import all Questions
         for i in range(len(documents)):
             properties = {
-                
                 "text": documents[i]
             }
             print(i)
-            client.batch.add_data_object(properties, class_name)
+            client.batch.add_data_object(properties, class_name, vector=embeddings[i])
 
 def upload_documents_youtube(documents, client, class_name, send_progress_update):
     configure_batch(client, 1000, 30, send_batch_update_progress(send_progress_update, 40, calculate_increment_value(len(documents))))
