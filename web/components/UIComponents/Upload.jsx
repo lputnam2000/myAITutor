@@ -215,6 +215,7 @@ export default function Upload({handleFile}) {
                         method: 'PUT',
                         body: file,
                     }).then((res) => {
+                        setIsSending(false);
                         return res.text()
                     }).then((txt) => {
                         console.log(txt)
