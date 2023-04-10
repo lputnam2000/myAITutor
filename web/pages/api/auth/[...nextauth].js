@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email"
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter"
 import clientPromise from "../../../lib/mongodb";
-import {ObjectId} from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 export const authOptions = {
   adapter: MongoDBAdapter(clientPromise),
@@ -25,30 +25,19 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async signIn(user, account, profile) {
-      try {
-        const client = await clientPromise;
-        let users = client.db("admin").collection("users");
-        let accounts = client.db("admin").collection("accounts");
-
-        //if the user is new, then the user.user.id is actually the provider id, lets check:
-        let user_id = null;
-        let userObject = null;
+    session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+    async jwt({ token, isNewUser }) {
+      if (isNewUser) {
+        console.log("JWT - IS NEW USER?: ", isNewUser)
+        console.log("JWT - userid", token.sub)
+        let user_id = token.sub
         try {
-          user_id = new ObjectId(user.user.id.toString());
-          userObject = await users.findOne({_id: user_id})
-        } catch (e) {
-          console.log("user.user.id was not valid for creating ObjectId: ", user.user.id)
-          console.log("Searching for real userid by using accounts collection with user.id.id as provider id")
-          let providerAccountId = user.user.id
-          const lastAccount = await accounts.findOne({ providerAccountId }, { sort: { $natural: -1 } });
-          console.log("LastAccount: ", lastAccount);
-          const user_id = lastAccount.userId;
-        }
-
-        console.log("UserObject: ", userObject)
-        if (!userObject) {
-          //this user is new
+          const client = await clientPromise;
           let userUploads = client.db("data").collection("UserUploads");
           const result = await userUploads.updateOne(
             { userid: user_id },
@@ -56,33 +45,20 @@ export const authOptions = {
               $push: {
                 uploads:
                 {
-                  "uuid": "48a26389-ff79-4f66-a318-56d516544dcf",
-                  "title": "The Evolution of Apes :)",
-                  "status": "Not Ready",
-                  "type": "youtube",
-                  "url": "https://www.youtube.com/watch?v=5G13oKqCFs4"
+                  "uuid": "582fc8e4-c611-448f-b8da-19fc743d4039",
+                  "title": "bitcoin.pdf",
+                  "progress": 100,
+                  "type": "pdf"
                 }
               },
             },
             { upsert: true }
           );
-        } else {
-          //this user already existed, because user.user.id is an actual userid
-          return true
+        } catch (e) {
+          console.log("Error in JWT callback: ", e)
         }
-      } catch (e) {
-        console.log("Error", e)
-      }
-      return true;
-
-
-
-    },
-    session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.sub;
-      }
-      return session;
+      };
+      return token;
     },
   },
   secret: process.env.AUTH_SECRET,
