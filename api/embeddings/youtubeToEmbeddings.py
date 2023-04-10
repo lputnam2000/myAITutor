@@ -130,6 +130,7 @@ def transcribe_file(model_id, segment_info):
         }
         response = requests.post(url, headers=headers, files=files)
     if response.ok:
+        os.remove(segment_path)
         return response.text
     else:
         # import pdb
