@@ -119,7 +119,7 @@ const ValueList = styled.ul`
 const ListEntry = styled.li`
   margin-bottom: 1rem;
 `
-const GifImage = styled.img`
+const GifVideo = styled.video`
   display: block;
   width: 50%;
   border-radius: 8px;
@@ -141,7 +141,14 @@ const StepByStep = () => {
             <GridContainer>
                 <StepBox>
                     <TextWithGif reverse={true}>
-                        <GifImage src="/gifs/step1.gif" alt="Step 1"/>
+                        <GifVideo autoPlay={true}
+                                  loop={true}
+                                  controls={false}
+                                  muted
+                                  playsInline
+                                  alt="Step 1">
+                            <source src="/gifs/step1.mp4" type="video/mp4"/>
+                        </GifVideo>
                         <StackedLabels>
                             <BigWords>Upload Your Content</BigWords>
                             <GradientText>PDFs, Websites, MP4s, Youtube </GradientText>
@@ -160,7 +167,14 @@ const StepByStep = () => {
                 </StepBox>
                 <StepBox>
                     <TextWithGif reverse={false}>
-                        <GifImage src="/gifs/step2.gif" alt="Step 1"/>
+                        <GifVideo autoPlay={true}
+                                  loop={true}
+                                  controls={false}
+                                  muted
+                                  playsInline
+                                  alt="Step 2">
+                            <source src="/gifs/step2.mp4" type="video/mp4"/>
+                        </GifVideo>
                         <StackedLabels>
                             <BigWords>We process the content and...</BigWords>
                             <BoomText>You go bananas</BoomText>
