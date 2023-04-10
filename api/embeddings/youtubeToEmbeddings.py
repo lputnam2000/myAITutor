@@ -167,6 +167,8 @@ def get_video_transcript(url, isMP4, send_progress_update):
         videoFileMP3 = f'{url}.mp3'
         video = VideoFileClip(url)
         audio = video.audio
+        if audio == None:
+            return []
         audio.write_audiofile(videoFileMP3)
         video.close()
         audio.close()
