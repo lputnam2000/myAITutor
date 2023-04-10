@@ -255,7 +255,7 @@ def upload_documents_youtube(formatted_docs_with_embeddings, client, class_name,
         # Batch import all Questions
         for i in range(len(formatted_docs_with_embeddings)):
             # print(documents[i])
-            properties = {'text':formatted_docs_with_embeddings[i]['text'],'start_page':formatted_docs_with_embeddings[i]['start_page'], 'end_page': formatted_docs_with_embeddings[i]['end_page']}
+            properties = {'text':formatted_docs_with_embeddings[i]['text'],'start_time':formatted_docs_with_embeddings[i]['start_time'], 'end_time': formatted_docs_with_embeddings[i]['end_time']}
             embedding = formatted_docs_with_embeddings[i]['embedding']
             print(i)
             client.batch.add_data_object(properties, class_name, vector=embedding)
