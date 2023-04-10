@@ -1,14 +1,15 @@
-import { getProviders, signIn, getCsrfToken } from "next-auth/react"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "./api/auth/[...nextauth]";
-import React, { useState } from "react"
-import { FcGoogle } from "react-icons/fc";
-import { AiOutlineMail } from "react-icons/ai"
+import {getProviders, signIn, getCsrfToken} from "next-auth/react"
+import {getServerSession} from "next-auth/next"
+import {authOptions} from "./api/auth/[...nextauth]";
+import React, {useState} from "react"
+import {FcGoogle} from "react-icons/fc";
+import {AiOutlineMail} from "react-icons/ai"
 import styles from "/styles/signin.module.scss"
 import Link from "next/link";
-import styled, { keyframes } from "styled-components";
-import { FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, useToast } from "@chakra-ui/react";
-import { useRouter } from 'next/router';
+import styled, {keyframes} from "styled-components";
+import {FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, useToast} from "@chakra-ui/react";
+import {useRouter} from 'next/router';
+import {NextSeo} from "next-seo";
 
 const NavbarContainer = styled.nav`
   height: 50px;
@@ -150,7 +151,7 @@ const LargeSpinner = styled.div`
   }
 `;
 
-export default function SignIn({ csrfToken, providers }) {
+export default function SignIn({csrfToken, providers}) {
     const [isSignIn, setIsSignIn] = useState(true);
     const [email, setEmail] = useState('');
     const [isEmailInvalid, setIsEmailInvalid] = useState(false);
@@ -166,7 +167,7 @@ export default function SignIn({ csrfToken, providers }) {
             let googleProvider = Object.values(providers).filter(provider => provider.name == "Google")
             const response = await signIn(googleProvider[0].id)
             if (response) {
-                const { error, status, ok, url} = response
+                const {error, status, ok, url} = response
                 if (ok) {
                     console.log("signin success")
                     router.push('/home')
@@ -211,18 +212,18 @@ export default function SignIn({ csrfToken, providers }) {
                         'csrfToken': csrfToken,
                     }),
                 }).then((response) => {
-                    if (response.ok) {
-                        toastIdRef.current = toast({
-                            position: 'top',
-                            description: `Link Sent! Check Your Email for the Sign ${isSignIn ? 'In' : 'Up'} Link`
-                        })
-                    } else {
-                        toastIdRef.current = toast({
-                            position: 'top',
-                            description: `Sorry, there was an issue on our end. Refresh this page and try again.`
-                        })
-                    }
-                })
+                if (response.ok) {
+                    toastIdRef.current = toast({
+                        position: 'top',
+                        description: `Link Sent! Check Your Email for the Sign ${isSignIn ? 'In' : 'Up'} Link`
+                    })
+                } else {
+                    toastIdRef.current = toast({
+                        position: 'top',
+                        description: `Sorry, there was an issue on our end. Refresh this page and try again.`
+                    })
+                }
+            })
         } catch (e) {
             console.log(e)
             toastIdRef.current = toast({
@@ -235,15 +236,19 @@ export default function SignIn({ csrfToken, providers }) {
 
     return (
         <Container>
-            <Navbar />
+            <NextSeo
+                title="Sign In"
+                description="Sign In to Chimpbase. Chimpbase is a game-changing information discovery platform, leveraging advanced AI technologies such as semantic search and chatGPT to deliver accurate, efficient and comprehensive insights from various sources including videos, documents, and websites. With AI-powered summarization and intuitive interfaces, Chimpbase is the ultimate solution for users seeking to deepen their understanding and knowledge."
+            />
+            <Navbar/>
             <PageContainer>
                 {formLoading ?
                     <>
-                        <LargeSpinner />
+                        <LargeSpinner/>
                     </>
                     :
                     <>
-                        <object className={styles.monkeyIcon} data={"/svg/monkey1.svg"} />
+                        <object className={styles.monkeyIcon} data={"/svg/monkey1.svg"}/>
                         <SignInContainer>
                             <TOSAgreement>
                                 By Signing {isSignIn ? 'In' : 'Up'}, you accept our &nbsp;
@@ -252,7 +257,7 @@ export default function SignIn({ csrfToken, providers }) {
                                 </TOSLink>
                             </TOSAgreement>
                             <Button onClick={googleSignIn}>
-                                <FcGoogle size={22} style={{ marginRight: '5px' }} />
+                                <FcGoogle size={22} style={{marginRight: '5px'}}/>
                                 Sign {isSignIn ? 'In' : 'Up'} with Google
                             </Button>
                             <Or>
@@ -263,9 +268,9 @@ export default function SignIn({ csrfToken, providers }) {
                                     <FormLabel color={'#fff'}>Email address</FormLabel>
                                     <Input borderColor={'#57657e'}
 
-                                        value={email}
-                                        onChange={e => setEmail(e.target.value)}
-                                        color={'#fff'} type="email" placeholder="Enter your email address" />
+                                           value={email}
+                                           onChange={e => setEmail(e.target.value)}
+                                           color={'#fff'} type="email" placeholder="Enter your email address"/>
                                     {!isEmailInvalid ? (
                                         <FormHelperText color={'#fff'}>
                                             We&apos;ll never share your email.
@@ -276,7 +281,7 @@ export default function SignIn({ csrfToken, providers }) {
                                 </FormControl>
 
                                 <Button onClick={emailSignIn}>
-                                    <AiOutlineMail size={22} style={{ marginRight: '5px' }} />
+                                    <AiOutlineMail size={22} style={{marginRight: '5px'}}/>
                                     Sign {isSignIn ? 'In' : 'Up'} with Email
                                 </Button>
                             </EmailContainer>
@@ -301,12 +306,12 @@ export async function getServerSideProps(context) {
     // To avoid an infinite loop!
 
     if (session) {
-        return { redirect: { destination: "/home" } };
+        return {redirect: {destination: "/home"}};
     }
 
     const providers = await getProviders(context);
 
     return {
-        props: { providers: Object.values(providers) ?? [], csrfToken },
+        props: {providers: Object.values(providers) ?? [], csrfToken},
     }
 }

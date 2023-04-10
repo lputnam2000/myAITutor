@@ -4,6 +4,7 @@ import {ViewerContext} from "./context";
 import Summary from "./Summary";
 import dynamic from 'next/dynamic';
 import {BsLink45Deg} from 'react-icons/bs'
+import {NextSeo} from "next-seo";
 
 const PDFViewer = dynamic(() => import('./PDFViewer'));
 const WebsiteViewer = dynamic(() => import('./WebsiteViewer'));
@@ -115,6 +116,10 @@ function ViewerWithSummary({href}) {
 
     return (
         <Container>
+            <NextSeo
+                title={title}
+                description={`Chimpbase summary and semantic search for ${title}. Chimpbase is a game-changing information discovery platform, leveraging advanced AI technologies such as semantic search and chatGPT to deliver accurate, efficient and comprehensive insights from various sources including videos, documents, and websites. With AI-powered summarization and intuitive interfaces, Chimpbase is the ultimate solution for users seeking to deepen their understanding and knowledge.`}
+            />
             <TitleContainer>
                 <Title>
                     {title}

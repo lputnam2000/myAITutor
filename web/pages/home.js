@@ -7,6 +7,7 @@ import Layout from "../Layouts/basicLayout"
 import {WebsocketContext} from "../components/WebsocketContext";
 import LargeLoadingSpinner from "../components/LargeLoadingSpinner";
 import {AnimatePresence} from 'framer-motion';
+import {NextSeo} from 'next-seo';
 
 const HomeContainer = styled.div`
   padding: 30px;
@@ -15,7 +16,6 @@ const HomeContainer = styled.div`
 const Container = styled.div`
   height: 100%;
 `
-
 
 const UserFilesContainer = styled.div`
   display: grid;
@@ -100,7 +100,6 @@ function Home() {
         };
     }, [filesContainerRef, userUploads]);
 
-
     const renameTitle = (uploadId, type, newTitle) => {
         let params = {key: uploadId, fileType: type, newTitle: newTitle};
         axios
@@ -183,7 +182,6 @@ function Home() {
     };
 
     const pdfCards = useMemo(() => {
-
         return userUploads.map((uploadId, i) => {
             let upload = userUploadsObject[uploadId];
             if (!upload) {
@@ -206,13 +204,16 @@ function Home() {
         });
     }, [userUploads, userUploadsObject]);
 
-
     if (isFetchingUploads) {
         return <LargeLoadingSpinner/>
     }
 
     return (
         <Container>
+            <NextSeo
+                title="Home"
+                description="Chimpbase Home - Chimpbase is a game-changing information discovery platform, leveraging advanced AI technologies such as semantic search and chatGPT to deliver accurate, efficient and comprehensive insights from various sources including videos, documents, and websites. With AI-powered summarization and intuitive interfaces, Chimpbase is the ultimate solution for users seeking to deepen their understanding and knowledge."
+            />
             <HomeContainer>
                 <UserFilesContainer ref={filesContainerRef}>
                     <Upload handleFile={handleFileUpload}></Upload>
