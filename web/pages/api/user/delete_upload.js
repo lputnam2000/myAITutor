@@ -27,6 +27,9 @@ const deleteUpload = async (req, res) => {
                     } else if (fileType === 'youtube') {
                         const collection = db.collection('SummaryYoutube');
                         const r = await collection.deleteOne({_id: key});
+                    } else if (fileType === 'mp4') {
+                        const collection = db.collection('SummaryVideos');
+                        const r = await collection.deleteOne({_id: key});
                     }
                 } catch (e) {
                     res.status(500).json({error: e})
