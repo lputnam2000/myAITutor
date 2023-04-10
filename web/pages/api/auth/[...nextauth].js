@@ -51,7 +51,8 @@ export const authOptions = {
                             "uuid": "d6190bcb-0bc6-4464-89c8-a1431db4546a",
                             "title": "Our Planet - Demo Youtube",
                             "progress": 100,
-                            "type": "youtube"
+                            "type": "youtube",
+                            "url": "https://www.youtube.com/watch?v=XmtXC_n6X6Q&ab_channel=Netflix"
                         }
                     ];
                     const result = await userUploads.updateOne(
