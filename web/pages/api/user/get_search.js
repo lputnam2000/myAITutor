@@ -46,6 +46,29 @@ async function getChatGPTAnswer(prompt, fileType) {
     }
 }
 
+async function getEmbedding(searchText) {
+    try {
+      const response = await fetch(process.env.BACKEND_URL + '/query_to_embedding', {
+        method: 'POST',
+        body: JSON.stringify({
+          query: searchText
+        }),
+        headers: {
+          'X-API-Key': process.env.CB_API_SECRET,
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json(); // Parse the JSON response
+      const embeddingString = data.embedding; // Extract the `embedding` value from the response
+      const embeddingArray = Array.from(embeddingString); // Parse the embedding string to an array
+      return embeddingArray;
+    } catch (error) {
+      console.error('API request error:', error);
+      return null; // Return null if an error occurred
+    }
+  }
+  
+
 const getClassName = (key) => {
     return `Document_${key.replaceAll('-', '_')}`
 }
@@ -79,13 +102,32 @@ const requestHandler = async (req, res) => {
             properties.push('end_time')
         }
 
+        // const embedding = await fetch(process.env.BACKEND_URL + '/query_to_embedding', {
+        //     method: 'POST',
+        //     body: JSON.stringify({
+        //         query: searchText
+        //     }),
+        //     headers: {
+        //         'X-API-Key': process.env.CB_API_SECRET,
+        //         'Content-Type': 'application/json'
+        //     }
+        // }).then(response => response.json()) // Parse the JSON response
+        // .then(data => {
+        //     const embeddingString = data.embedding; // Extract the `embedding` value from the response
+        //     const embeddingArray = Array.from(embeddingString) // Parse the embedding string to an array
+        // })
+        // .catch(error => {
+        //   console.error('API request error:', error);
+        // });
+        // console.log(embeddingArray)
+        const embedding = await getEmbedding(searchText);
         let weaviateRes = await client.graphql
             .get()
             .withClassName(className)
             .withFields(properties)
-            .withNearText({
-                concepts: [searchText],
-                distance: 0.6,
+            .withNearVector({
+                vector: embedding
+                // distance: 0.6,
             })
             .withLimit(2)
             .do()
