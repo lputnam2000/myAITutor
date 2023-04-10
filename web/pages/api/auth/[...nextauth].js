@@ -29,22 +29,29 @@ export const authOptions = {
       try {
         const client = await clientPromise;
         let users = client.db("admin").collection("users");
-        let uid = user.user.id
-        let isRegistered = await users.findOne({
-          "_id": ObjectId(uid),
-          "Initialized": { $exists: true }
-        });
-        //check if the user is not registered
-        if (isRegistered == null) {
-          users.updateOne(
-            { "_id": ObjectId(uid) }, 
-            { $set: { "Initialized": true } }
-          )          
-          // do something if the user is new
-          console.log("NEW USER: ", uid)
+        let accounts = client.db("admin").collection("accounts");
+
+        //if the user is new, then the user.user.id is actually the provider id, lets check:
+        let user_id = null;
+        let userObject = null;
+        try {
+          user_id = new ObjectId(user.user.id.toString());
+          userObject = await users.findOne({_id: user_id})
+        } catch (e) {
+          console.log("user.user.id was not valid for creating ObjectId: ", user.user.id)
+          console.log("Searching for real userid by using accounts collection with user.id.id as provider id")
+          let providerAccountId = user.user.id
+          const lastAccount = await accounts.findOne({ providerAccountId }, { sort: { $natural: -1 } });
+          console.log("LastAccount: ", lastAccount);
+          const user_id = lastAccount.userId;
+        }
+
+        console.log("UserObject: ", userObject)
+        if (!userObject) {
+          //this user is new
           let userUploads = client.db("data").collection("UserUploads");
           const result = await userUploads.updateOne(
-            { userid: user.user.id },
+            { userid: user_id },
             {
               $push: {
                 uploads:
@@ -60,7 +67,8 @@ export const authOptions = {
             { upsert: true }
           );
         } else {
-          console.log("OLD USER: ", user.user.id)
+          //this user already existed, because user.user.id is an actual userid
+          return true
         }
       } catch (e) {
         console.log("Error", e)
