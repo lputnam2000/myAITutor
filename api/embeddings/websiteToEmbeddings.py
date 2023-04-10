@@ -9,7 +9,7 @@ from flask import app, current_app
 from watchtower import CloudWatchLogHandler
 import logging
 from api.utils.utils import  get_mongo_client, send_notification_to_client, update_mongo_progress
-from ..weaviate_embeddings import upload_documents_website, create_website_class
+from ..weaviate_embeddings import upload_documents_website, create_website_class, clean_text, sentences_to_embeddings
 from ..socket_helper import send_update
 
 FORMATTER = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
@@ -80,17 +80,19 @@ def get_documents_from_url(url:str):
     textExtractor = WebsiteTextExtracter()
     extracted_text = textExtractor.extract_formatted_text_from_url(url)
     formatted_documents = extracted_text.split("\n\n")
-    clean_text_to_embed = clean_text([dic['text'] for dic in formatted_documents])
+    #TODO: split into 250 words before cleaning and embedding
+    clean_text_to_embed = clean_text(formatted_documents)
     embeddings = sentences_to_embeddings(clean_text_to_embed)
-    final_data = [add_embeddings_to_formatted_text(document, embedding) for (document, embedding) in zip(format_text_for_documents, embeddings)]
-    return final_data
-    # return formatted_documents
+    return (formatted_documents, embeddings)
 
 def get_documents_from_html(html):
     textExtractor = WebsiteTextExtracter()
     extracted_text = textExtractor.extract_formatted_text_from_html(html)
     formatted_documents = extracted_text.split("\n\n")
-    return formatted_documents
+    #TODO: split into 250 words before cleaning and embedding
+    clean_text_to_embed = clean_text(formatted_documents)
+    embeddings = sentences_to_embeddings(clean_text_to_embed)
+    return (formatted_documents, embeddings)
 
 def configure_batch(client, batch_size: int, batch_target_rate: int):
     """
@@ -274,7 +276,7 @@ def process_web_embeddings(data,  stream_name):
             update_mongo_progress(data_db, user_id, key, value, text, 'SummaryWebsites')
 
         send_progress_update(0, 'Surfing the Web! 🍌🦍🌊')
-        documents = get_documents_from_url(url)
+        documents, embeddings = get_documents_from_url(url)
         print('2. PARSED DOCUMENTS')
         current_app.logger.info('2. PARSED DOCUMENTS')
         client = get_client()
@@ -282,7 +284,7 @@ def process_web_embeddings(data,  stream_name):
         print(f'3. CREATED CLASS {class_name}')
         current_app.logger.info(f'3. CREATED CLASS {class_name}')
         send_progress_update(40, "Making Notes! 📝🦍")
-        upload_documents_website(documents, client, class_name, send_progress_update)
+        upload_documents_website(documents, embeddings, client, class_name, send_progress_update)
         print("4. UPLOADED DOCUMENTS")
         current_app.logger.info("4. UPLOADED DOCUMENTS")
         send_progress_update(99, "Finishing Up! 💪🦍")
@@ -318,7 +320,7 @@ def process_chrome_extension_embeddings(data,  stream_name):
         print(f'1. PROCESSING REQ IN THREAD: {key}')
         current_app.logger.info(f'1. PROCESSING REQ IN THREAD: {key}')
         send_progress_update(0, 'Surfing the Web! 🍌🦍🌊')
-        documents = get_documents_from_html(html)
+        documents, embeddings = get_documents_from_html(html)
         print('2. PARSED DOCUMENTS')
         current_app.logger.info('2. PARSED DOCUMENTS')
         client = get_client()
@@ -326,7 +328,7 @@ def process_chrome_extension_embeddings(data,  stream_name):
         print(f'3. CREATED CLASS {class_name}')
         send_progress_update(40, "Making Notes! 📝🦍")
         current_app.logger.info(f'3. CREATED CLASS {class_name}')
-        upload_documents_website(documents, client, class_name, send_progress_update)
+        upload_documents_website(documents, embeddings, client, class_name, send_progress_update)
         print("4. UPLOADED DOCUMENTS")
         send_progress_update(99, "Finishing Up! 💪🦍")
         current_app.logger.info("4. UPLOADED DOCUMENTS")
