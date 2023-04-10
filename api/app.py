@@ -8,7 +8,7 @@ import openai
 from api.embeddings.main_view import embeddings_bp
 from api.summary import get_summary, get_summary_string
 from api.utils.utils import require_api_key, get_mongo_client, update_mongo_summary, update_mongo_progress, send_notification_to_client
-from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_pdf_class
+from api.weaviate_embeddings import get_documents, upload_documents_pdf, get_client, create_pdf_class, string_to_embedding
 from api.utils.aws import get_pdf
 from api.embeddings.youtubeToEmbeddings import process_mp4_embeddings
 from api.socket_helper import send_update
@@ -86,6 +86,15 @@ def index():
 @app.route("/webook")
 def webhook_testing():
     return "test";
+
+@app.route("/query_to_embedding", methods=["POST"])
+@require_api_key
+def generate_embedding():
+    data = request.json
+    query = data['query']
+    embedding = string_to_embedding(query)
+    print("sent")
+    return jsonify({"embedding": embedding})
 
 @app.route("/lambda_notification", methods=["POST"])
 @require_api_key
@@ -179,38 +188,6 @@ def process_summary_pdf(data,stream_name):
         logger.info(f'Error:{e}')
         logger.removeHandler(new_handler)
         raise e
-
-# def process_video(data):
-#     @copy_current_request_context
-#     def run_in_context(data, function, socketio_instance, stream_name):
-#         function(data, socketio_instance, stream_name)
-
-#     stream_name = f'stream-name-video-embeddings-{str(uuid4())}'
-#     thread_embeddings = threading.Thread(target=run_in_context, args=(data, process_mp4_embeddings, socketio, stream_name))
-#     thread_thumbnails = threading.Thread(target=run_in_context, args=(data, create_video_thumbnail, socketio, stream_name))
-
-#     thread_embeddings.start()
-#     thread_thumbnails.start()
-
-# def create_video_thumbnail(data, socketio_instance, stream_name):
-#     try:
-#         bucket = data['bucket']
-#         key = data['key']
-#         user_id = data['user_id']
-
-#         clip = VideoFileClip("my_video.mp4")
-
-#         # Get a frame from the start of the video
-#         thumbnail = clip.get_frame(0)
-
-#         # Save the thumbnail image
-#         thumbnail_path = "my_video_thumbnail.jpg"
-#         with open(thumbnail_path, "wb") as f:
-#             f.write(thumbnail)
-
-#         # send_update(socketio_instance, user_id, key,  {'key': 'isReady', 'value': True})
-#     except Exception as e:
-#         print(e)
 
 def process_pdf_embeddings(data):
     try:

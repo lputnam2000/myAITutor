@@ -74,10 +74,17 @@ def get_text_from_html(html):
 
 
 def get_documents_from_url(url:str):
+    def add_embeddings_to_formatted_text(document, embedding):
+        document['embedding'] = embedding
+        return document
     textExtractor = WebsiteTextExtracter()
     extracted_text = textExtractor.extract_formatted_text_from_url(url)
     formatted_documents = extracted_text.split("\n\n")
-    return formatted_documents
+    clean_text_to_embed = clean_text([dic['text'] for dic in formatted_documents])
+    embeddings = sentences_to_embeddings(clean_text_to_embed)
+    final_data = [add_embeddings_to_formatted_text(document, embedding) for (document, embedding) in zip(format_text_for_documents, embeddings)]
+    return final_data
+    # return formatted_documents
 
 def get_documents_from_html(html):
     textExtractor = WebsiteTextExtracter()
