@@ -1,6 +1,7 @@
 import React, {useContext, useState, useCallback, useMemo} from 'react';
 import styled from 'styled-components';
 import {ViewerContext} from "./context";
+import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 
 
 const Wrapper = styled.div`
@@ -96,12 +97,60 @@ const IndexTag = ({context, index}) => {
     </IndexTagContainer>
 }
 
+const ParagraphContainer = styled.div`
+  max-width: 600px;
+  margin: 0 auto;
+`;
+
+const ParagraphText = styled.p`
+  overflow: hidden;
+  position: relative;
+`;
+
+const ExpandArrow = styled.button`
+  background: transparent;
+  border: none;
+  margin-top: 10px;
+  height: 30px;
+  width: 100%;
+  &:hover {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); /* Add box shadow property here */
+  }
+`;
+
+const ParagraphComponent = ({ text }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <ParagraphContainer>
+      <ParagraphText>
+        {expanded ? (
+            <>
+                {text}
+                <ExpandArrow onClick={()=>{setExpanded(false)}}>
+                    <ChevronUpIcon/>
+                </ExpandArrow>
+            </>
+        ) : (
+          <>
+            {text.slice(0, 150)}...{/* Adjust character limit as needed */}
+            <ExpandArrow onClick={()=>{setExpanded(true)}}>
+                <ChevronDownIcon/>
+            </ExpandArrow>
+          </>
+        )}
+      </ParagraphText>
+    </ParagraphContainer>
+  );
+};
+
 
 const Context = ({context, fileType, index}) => {
 
     return <ContextContainer>
         <IndexTag context={context} index={index}/>
-        {context.text}
+        <ParagraphComponent text={context.text}>
+        </ParagraphComponent>
     </ContextContainer>
 }
 
