@@ -234,6 +234,7 @@ def configure_batch(client, batch_size: int, batch_target_rate: int, send_progre
 
 def calculate_increment_value(num_documents):
     num_batches =num_documents/1000 if num_documents%1000 == 0 else (num_documents//1) + 1
+    num_batches = num_batches if num_batches > 0 else 1
     progress_per_batch = 57 / num_batches
     return int(progress_per_batch)
 
