@@ -161,6 +161,7 @@ def get_video_transcript(url, isMP4, send_progress_update):
     print('#Downloading Video')
     videoFile = ''
     if isMP4:
+        print(url)
         send_progress_update(0, 'Watching the Video! ▶️🦍🍌')
 
         # convert to s3
@@ -168,6 +169,8 @@ def get_video_transcript(url, isMP4, send_progress_update):
         video = VideoFileClip(url)
         audio = video.audio
         if audio == None:
+            # delete mp4
+            os.remove(url)
             return []
         audio.write_audiofile(videoFileMP3)
         video.close()
