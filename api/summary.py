@@ -5,6 +5,7 @@ from langchain import PromptTemplate
 import os
 import openai
 import json
+from api.utils.ocr import ocr_the_page, needs_ocr
 
 
 OPEN_AI_KEY = "''"
@@ -127,13 +128,6 @@ def generate_context(summary):
         context_token_count += len(text_split_encodings[i])
         i -= 1
     return final_context
-
-def needs_ocr(extracted_text):
-    total_tokens = 0
-    for _, tuples_list in extracted_text.items():
-        for tup in tuples_list:
-            total_tokens += tup[1]
-    return total_tokens < 100
 
 def get_summary(doc, start_page=6, end_page=8, send_summary_update=lambda x:  None):
     summary = []
