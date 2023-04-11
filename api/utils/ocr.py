@@ -1,6 +1,34 @@
 import fitz
 import ocrmypdf
 import io
+from nltk import tokenize
+
+def needs_ocr(extracted_text):
+    total_tokens = 0
+    for _, tuples_list in extracted_text.items():
+        for tup in tuples_list:
+            total_tokens += tup[1]
+    return total_tokens < 100
+
+def needs_ocr_embeddings(extracted_text):
+    total_tokens = 0
+    for dic in extracted_text:
+        sentence = dic['sentence']
+        total_tokens += len(sentence.split(' '))
+    return total_tokens < 100
+
+def extract_text_ocr(blocks, page_number):
+    to_return = []
+    page_text = ''
+    for block in blocks:
+        if block[6] == 0:
+            text = block[4]
+            text = text.replace('\n', " ")
+            page_text += text        
+    text_split = tokenize.sent_tokenize(page_text)
+    for sentence in text_split:
+        to_return.append({'sentence': sentence, 'page_number': page_number})
+    return to_return
 
 def ocr_the_page(page):
     """Extract the text from passed-in PDF page."""
