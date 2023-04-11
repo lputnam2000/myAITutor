@@ -57,6 +57,13 @@ const TryNowButton = styled.a`
   }
 `;
 
+const InvisibleH1 = styled.h1`
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  overflow: hidden;
+  white-space: nowrap;
+`;
+
 
 export default function Home({}) {
 
@@ -68,11 +75,13 @@ export default function Home({}) {
                 <meta name="description"
                       content="Chimpbase is revolutionizing the way people consume information. Our innovative software extracts key details from large pieces of text, video and PDFs to create smart notes that help users understand and retain information quickly and easily. Join the waitlist today and join the Chimp Squad to simplify your information overload "/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta name="keywords" content="ChIPBase v2.0, ChIPBase, AI Summarizer, AI Summary, Chimpbase, Summarizer, Summary, Semantic Search, PDF Summarizer, Video Summarizer, AI PDF Summarizer, AI Video Summarizer"/>
                 <link rel="icon" href="/svg/bananas.svg"/>
             </Head>
             <Main>
                 <HomeNavbar/>
                 <Container>
+                    <InvisibleH1>ChIPBase</InvisibleH1>
                     <HowItWorks/>
                     <TryNowButton href={'https://www.chimpbase.com/home'}>No cost. No risk. Try it now.</TryNowButton>
                 </Container>
