@@ -9,6 +9,7 @@ import time
 from sentence_transformers import SentenceTransformer
 from nltk.corpus import stopwords
 import numpy as np
+from api.utils.ocr import needs_ocr_embeddings, ocr_the_page, extract_text_ocr
 
 ENCODER = tiktoken.get_encoding("gpt2")
 OPEN_AI_KEY = "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"
@@ -181,6 +182,13 @@ def extract_text(doc):
         for sentence in text_split:
             extracted_text.append({'sentence': sentence, 'page_number': i+1})
     print('FINISHED EXTRACTING TEXT')
+    if needs_ocr_embeddings(extracted_text):
+        extracted_text = []
+        print('OCRing PDF')
+        for i in range(0 , len(doc)):
+            page = doc.load_page(i)
+            extracted_text.extend(extract_text_ocr(ocr_the_page(page), i+1))
+        print('FINISHED OCR EXTRACTION')
     return extracted_text
 
 def add_embeddings_to_formatted_text(document, embedding):
@@ -189,6 +197,7 @@ def add_embeddings_to_formatted_text(document, embedding):
 
 def get_documents(doc):
     extracted_text = extract_text(doc)
+    print(extracted_text)
     format_text_for_documents = format_for_documents(extracted_text)
     clean_text_to_embed = clean_text([dic['text'] for dic in format_text_for_documents])
     embeddings = sentences_to_embeddings(clean_text_to_embed)
