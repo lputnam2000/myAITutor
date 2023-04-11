@@ -132,65 +132,66 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
     const MotionContainer = motion(Container);
 
     return (
-        <MotionContainer
-            onClick={openSummary}
-            exit={exit}
-        >
-            {type === 'pdf' && <ImageContainer>
-                <img src={thumbnail} alt="" onError={(e) => {
-                    e.target.style.display = "none"
-                }}/>
-            </ImageContainer>}
-            {type === 'mp4' && <ImageContainer>
-                <img src={thumbnail} alt="" onError={(e) => {
-                    e.target.style.display = "none"
-                }}/>
-            </ImageContainer>}
-            {type === 'youtube' && <ImageContainer>
-                <img src={thumbnailUrl} alt="" onError={(e) => {
-                    e.target.style.display = "none"
-                }}/>
-            </ImageContainer>}
-            <CardInformation>
-                <CenteredText fileType={type}>{title}</CenteredText>
-                {
-                    progress !== 100 &&
-                    <Progress size='xs' value={progress} colorScheme='green'/>
-                }
-            </CardInformation>
-            <TagList>
-                <TagContainer>
-                    {progress === 100 &&
-                        <IoIosCloudDone size={22}/>
+        <>
+            <MotionContainer
+                onClick={openSummary}
+                exit={exit}
+            >
+                {type === 'pdf' && <ImageContainer>
+                    <img src={thumbnail} alt="" onError={(e) => {
+                        e.target.style.display = "none"
+                    }}/>
+                </ImageContainer>}
+                {type === 'mp4' && <ImageContainer>
+                    <img src={thumbnail} alt="" onError={(e) => {
+                        e.target.style.display = "none"
+                    }}/>
+                </ImageContainer>}
+                {type === 'youtube' && <ImageContainer>
+                    <img src={thumbnailUrl} alt="" onError={(e) => {
+                        e.target.style.display = "none"
+                    }}/>
+                </ImageContainer>}
+                <CardInformation>
+                    <CenteredText fileType={type}>{title}</CenteredText>
+                    {
+                        progress !== 100 &&
+                        <Progress size='xs' value={progress} colorScheme='green'/>
                     }
-                    <Tag>{typeToLabel[type]}</Tag>
+                </CardInformation>
+                <TagList>
+                    <TagContainer>
+                        {progress === 100 &&
+                            <IoIosCloudDone size={22}/>
+                        }
+                        <Tag>{typeToLabel[type]}</Tag>
 
-                </TagContainer>
-                <Menu>
-                    <MenuButton
-                        as={IconButton}
-                        aria-label='Options'
-                        icon={<HiDotsVertical size={17}/>}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                        }}
-                        variant='filled'
-                    />
-                    <MenuList borderColor={'#57657e'} bg='#1c2025'>
-                        <MenuItem bg='#1c2025' icon={<EditIcon/>} onClick={openRenameModal}>
-                            Rename
-                        </MenuItem>
-                        <MenuItem bg='#1c2025' onClick={removeUpload} icon={<DeleteIcon/>}>
-                            Remove
-                        </MenuItem>
-                    </MenuList>
-                </Menu>
-            </TagList>
+                    </TagContainer>
+                    <Menu>
+                        <MenuButton
+                            as={IconButton}
+                            aria-label='Options'
+                            icon={<HiDotsVertical size={17}/>}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                            }}
+                            variant='filled'
+                        />
+                        <MenuList borderColor={'#57657e'} bg='#1c2025'>
+                            <MenuItem bg='#1c2025' icon={<EditIcon/>} onClick={openRenameModal}>
+                                Rename
+                            </MenuItem>
+                            <MenuItem bg='#1c2025' onClick={removeUpload} icon={<DeleteIcon/>}>
+                                Remove
+                            </MenuItem>
+                        </MenuList>
+                    </Menu>
+                </TagList>
+            </MotionContainer>
             <Modal isOpen={isRenameModalOpen} onClose={closeRenameModal}>
                 <ModalOverlay/>
                 <ModalContent backgroundColor='#242933'>
                     <ModalHeader color={'#fff'}>Rename Title</ModalHeader>
-                    <ModalCloseButton/>
                     <ModalBody>
                         <FormControl>
                             <FormLabel color={'#fff'}>New Title</FormLabel>
@@ -210,7 +211,7 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </MotionContainer>
+        </>
     );
 }
 
