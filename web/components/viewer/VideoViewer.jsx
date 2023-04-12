@@ -24,7 +24,7 @@ function VideoViewer() {
         setSummary, setTitle, setFileType, pdfKey,
         setProgress,
         setProgressMessage, setGoToContextVideo,
-        setLiveSummary
+        setLiveSummary, setAnswers
     } = useContext(ViewerContext);
     const playerRef = useRef();
 
@@ -39,10 +39,11 @@ function VideoViewer() {
             setProgress(res.data.documentDetails.progress)
             setProgressMessage(res.data.documentDetails.progressMessage)
             setLiveSummary(res.data.documentDetails.liveSummary)
+            setAnswers(res.data.documentDetails.answers)
         }).catch(err => {
             console.log(err)
         })
-    }, [pdfKey, setFileType, setUrl, setSummary, setTitle, setProgress, setProgressMessage, setLiveSummary])
+    }, [pdfKey, setAnswers, setFileType, setUrl, setSummary, setTitle, setProgress, setProgressMessage, setLiveSummary])
 
 
     useEffect(() => {

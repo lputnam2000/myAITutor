@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components'
 import {FcIdea} from 'react-icons/fc'
 import {
@@ -59,6 +59,7 @@ const GlowIcon = styled(FcIdea)`
   @media (max-width: 500px) {
     font-size: 30px;
   }
+  margin-right: 5px;
 `;
 
 const HelperText = styled.span`
@@ -75,6 +76,22 @@ function FeedbackOverlay(props) {
     const [isSuggestionModalOpen, setIsSuggestionModalOpen] = useState(false);
     const [suggestion, setSuggestion] = useState("");
     const [rating, setRating] = useState(0);
+    const [showOverlay, setShowOverlay] = useState(null);
+
+    useEffect(() => {
+        const shouldShowOverlay = localStorage.getItem('showOverlay');
+        if (shouldShowOverlay === 'false') {
+            setShowOverlay(false);
+        } else {
+            setShowOverlay(true)
+        }
+    }, []);
+
+    const handleHideOverlay = (e) => {
+        e.stopPropagation();
+        localStorage.setItem('showOverlay', false);
+        setShowOverlay(false);
+    };
 
     const closeSuggestionModal = () => {
         setRating(0)
@@ -100,9 +117,29 @@ function FeedbackOverlay(props) {
         // Handle the submission of the suggestion and rating
     };
     return (
-        <Container onClick={(e) => setIsSuggestionModalOpen(true)}>
-            <HelperText>Have suggestions?</HelperText>
-            <GlowIcon/>
+        <>
+            {showOverlay !== null && showOverlay && (
+                <Container onClick={(e) => setIsSuggestionModalOpen(true)}>
+                    <HelperText>Have suggestions?</HelperText>
+                    <GlowIcon/>
+                    <button
+                        style={{
+                            position: 'absolute',
+                            top: '5px',
+                            right: '5px',
+                            backgroundColor: 'transparent',
+                            border: 'none',
+                            color: '#fff',
+                            fontSize: '16px',
+                            cursor: 'pointer',
+                        }}
+                        onClick={handleHideOverlay}
+                    >
+                        x
+                    </button>
+                </Container>
+            )}
+
             <Modal isOpen={isSuggestionModalOpen} onClose={closeSuggestionModal}>
                 <ModalOverlay/>
                 <ModalContent backgroundColor="#242933">
@@ -143,7 +180,7 @@ function FeedbackOverlay(props) {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </Container>
+        </>
     );
 }
 
