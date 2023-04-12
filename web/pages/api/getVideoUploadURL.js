@@ -50,7 +50,8 @@ async function generateRecord(session, fileName) {
                 uploads.insertOne(record),
                 videosCollection.insertOne({
                     _id: uuid, owner, title, progress: 0,
-                    progressMessage: '', summary: [], type: 'mp4'
+                    progressMessage: '', summary: [], type: 'mp4',
+                    answers: []
                 })
             ]);
             await uploads.updateOne(
@@ -70,7 +71,8 @@ async function generateRecord(session, fileName) {
                 }),
                 videosCollection.insertOne({
                     _id: uuid, owner, title, progress: 0,
-                    progressMessage: '', summary: [], type: 'mp4'
+                    progressMessage: '', summary: [], type: 'mp4',
+                    answers: []
                 })
             ]);
         }
