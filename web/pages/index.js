@@ -2,6 +2,7 @@ import Head from 'next/head'
 import styled from 'styled-components'
 import HomeNavbar from "../components/HomeNavbar";
 import HowItWorks from "../components/index/HowItWorks";
+import Footer from '../components/UIComponents/Footer';
 
 
 const Container = styled.div`
@@ -85,6 +86,7 @@ export default function Home({}) {
                     <HowItWorks/>
                     <TryNowButton href={'https://www.chimpbase.com/home'}>No cost. No risk. Try it now.</TryNowButton>
                 </Container>
+                <Footer/>
             </Main>
         </>
     )
