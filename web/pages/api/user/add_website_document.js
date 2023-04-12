@@ -24,7 +24,8 @@ async function generateRecord(session, url) {
                 uploads.insertOne(record),
                 documentsCollection.insertOne({
                     _id: uuid, owner, title, progress: 0,
-                    progressMessage: '', summary: [], type: 'url'
+                    progressMessage: '', summary: [], type: 'url',
+                    answers: []
                 })
             ]);
             await uploads.updateOne(
@@ -50,7 +51,8 @@ async function generateRecord(session, url) {
                     progressMessage: '',
                     summary: [],
                     type: 'url',
-                    url
+                    url,
+                    answers: []
                 }),
             ]);
         }

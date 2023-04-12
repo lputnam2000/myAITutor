@@ -55,7 +55,9 @@ async function generateRecord(session, fileName) {
                     progress: 0,
                     progressMessage: '',
                     summary: [],
-                    type: 'pdf'
+                    type: 'pdf',
+                    answers: []
+
                 })
             ]);
             await uploads.updateOne(
@@ -75,7 +77,8 @@ async function generateRecord(session, fileName) {
                 }),
                 documentsCollection.insertOne({
                     _id: uuid, owner, title, progress: 0,
-                    progressMessage: '', summary: [], type: 'pdf'
+                    progressMessage: '', summary: [], type: 'pdf',
+                    answers: []
                 })
             ]);
         }
