@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import Link from 'next/link'
+
 
 const FooterContainer = styled.footer`
   width: 100%;
@@ -20,7 +22,7 @@ const FooterLinks = styled.ul`
 const FooterLink = styled.li`
   margin: 0 1rem;
   position: relative;
-  
+
   &:before,
   &:after {
     content: '';
@@ -52,13 +54,12 @@ const FooterLink = styled.li`
       opacity: 0.8;
     }
   }
-
-  a {
-    text-decoration: none;
-    color: #fff;
-    font-weight: bold;
-  }
 `;
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+`
 
 const Trademark = styled.div`
   margin: 1rem 0 0 0;
@@ -67,22 +68,22 @@ const Trademark = styled.div`
 `
 
 const Footer = () => {
-  return (
-    <FooterContainer>
-      <FooterLinks>
-        <FooterLink>
-          <a href="https://twitter.com/chimpbase">Twitter</a>
-        </FooterLink>
-        <FooterLink>
-          <a href="https://blog.chimpbase.com">Blog with tutorials</a>
-        </FooterLink>
-        <FooterLink>
-          <a href="/tos">Terms of Service</a>
-        </FooterLink>
-      </FooterLinks>
-      <Trademark>&copy; Chimpbase.com - All rights reserved.</Trademark>
-    </FooterContainer>
-  );
+    return (
+        <FooterContainer>
+            <FooterLinks>
+                <FooterLink>
+                    <StyledLink href="https://twitter.com/chimpbase">Twitter</StyledLink>
+                </FooterLink>
+                <FooterLink>
+                    <StyledLink href="https://blog.chimpbase.com">Blog with tutorials</StyledLink>
+                </FooterLink>
+                <FooterLink>
+                    <StyledLink href="/tos">Terms of Service</StyledLink>
+                </FooterLink>
+            </FooterLinks>
+            <Trademark>&copy; Chimpbase.com - All rights reserved.</Trademark>
+        </FooterContainer>
+    );
 };
 
 export default Footer;
