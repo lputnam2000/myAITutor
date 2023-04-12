@@ -11,14 +11,15 @@ const Container = styled.div`
 `
 const SearchInputContainer = styled.div`
   margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #57657e;
 `
 const SearchButton = styled.button`
   background-color: ${({isSearchDisabled, theme}) => isSearchDisabled ? 'gray' : theme.colors.secondary};
   cursor: ${({isSearchDisabled, theme}) => isSearchDisabled ? 'not-allowed' : 'pointer'};
   color: white;
-  padding: 5px 10px;
+  padding: 4px 9px;
   border-radius: 4px;
-  margin-top: 10px;
 
   &:focus {
     background-color: #464846;
@@ -48,6 +49,22 @@ const demoSearch = new Set([
     '136fe416-d18f-4051-9d5c-c2692fdcd50f'
 ])
 
+const SearchWithTags = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  gap: 10px;
+`
+
+const QuestionTypeTag = styled.button`
+  background-color: ${(props) => props.isSelected ? '#90f58d' : '#f58dc5'};
+  padding: 2px 10px;
+  border-radius: 20px;
+  color: #242933;
+  transition: background-color 400ms ease;
+  height: min-content;
+`
+
 
 function SemanticSearch({uploadId}) {
     const {isReady, fileType} = useContext(ViewerContext);
@@ -55,6 +72,8 @@ function SemanticSearch({uploadId}) {
     const [answers, setAnswers] = useState([]);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false)
     const [searchLoading, setSearchLoading] = useState(false)
+    const [questionTagSelected, setQuestionTagSelected] = useState('q&a');
+    const [textAreaPlaceholder, setTextAreaPlaceholder] = useState('Ask a Question ...');
     const updateSearches = (inputQuery, inputResults) => {
         if (!inputResults || !inputQuery) {
             return
@@ -68,7 +87,7 @@ function SemanticSearch({uploadId}) {
     }
 
     const searchAnswer = async () => {
-        let params = {'key': uploadId, query: searchQuery, fileType: fileType}
+        let params = {'key': uploadId, query: searchQuery, fileType: fileType, questionTagSelected}
         let result;
         setIsSearchDisabled(true)
         await axios.get('/api/user/get_search', {params: params}).then(res => {
@@ -79,20 +98,45 @@ function SemanticSearch({uploadId}) {
         })
         return result
     }
+
+    const updateQuestionTag = (tag) => {
+        setQuestionTagSelected(tag)
+        if (tag === 'q&a') {
+            setTextAreaPlaceholder('Ask a Question')
+        } else if (tag === 'learn') {
+            setTextAreaPlaceholder('What do you want to learn today')
+        }
+    }
+
+
     return (
         <Container>
             {searchLoading ? <LoadingSpinner><Spinner size="xl" color="blue.500"/></LoadingSpinner> :
                 <SearchInputContainer>
                     <Textarea style={{borderColor: '#57657e'}} value={searchQuery}
+                              noOfLines={1}
                               onChange={(e) => setSearchQuery(e.target.value)}
-                              placeholder='Ask a Question'/>
-                    <SearchButton
-                        isSearchDisabled={isSearchDisabled && !demoSearch.has(uploadId)}
-                        onClick={async (e) => {
-                            setSearchLoading(true);
-                            updateSearches(searchQuery, await searchAnswer(e));
-                            setSearchLoading(false)
-                        }}>Search</SearchButton>
+                              placeholder={textAreaPlaceholder}
+                    />
+                    <SearchWithTags>
+                        <SearchButton
+                            isSearchDisabled={isSearchDisabled && !demoSearch.has(uploadId)}
+                            onClick={async (e) => {
+                                setSearchLoading(true);
+                                updateSearches(searchQuery, await searchAnswer(e));
+                                setSearchLoading(false)
+                            }}>Search
+                        </SearchButton>
+                        <QuestionTypeTag onClick={() => updateQuestionTag('q&a')}
+                                         isSelected={questionTagSelected === 'q&a'}>
+                            Q & A
+                        </QuestionTypeTag>
+                        <QuestionTypeTag onClick={() => updateQuestionTag('learn')}
+                                         isSelected={questionTagSelected === 'learn'}>
+                            Learn
+                        </QuestionTypeTag>
+                    </SearchWithTags>
+
                 </SearchInputContainer>}
             <PreviousSearches>
 

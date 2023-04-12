@@ -100,6 +100,8 @@ const requestHandler = async (req, res) => {
         if (fileType === 'mp4' || fileType === 'youtube') {
             properties.push('start_time')
             properties.push('end_time')
+        } else if (fileType === 'pdf') {
+            properties.push('start_page')
         }
 
         // const embedding = await fetch(process.env.BACKEND_URL + '/query_to_embedding', {

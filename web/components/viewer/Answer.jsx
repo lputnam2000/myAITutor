@@ -1,8 +1,8 @@
 import React, {useContext, useState, useCallback, useMemo} from 'react';
 import styled from 'styled-components';
 import {ViewerContext} from "./context";
-import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
-
+import {ChevronUpIcon, ChevronDownIcon} from "@chakra-ui/icons";
+import Image from 'next/image'
 
 const Wrapper = styled.div`
   display: flex;
@@ -17,17 +17,27 @@ const Wrapper = styled.div`
 `;
 
 const Question = styled.div`
-  font-weight: bold;
-  font-size: 20px;
-  color: #ffdb58;
-  margin-bottom: 0.5rem;
+  font-size: 16px;
+  color: #000;
+  border-radius: 5px;
+  padding: 5px;
+  font-weight: 500;
+  background-color: #9aa9f3;
 `;
 
 const Answer = styled.div`
-  margin-bottom: 1rem;
-  padding: 5px 5px 5px 5px;
+  border-radius: 5px;
+  color: #000;
+  background-color: #b69dfa;
+  padding: 5px;
+
 `;
 
+const MonkeyProfileImage = styled(Image)`
+  float: left;
+  margin-right: 5px;
+  border: 2px solid black;
+`
 const ContextWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -92,7 +102,7 @@ const IndexTag = ({context, index}) => {
     const {goToContext, fileType} = useContext(ViewerContext);
     return <IndexTagContainer onClick={() => goToContext(context)}>
         {(fileType == 'mp4' || fileType == 'youtube') ? formatSeconds(context.start_time)
-            : `${index}`
+            : `[Page: ${context.start_page}]`
         }
     </IndexTagContainer>
 }
@@ -113,35 +123,40 @@ const ExpandArrow = styled.button`
   margin-top: 10px;
   height: 30px;
   width: 100%;
+
   &:hover {
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); /* Add box shadow property here */
   }
 `;
 
-const ParagraphComponent = ({ text }) => {
-  const [expanded, setExpanded] = useState(false);
+const ParagraphComponent = ({text}) => {
+    const [expanded, setExpanded] = useState(false);
 
-  return (
-    <ParagraphContainer>
-      <ParagraphText>
-        {expanded ? (
-            <>
-                {text}
-                <ExpandArrow onClick={()=>{setExpanded(false)}}>
-                    <ChevronUpIcon/>
-                </ExpandArrow>
-            </>
-        ) : (
-          <>
-            {text.slice(0, 150)}...{/* Adjust character limit as needed */}
-            <ExpandArrow onClick={()=>{setExpanded(true)}}>
-                <ChevronDownIcon/>
-            </ExpandArrow>
-          </>
-        )}
-      </ParagraphText>
-    </ParagraphContainer>
-  );
+    return (
+        <ParagraphContainer>
+            <ParagraphText>
+                {expanded ? (
+                    <>
+                        {text}
+                        <ExpandArrow onClick={() => {
+                            setExpanded(false)
+                        }}>
+                            <ChevronUpIcon/>
+                        </ExpandArrow>
+                    </>
+                ) : (
+                    <>
+                        {text.slice(0, 150)}...{/* Adjust character limit as needed */}
+                        <ExpandArrow onClick={() => {
+                            setExpanded(true)
+                        }}>
+                            <ChevronDownIcon/>
+                        </ExpandArrow>
+                    </>
+                )}
+            </ParagraphText>
+        </ParagraphContainer>
+    );
 };
 
 
@@ -179,7 +194,7 @@ export default function AnswerBox({question, answer, contexts, fileType}) {
         setShowContexts(!showContexts);
     };
 
-    const renderedAnswer = (answer, contexts) => {
+    const renderedAnswer = useCallback((answer, contexts) => {
         console.log(answer)
         console.log(contexts)
         const numberRegex = /\{(\d+)\}/g;
@@ -198,13 +213,15 @@ export default function AnswerBox({question, answer, contexts, fileType}) {
             }
             return part;
         });
-    }
+    }, [])
 
 
     return (
         <Wrapper>
             <Question>{question}</Question>
-            <Answer>{renderedAnswer(answer, contexts)}
+            <Answer><MonkeyProfileImage src={'/monkeyProfile.png'} height={40}
+                                        width={40}/>
+                {renderedAnswer(answer, contexts)}
             </Answer>
             <ExpandButton onClick={toggleContexts}>
                 {showContexts ? 'Hide Contexts Used' : 'Show Contexts Used'}
