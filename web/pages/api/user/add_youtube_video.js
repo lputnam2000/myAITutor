@@ -30,7 +30,9 @@ async function generateRecord(session, url, title) {
                     summary: [],
                     type: 'youtube',
                     transcript: [],
-                    url
+                    url,
+                    answers: []
+
                 })
             ]);
             await uploads.updateOne(
@@ -56,7 +58,9 @@ async function generateRecord(session, url, title) {
                     summary: [],
                     type: 'youtube',
                     transcript: [],
-                    url
+                    url,
+                    answers: []
+
                 })
             ]);
         }
