@@ -8,22 +8,38 @@ const addSuggestion = async (req, res) => {
 
     if (req.method === "POST") {
         if (session) {
-            const {question, answer, questionType, additionalQuestions} = req.body;
+            const {answer, contexts, questionTagSelected, query, fileType, key} = req.body
+
+            let documentCollection = 'SummaryDocuments'
+            if (fileType === 'youtube') {
+                documentCollection = 'SummaryYoutube'
+            } else if (fileType === 'url') {
+                documentCollection = 'SummaryWebsites'
+            } else if (fileType === 'mp4') {
+                documentCollection = 'SummaryVideos'
+            }
 
             try {
                 const client = await clientPromise;
                 const db = client.db("data");
+                const collection = db.collection(documentCollection);
 
-                const newSuggestion = {
-                    'userId': session.user.id,
-                    'rating': rating,
-                    'suggestion': suggestion
+                const newAnswer = {
+                    answer, contexts, questionTagSelected, query
                 }
-                await suggestionsCollection.insertOne(newSuggestion);
-                console.log("Suggestion added successfully");
-                res.status(200).json({message: "Suggestion added successfully"});
+                const filter = {_id: key}
+                const updateResult = await collection.updateOne(filter, {
+                    $push: {
+                        answers: {
+                            $each: [newAnswer],
+                            $position: 0,
+                        },
+                    },
+                });
+                console.log('Updated document count:', updateResult.modifiedCount);
+                res.status(200).json({message: "Updated answers"});
             } catch (e) {
-                console.log("Failed to add suggestion");
+                console.log("Failed to add answer");
                 res.status(500).json({error: e});
                 console.error(e);
             }

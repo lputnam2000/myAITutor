@@ -88,7 +88,7 @@ function formatSeconds(seconds) {
 
 const requestHandler = async (req, res) => {
     if (req.method === "GET") {
-        const {query, key, fileType} = req.query
+        const {query, key, fileType, questionTagSelected} = req.query
         console.log(key)
         let searchText = String(query);
         if (!searchText) {
@@ -104,24 +104,6 @@ const requestHandler = async (req, res) => {
             properties.push('start_page')
         }
 
-        // const embedding = await fetch(process.env.BACKEND_URL + '/query_to_embedding', {
-        //     method: 'POST',
-        //     body: JSON.stringify({
-        //         query: searchText
-        //     }),
-        //     headers: {
-        //         'X-API-Key': process.env.CB_API_SECRET,
-        //         'Content-Type': 'application/json'
-        //     }
-        // }).then(response => response.json()) // Parse the JSON response
-        // .then(data => {
-        //     const embeddingString = data.embedding; // Extract the `embedding` value from the response
-        //     const embeddingArray = Array.from(embeddingString) // Parse the embedding string to an array
-        // })
-        // .catch(error => {
-        //   console.error('API request error:', error);
-        // });
-        // console.log(embeddingArray)
         const embedding = await getEmbedding(searchText);
         let weaviateRes = await client.graphql
             .get()
@@ -137,16 +119,20 @@ const requestHandler = async (req, res) => {
         let prompt = "Context: "
         for (let i = 0; i < matchingText.length; i++) {
             let index = i + 1
-            // if (fileType === 'mp4' || fileType === 'youtube') {
-            //     index = formatSeconds(matchingText[i].start_time)
-            // }
             prompt += '\n[' + index + '] ' + matchingText[i].text + '\n';
         }
         console.log(prompt)
         prompt += `Question: ${query}` + "\nAnswer:\n"
         getChatGPTAnswer(prompt, fileType).then(answer => {
             console.log(answer)
-            return res.status(200).json({'answer': answer, 'contexts': matchingText})
+            return res.status(200).json({
+                'answer': answer,
+                'contexts': matchingText,
+                questionTagSelected,
+                query,
+                fileType,
+                key,
+            })
         })
 
         // return res.status(200).json({s3Url: ''})

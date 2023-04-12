@@ -36,7 +36,8 @@ function YoutubeViewer() {
         setFileType,
         pdfKey,
         setGoToContextYoutube,
-        setLiveSummary
+        setLiveSummary,
+        setAnswers
     } = useContext(ViewerContext);
     const playerRef = useRef();
 
@@ -51,12 +52,12 @@ function YoutubeViewer() {
             setProgress(res.data.documentDetails.progress)
             setProgressMessage(res.data.documentDetails.progressMessage)
             setLiveSummary(res.data.documentDetails.liveSummary)
-
+            setAnswers(res.data.documentDetails.answers)
         }).catch(err => {
             console.log(err)
         })
 
-    }, [setSummary, setLiveSummary, setTitle, setFileType, pdfKey, setProgress, setProgressMessage])
+    }, [setSummary, setAnswers, setLiveSummary, setTitle, setFileType, pdfKey, setProgress, setProgressMessage])
 
     useEffect(() => {
         if (playerRef.current) {

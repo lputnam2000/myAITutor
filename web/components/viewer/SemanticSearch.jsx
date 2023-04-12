@@ -67,9 +67,8 @@ const QuestionTypeTag = styled.button`
 
 
 function SemanticSearch({uploadId}) {
-    const {isReady, fileType} = useContext(ViewerContext);
+    const {isReady, fileType, answers, setAnswers} = useContext(ViewerContext);
     const [searchQuery, setSearchQuery] = useState('');
-    const [answers, setAnswers] = useState([]);
     const [isSearchDisabled, setIsSearchDisabled] = useState(false)
     const [searchLoading, setSearchLoading] = useState(false)
     const [questionTagSelected, setQuestionTagSelected] = useState('q&a');
@@ -86,6 +85,14 @@ function SemanticSearch({uploadId}) {
         setAnswers(oldArray => [newValue, ...oldArray])
     }
 
+    const addAnswerToDb = async (result) => {
+        try {
+            await axios.post('/api/user/add_answer_to_db', result);
+        } catch (err) {
+            console.log('Error in background API call:', err);
+        }
+    };
+
     const searchAnswer = async () => {
         let params = {'key': uploadId, query: searchQuery, fileType: fileType, questionTagSelected}
         let result;
@@ -93,6 +100,7 @@ function SemanticSearch({uploadId}) {
         await axios.get('/api/user/get_search', {params: params}).then(res => {
             result = res.data
             setIsSearchDisabled(false)
+            addAnswerToDb(result)
         }).catch(err => {
             console.log(err)
         })
