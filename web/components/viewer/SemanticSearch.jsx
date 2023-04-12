@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 import styled from 'styled-components'
 import {Textarea} from '@chakra-ui/react'
 import axios from "axios";
@@ -85,27 +85,31 @@ function SemanticSearch({uploadId}) {
         setAnswers(oldArray => [newValue, ...oldArray])
     }
 
-    const addAnswerToDb = async (result) => {
-        try {
-            await axios.post('/api/user/add_answer_to_db', result);
-        } catch (err) {
-            console.log('Error in background API call:', err);
-        }
-    };
+    const addAnswerToDb = useCallback(
+        async (result) => {
+            console.log('RESULTS ARE ', result)
+            try {
+                await axios.post('/api/user/add_answer_to_db', result);
+            } catch (err) {
+                console.log('Error in background API call:', err);
+            }
+        }, []);
 
-    const searchAnswer = async () => {
-        let params = {'key': uploadId, query: searchQuery, fileType: fileType, questionTagSelected}
-        let result;
-        setIsSearchDisabled(true)
-        await axios.get('/api/user/get_search', {params: params}).then(res => {
-            result = res.data
-            setIsSearchDisabled(false)
-            addAnswerToDb(result)
-        }).catch(err => {
-            console.log(err)
-        })
-        return result
-    }
+    const searchAnswer = useCallback(
+        async () => {
+            let params = {'key': uploadId, query: searchQuery, fileType: fileType, questionTagSelected}
+            let result;
+            setIsSearchDisabled(true)
+            await axios.get('/api/user/get_search', {params: params}).then(res => {
+                result = res.data
+                setIsSearchDisabled(false)
+            }).catch(err => {
+                console.log(err)
+            })
+            return result
+        },
+        [uploadId, searchQuery, fileType, questionTagSelected],
+    );
 
     const updateQuestionTag = (tag) => {
         setQuestionTagSelected(tag)
@@ -115,6 +119,17 @@ function SemanticSearch({uploadId}) {
             setTextAreaPlaceholder('What do you want to learn today')
         }
     }
+
+    const onClickSearch = useCallback(
+        async (e) => {
+            setSearchLoading(true);
+            let result = await searchAnswer(e)
+            updateSearches(searchQuery, result);
+            setSearchLoading(false)
+            await addAnswerToDb(result)
+        },
+        [updateSearches, addAnswerToDb, searchAnswer, searchQuery],
+    );
 
 
     return (
@@ -129,11 +144,7 @@ function SemanticSearch({uploadId}) {
                     <SearchWithTags>
                         <SearchButton
                             isSearchDisabled={isSearchDisabled && !demoSearch.has(uploadId)}
-                            onClick={async (e) => {
-                                setSearchLoading(true);
-                                updateSearches(searchQuery, await searchAnswer(e));
-                                setSearchLoading(false)
-                            }}>Search
+                            onClick={onClickSearch}>Search
                         </SearchButton>
                         <QuestionTypeTag onClick={() => updateQuestionTag('q&a')}
                                          isSelected={questionTagSelected === 'q&a'}>

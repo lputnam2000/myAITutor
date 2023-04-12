@@ -72,6 +72,7 @@ const ContextContainer = styled.div`
   @media (max-width: 600px) {
     font-size: 12px;
   }
+  display: flex;
 `;
 
 function formatSeconds(seconds) {
@@ -94,15 +95,17 @@ const IndexTagContainer = styled.span`
   font-size: 14px;
   font-weight: 500;
   border-radius: 6px;
-  padding: 4px;
+  padding: 3px;
   margin: 4px 4px 4px 0px;
+  height: min-content;
 `
 
 const IndexTag = ({context, index}) => {
     const {goToContext, fileType} = useContext(ViewerContext);
+
     return <IndexTagContainer onClick={() => goToContext(context)}>
-        {(fileType == 'mp4' || fileType == 'youtube') ? formatSeconds(context.start_time)
-            : `[Page: ${context.start_page}]`
+        {(fileType === 'mp4' || fileType === 'youtube') ? formatSeconds(context.start_time)
+            : ((fileType === 'pdf') ? `[Page: ${context.start_page}]` : `[${index}]`)
         }
     </IndexTagContainer>
 }

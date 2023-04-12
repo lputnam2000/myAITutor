@@ -2,14 +2,13 @@ import clientPromise from "../../../lib/mongodb";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "/pages/api/auth/[...nextauth]";
 
-const addSuggestion = async (req, res) => {
+const addAnswerToBody = async (req, res) => {
     const session = await getServerSession(req, res, authOptions);
     const body = req.body;
 
     if (req.method === "POST") {
         if (session) {
             const {answer, contexts, questionTagSelected, query, fileType, key} = req.body
-
             let documentCollection = 'SummaryDocuments'
             if (fileType === 'youtube') {
                 documentCollection = 'SummaryYoutube'
@@ -23,11 +22,11 @@ const addSuggestion = async (req, res) => {
                 const client = await clientPromise;
                 const db = client.db("data");
                 const collection = db.collection(documentCollection);
-
                 const newAnswer = {
                     answer, contexts, questionTagSelected, query
                 }
-                const filter = {_id: key}
+                const filter = {'_id': key}
+
                 const updateResult = await collection.updateOne(filter, {
                     $push: {
                         answers: {
@@ -36,6 +35,7 @@ const addSuggestion = async (req, res) => {
                         },
                     },
                 });
+
                 console.log('Updated document count:', updateResult.modifiedCount);
                 res.status(200).json({message: "Updated answers"});
             } catch (e) {
@@ -52,4 +52,4 @@ const addSuggestion = async (req, res) => {
     }
 };
 
-export default addSuggestion;
+export default addAnswerToBody;
