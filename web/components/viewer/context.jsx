@@ -15,6 +15,7 @@ function ViewerContextProvider({children}) {
     const [fileType, setFileType] = useState('');
     const [isWebsiteReady, setIsWebsiteReady] = useState(false);
     const [progress, setProgress] = useState(0);
+    const [answers, setAnswers] = useState([]);
     const [progressMessage, setProgressMessage] = useState('');
 
     const {socket} = useContext(WebsocketContext);
@@ -79,6 +80,8 @@ function ViewerContextProvider({children}) {
 
     return (
         <ViewerContext.Provider value={{
+            answers,
+            setAnswers,
             numPages,
             setNumPages,
             pdfKey,

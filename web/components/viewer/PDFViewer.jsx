@@ -55,7 +55,8 @@ function PdfViewer() {
         setFileType,
         setProgress,
         setLiveSummary,
-        setProgressMessage
+        setProgressMessage,
+        setAnswers
     } = useContext(ViewerContext);
 
     useEffect(() => {
@@ -70,11 +71,13 @@ function PdfViewer() {
             setProgress(res.data.documentDetails.progress)
             setProgressMessage(res.data.documentDetails.progressMessage)
             setLiveSummary(res.data.documentDetails.liveSummary)
+            setAnswers(res.data.documentDetails.answers)
+
         }).catch(err => {
             console.log(err)
         })
 
-    }, [pdfKey, setLiveSummary, setPdfFile, setSummary, setTitle, setFileType, setProgress, setProgressMessage])
+    }, [pdfKey, setAnswers, setLiveSummary, setPdfFile, setSummary, setTitle, setFileType, setProgress, setProgressMessage])
 
 
     const transformToolbar = (slot) => ({

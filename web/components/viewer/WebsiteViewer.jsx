@@ -110,7 +110,8 @@ function WebsiteViewer() {
         setProgress,
         setProgressMessage,
         isWebsiteReady,
-        setLiveSummary
+        setLiveSummary,
+        setAnswers
     } = useContext(ViewerContext);
 
     useEffect(() => {
@@ -125,11 +126,11 @@ function WebsiteViewer() {
             setProgress(res.data.documentDetails.progress)
             setProgressMessage(res.data.documentDetails.progressMessage)
             setLiveSummary(res.data.documentDetails.liveSummary)
-
+            setAnswers(res.data.documentDetails.answers)
         }).catch(err => {
             console.log(err)
         })
-    }, [pdfKey, setSummary, setLiveSummary, setTitle, setFileType, setMarkdown, setIsWebsiteReady, setProgress, setProgressMessage])
+    }, [pdfKey, setAnswers, setSummary, setLiveSummary, setTitle, setFileType, setMarkdown, setIsWebsiteReady, setProgress, setProgressMessage])
     return (
         <MarkdownWrapper>
             <ContentWrapper>
