@@ -65,6 +65,7 @@ const getRelatedTopics = async (topic) => {
                     {
                         "role": "system",
                         "content": "Please provide three related concepts that will help someone learn more about the given topic. If the topic is invalid or inappropriate. Return just an empty list. Represent the list of concepts in the following format: \n" +
+
                             "[\"first concept\", \"second concept\", \"third concept\"]"
                     },
                     {"role": "user", "content": prompt}
