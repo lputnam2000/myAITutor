@@ -64,7 +64,8 @@ const getRelatedTopics = async (topic) => {
                 messages: [
                     {
                         "role": "system",
-                        "content": "Please provide three related concepts that will help someone learn everything about the given topic. If the topic is invalid or inappropriate. Return just an empty list. Represent the list of concepts in the following format: \n" +
+                        "content": "Please provide three related concepts that will help someone learn more about the given topic. If the topic is invalid or inappropriate. Return just an empty list. Represent the list of concepts in the following format: \n" +
+
                             "[\"first concept\", \"second concept\", \"third concept\"]"
                     },
                     {"role": "user", "content": prompt}
@@ -73,7 +74,10 @@ const getRelatedTopics = async (topic) => {
             }
         )
         let output = '[' + response.data.choices[0]['message']['content']
-        return JSON.parse(output);
+        let parsedOutput = JSON.parse(output);
+        if (parsedOutput.length === 0) {
+            return [topic]
+        }
     } catch (error) {
         console.log(error);
         return [topic];
@@ -88,10 +92,10 @@ async function getChatGPTLearn(topic, fileType, key) {
         contextStyle = 'from the transcripts of a video'
     }
     let relatedTopics = await getRelatedTopics(topic)
+    console.log(relatedTopics)
     const results = await Promise.all(
         relatedTopics.map(concept => getEmbeddingContext(concept, key, fileType))
     );
-    console.log(relatedTopics)
     const finalContexts = [];
     const contextTextSet = new Set()
     let indexArray = Array(relatedTopics.length).fill(0); // Initialize an index array to keep track of the current index for each result
@@ -123,6 +127,7 @@ async function getChatGPTLearn(topic, fileType, key) {
         prompt += '\n[' + index + '] ' + finalContexts[i].text + '\n';
     }
     prompt += `Topic The User Wants to Learn about: ${topic}` + "\nExplanation:\n"
+    console.log('Calling GPT for Answer')
     try {
         let response = await openai.createChatCompletion(
             {
