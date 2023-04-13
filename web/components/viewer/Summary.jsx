@@ -150,6 +150,7 @@ function Summary({}) {
                     <TabList height={'35px'}>
                         <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
                         <Tab style={{borderRadius: '0px', fontSize: '14px'}} _selected={{color: 'white', bg: 'black',}}>Professor
+
                             Bananabrains</Tab>
                     </TabList>
 
