@@ -56,7 +56,7 @@ async function getChatGPTAnswer(prompt, fileType) {
 
 const getRelatedTopics = async (topic) => {
     const prompt = `Topic: ${topic}\n Represent the list of related concepts in the following format: 
-[\"first concept\", \"second concept\", \"third concept\", \"fourth concept\"]\n Related Concepts: [`
+[\"first concept\", \"second concept\", \"third concept\"]\n Related Concepts: [`
     try {
         let response = await openai.createChatCompletion(
             {
@@ -64,8 +64,8 @@ const getRelatedTopics = async (topic) => {
                 messages: [
                     {
                         "role": "system",
-                        "content": "Please provide four related concepts that will help someone learn about the given topic. If the topic is invalid or inappropriate. Return just an empty list. Represent the list of concepts in the following format: \n" +
-                            "[\"first concept\", \"second concept\", \"third concept\", \"fourth concept\"]"
+                        "content": "Please provide three related concepts that will help someone learn everything about the given topic. If the topic is invalid or inappropriate. Return just an empty list. Represent the list of concepts in the following format: \n" +
+                            "[\"first concept\", \"second concept\", \"third concept\"]"
                     },
                     {"role": "user", "content": prompt}
                 ],
@@ -96,7 +96,7 @@ async function getChatGPTLearn(topic, fileType, key) {
     const contextTextSet = new Set()
     let indexArray = Array(relatedTopics.length).fill(0); // Initialize an index array to keep track of the current index for each result
 
-    while (finalContexts.length < 4) {
+    while (finalContexts.length < 3) {
         for (let i = 0; i < results.length; i++) {
             const dictionaries = results[i];
             const currentIndex = indexArray[i];
@@ -108,7 +108,7 @@ async function getChatGPTLearn(topic, fileType, key) {
                 if (!contextTextSet.has(text)) {
                     finalContexts.push(dictionaries[currentIndex]);
                     // Break the loop if 4 final contexts are already selected
-                    if (finalContexts.length === 4) {
+                    if (finalContexts.length === 3) {
                         break;
                     }
                 }
@@ -180,7 +180,7 @@ async function getEmbeddingContext(searchText, key, fileType) {
                 vector: embeddingArray
                 // distance: 0.6,
             })
-            .withLimit(4)
+            .withLimit(3)
             .do()
         return weaviateRes.data.Get[className]
     } catch (error) {
