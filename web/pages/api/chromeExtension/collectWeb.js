@@ -51,6 +51,7 @@ async function generateRecord(user_id, html, title) {
                     status: 'Not Ready',
                     summary: [],
                     type: 'url',
+                    answers: [],
                     html
                 })
             ]);
@@ -76,6 +77,7 @@ async function generateRecord(user_id, html, title) {
                     status: 'Not Ready',
                     summary: [],
                     type: 'url',
+                    answers: [],
                     html
                 })
             ]);
