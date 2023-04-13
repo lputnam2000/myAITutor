@@ -76,11 +76,12 @@ const getRelatedTopics = async (topic) => {
         let output = '[' + response.data.choices[0]['message']['content']
         let parsedOutput = JSON.parse(output);
         if (parsedOutput.length === 0) {
-            return [topic]
+            return [topic,]
         }
+        return parsedOutput
     } catch (error) {
         console.log(error);
-        return [topic];
+        return [topic,];
     }
 }
 
