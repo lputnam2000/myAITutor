@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react'
 import {Select, Progress} from '@chakra-ui/react'
 import axios from "axios";
+import { debounce } from 'lodash';
 
 
 const Directions = styled.div`
@@ -71,8 +72,21 @@ const ChromeTag = styled.a`
   color: orange;
 `
 
+function makeFullURL(url) {
+    // Check if the URL already starts with "http://" or "https://"
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      // If so, return the URL with the method
+      return url;
+    } else {
+      // Otherwise, add "http://" to the beginning of the URL and return with the method
+      return "http://" + url;
+    }
+  }
+
 const WebsiteInput = ({url, setUrl}) => {
-    const handleInputChange = (e) => setUrl(e.target.value)
+    const handleInputChange = (e) => {
+        setUrl(e.target.value)
+    }
     return (
         <FormControl>
             <FormLabel>Website URL</FormLabel>
@@ -182,6 +196,7 @@ export default function Upload({handleFile}) {
     const [progress, setProgress] = useState(0);
     const [isSending, setIsSending] = useState(false)
     const [title, setTitle] = useState('');
+    const urlChecker = React.useRef(null)
 
     const sendS3 = async (file, fileType) => {
         if (!file) {
@@ -326,7 +341,9 @@ export default function Upload({handleFile}) {
 
     const uploadDocument = async () => {
         if (fileType === 'url') {
-            axios.post('/api/user/add_website_document', {url,}).then((res) => {
+            let fullURL = makeFullURL(url)
+            console.log(fullURL)
+            axios.post('/api/user/add_website_document', {url:fullURL,}).then((res) => {
                 const {key, fileName} = res.data
                 handleFile(fileName, fileType, key);
                 closeModal()
@@ -364,7 +381,6 @@ export default function Upload({handleFile}) {
             setProgress(0)
         }
     }, [progress])
-
 
     return (<>
         <Modal isOpen={isOpen} onClose={onClose}>
