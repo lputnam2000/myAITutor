@@ -1,4 +1,4 @@
-from pytube import YouTube
+from pytube import YouTube, extract
 from api.utils.utils import  get_mongo_client, update_mongo_progress
 from .websiteToEmbeddings import get_client, clean_text, sentences_to_embeddings
 from api.weaviate_embeddings import create_youtube_class, upload_documents_youtube
@@ -7,6 +7,9 @@ from moviepy.editor import *
 from moviepy.video.io.VideoFileClip import VideoFileClip
 import math
 from pydub import AudioSegment
+from mutagen.mp3 import MP3
+from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api.formatters import SRTFormatter
 from flask import current_app
 import logging
 from watchtower import CloudWatchLogHandler
@@ -74,6 +77,23 @@ def get_weaviate_docs(transcripts):
     final_data = [add_embeddings_to_formatted_text(document, embedding) for (document, embedding) in zip(to_return, embeddings)]
     return final_data
 
+def srt_to_array_youtube(srt_text):
+    srt_array = srt_text.strip().split('\n\n')
+    subtitles = []
+    for s in srt_array:
+        # Split each subtitle into its timecodes and text
+        s_parts = s.split('\n')
+        # Extract start and end timecodes and convert to datetime objects
+        start_time = datetime.strptime(s_parts[1].split(' --> ')[0], '%H:%M:%S,%f')
+        end_time = datetime.strptime(s_parts[1].split(' --> ')[1], '%H:%M:%S,%f')
+        # Calculate start and end times in seconds
+        start_time_seconds = (start_time - datetime(1900, 1, 1)).total_seconds()
+        end_time_seconds = (end_time - datetime(1900, 1, 1)).total_seconds()
+        # Create a dictionary object with start and end times in seconds and text
+        subtitle = {'start': start_time_seconds, 'end': end_time_seconds, 'text': s_parts[2]}
+        subtitles.append(subtitle)
+    return subtitles
+
 def srt_to_array(arrays_of_srt_text):
     # Split the SRT text into an array of subtitles
     subtitles = []
@@ -115,7 +135,7 @@ def batch_transcribe_file(model_id, path):
 
 def transcribe_file(model_id, segment_info):
     i, segment, path = segment_info
-    segment_path = f"{path}_{i}.mp3"
+    segment_path = f"{path}_{i}.mp3" #TODO: change to uuid
     with open(segment_path, 'wb') as f:
         segment.export(f, format="mp3", tags={"timecode": str(i*CHUNKS_SIZE)})
 
@@ -147,6 +167,10 @@ def download_video(vidLink):
     except Exception as e:
         print(e)
         return "vid not available"
+    
+    if (vidObj.length / 3600) > 1:
+        return "too long"
+
     vidStreams = vidObj.streams.filter(only_audio=True)[0]
     if not vidStreams:
         return "no streams availables"   
@@ -156,6 +180,21 @@ def download_video(vidLink):
     newFile = file_name + '.mp3'
     os.rename(outFile, newFile)
     return newFile
+
+def use_youtube_captions(url):
+    print("HERE")
+    video_id = extract.video_id(url)
+    # Try to find english transcript otherwise translate first transcript to english
+
+    transcript_list = YouTubeTranscriptApi.list_transcripts(video_id) 
+    transcript = transcript_list.find_transcript(['en']).fetch()
+    formatter = SRTFormatter()
+    srt_captions = formatter.format_transcript(transcript)
+    formatted_subtitles = srt_to_array_youtube(srt_captions)
+    print(formatted_subtitles)
+    import pdb
+    pdb.set_trace()
+    return formatted_subtitles
 
 def get_video_transcript(url, isMP4, send_progress_update):
     print('#Downloading Video')
@@ -182,6 +221,8 @@ def get_video_transcript(url, isMP4, send_progress_update):
     else:
         send_progress_update(0, 'Browsing Youtube! ▶️🦍🍌')
         videoFile = download_video(url)
+        if videoFile == 'too long':
+            return use_youtube_captions(url)
     print('#Video Downloaded')
     send_progress_update(15, 'Translating hooman-speak to prime chimp-lingo! 👫➡️🦍')
     transcripts = batch_transcribe_file(WHISPER_MODEL_NAME, videoFile)
