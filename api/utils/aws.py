@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import fitz
 import io
+import uuid
 from PIL import Image
 load_dotenv()
 
@@ -17,9 +18,10 @@ def get_s3_client():
         region_name=os.getenv('CB_AWS_REGION'))
 
 def get_video_file(bucket, key):
+    file_name = uuid.uuid4().__str__()
     s3 = get_s3_client()
-    s3.download_file(bucket, key, f'{key}.mp4')
-    return f'{key}.mp4'
+    s3.download_file(bucket, key, f'{file_name}.mp4')
+    return f'{file_name}.mp4'
 
 def upload_video_thumbnail(thumbnail, key):
     bucket_name_imgs = "videouploads-thumbnails"

@@ -135,7 +135,8 @@ def batch_transcribe_file(model_id, path):
 
 def transcribe_file(model_id, segment_info):
     i, segment, path = segment_info
-    segment_path = f"{path}_{i}.mp3" #TODO: change to uuid
+    # segment_path = f"{path}_{i}.mp3" #TODO: change to uuid
+    segment_path = f"{uuid.uuid4().__str__()}.mp3"
     with open(segment_path, 'wb') as f:
         segment.export(f, format="mp3", tags={"timecode": str(i*CHUNKS_SIZE)})
 
@@ -167,7 +168,7 @@ def download_video(vidLink):
     except Exception as e:
         print(e)
         return "vid not available"
-    
+
     if (vidObj.length / 3600) > 1:
         return "too long"
 
@@ -203,11 +204,11 @@ def get_video_transcript(url, isMP4, send_progress_update):
     print('#Downloading Video')
     videoFile = ''
     if isMP4:
-        print(url)
+        print("MP4 Video Already Downloaded")
         send_progress_update(0, 'Watching the Video! ▶️🦍🍌')
 
         # convert to s3
-        videoFileMP3 = f'{url}.mp3'
+        videoFileMP3 = f'{uuid.uuid4().__str__()}.mp3'
         video = VideoFileClip(url)
         audio = video.audio
         if audio == None:
