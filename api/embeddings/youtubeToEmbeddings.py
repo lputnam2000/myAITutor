@@ -182,18 +182,21 @@ def download_video(vidLink):
     return newFile
 
 def use_youtube_captions(url):
-    print("HERE")
+    print("Using Youtube Captions")
     video_id = extract.video_id(url)
     # Try to find english transcript otherwise translate first transcript to english
 
     transcript_list = YouTubeTranscriptApi.list_transcripts(video_id) 
-    transcript = transcript_list.find_transcript(['en']).fetch()
+    transcript = None
+    try:
+        transcript = transcript_list.find_transcript(['en']).fetch()
+    except Exception as e:
+        # If no english transcript just translate the first available transcript into english
+        for scripts in transcript_list:
+            transcript = scripts.translate('en').fetch()
     formatter = SRTFormatter()
     srt_captions = formatter.format_transcript(transcript)
     formatted_subtitles = srt_to_array_youtube(srt_captions)
-    print(formatted_subtitles)
-    import pdb
-    pdb.set_trace()
     return formatted_subtitles
 
 def get_video_transcript(url, isMP4, send_progress_update):
