@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import styled, {keyframes, css} from "styled-components";
 import {Progress, Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
-import SemanticSearch from "./SemanticSearch";
+import SemanticSearch from "../search/SemanticSearch";
 import CollapsibleSummary from "./CollapsibleSummary";
 import GenerateSummary from "./GenerateSummary";
 import {ViewerContext} from "./context";
@@ -149,9 +149,8 @@ function Summary({}) {
                 <Tabs height={'100%'} variant='enclosed'>
                     <TabList height={'35px'}>
                         <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
-                        <Tab style={{borderRadius: '0px', fontSize: '14px'}} _selected={{color: 'white', bg: 'black',}}>Professor
-
-                            Bananabrains</Tab>
+                        <Tab style={{borderRadius: '0px', fontSize: '14px'}} _selected={{color: 'white', bg: 'black',}}>AI
+                            Assistant</Tab>
                     </TabList>
 
                     <TabPanels height={'calc(100%-35px)'}>
