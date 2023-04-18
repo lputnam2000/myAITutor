@@ -119,7 +119,7 @@ def srt_to_array(arrays_of_srt_text):
 
 def batch_transcribe_file(model_id, path):
     # Split audio file into chunks
-    print(path)
+    print("Using Whisper")
     audio = AudioSegment.from_file(path)
     segments = []
     for i in range(0, len(audio), CHUNKS_SIZE):
@@ -169,7 +169,12 @@ def download_video(vidLink):
         print(e)
         return "vid not available"
 
-    if (vidObj.length / 3600) > 1:
+    try:
+        video_length = vidObj.length
+        if (video_length / 3600) > 1:
+            return "too long"
+    except Exception as e:
+        print ("Pytube Failed getting Video Length")
         return "too long"
 
     vidStreams = vidObj.streams.filter(only_audio=True)[0]
