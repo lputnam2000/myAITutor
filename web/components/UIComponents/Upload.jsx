@@ -13,16 +13,20 @@ import {
 } from '@chakra-ui/react'
 import {Select, Progress} from '@chakra-ui/react'
 import axios from "axios";
-import { debounce } from 'lodash';
-
+import {AiOutlinePlus} from 'react-icons/ai'
 
 const Directions = styled.div`
   font-weight: 500;
-  font-size: 20px;
+  font-size: 40px;
   width: 100%;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
-
+const PlusIcon = styled(AiOutlinePlus)`
+  font-size: 80px;
+`
 const Container = styled.div`
   width: 200px;
   height: 225px;
@@ -75,13 +79,13 @@ const ChromeTag = styled.a`
 function makeFullURL(url) {
     // Check if the URL already starts with "http://" or "https://"
     if (url.startsWith("http://") || url.startsWith("https://")) {
-      // If so, return the URL with the method
-      return url;
+        // If so, return the URL with the method
+        return url;
     } else {
-      // Otherwise, add "http://" to the beginning of the URL and return with the method
-      return "http://" + url;
+        // Otherwise, add "http://" to the beginning of the URL and return with the method
+        return "http://" + url;
     }
-  }
+}
 
 const WebsiteInput = ({url, setUrl}) => {
     const handleInputChange = (e) => {
@@ -343,7 +347,7 @@ export default function Upload({handleFile}) {
         if (fileType === 'url') {
             let fullURL = makeFullURL(url)
             console.log(fullURL)
-            axios.post('/api/user/add_website_document', {url:fullURL,}).then((res) => {
+            axios.post('/api/user/add_website_document', {url: fullURL,}).then((res) => {
                 const {key, fileName} = res.data
                 handleFile(fileName, fileType, key);
                 closeModal()
@@ -387,7 +391,7 @@ export default function Upload({handleFile}) {
             <ModalOverlay/>
             <ModalContent color={'white'} bg={'#242933'}
                           sx={{'border': 'solid', 'borderWidth': '2px', 'borderColor': '#57657e'}}>
-                <ModalHeader>Upload To Summarize</ModalHeader>
+                <ModalHeader>New</ModalHeader>
                 <ModalBody>
                     <StyledSelect value={fileType} onChange={handleSelectFileType}
                                   sx={{borderColor: '#57657e', backgroundColor: '#242933'}}
@@ -472,7 +476,9 @@ export default function Upload({handleFile}) {
         </Modal>
 
         <Container onClick={onOpen}>
-            <Directions>Upload to summarize</Directions>
+            <Directions><PlusIcon/><span>
+                Add
+            </span></Directions>
         </Container>
     </>);
 }
