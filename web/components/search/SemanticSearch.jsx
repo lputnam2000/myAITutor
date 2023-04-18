@@ -62,12 +62,11 @@ const SearchWithTags = styled.div`
 `
 
 const QuestionTypeTag = styled.button`
-  background-color: #44b16a;
-  color: black;
+  color: #FFE135;;
+  background-color: black;
   font-family: var(--font-b);
   font-weight: 700;
   letter-spacing: .3px;
-  border: 2px solid #44b16a;
   padding: 2px 15px;
   margin: 0px 10px 0px 0px;
   border-radius: 20px;
@@ -194,7 +193,6 @@ function SemanticSearch({uploadId}) {
 
                 </SearchInputContainer>}
             <PreviousSearches>
-                {console.log(answers)}
                 {answers.map((elem, key) => {
                     return <AnswerBox key={key} question={elem.query} answer={elem.answer} contexts={elem.contexts}
                                       fileType={fileType} answerElem={elem}/>
