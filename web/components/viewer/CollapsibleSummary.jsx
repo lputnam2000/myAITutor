@@ -44,7 +44,7 @@ const CloseBorderContainer = styled.div`
 const CloseBorder = styled.div`
   width: 3px;
   height: 100%;
-  background-color: #48fdce;
+  background-color: #969a96;
 
 `
 
@@ -122,7 +122,7 @@ const MarkdownWrapper = styled.div`
   }
 
   strong {
-    color: #F7D592;
+    color: #ffdb58;
     padding: 1px 4px;
     font-weight: 500;
   }
