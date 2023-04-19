@@ -11,7 +11,7 @@ import {
     ModalFooter,
     Input,
     FormControl,
-    FormLabel, Progress,
+    FormLabel, Progress, Spinner,
 } from "@chakra-ui/react";
 import {HiDotsVertical} from 'react-icons/hi'
 import {useRouter} from "next/router";
@@ -154,15 +154,13 @@ function PdfCard({title, uploadId, thumbnail, type, onRemove, onRename, url = ''
                 </ImageContainer>}
                 <CardInformation>
                     <CenteredText fileType={type}>{title}</CenteredText>
-                    {
-                        progress !== 100 &&
-                        <Progress size='xs' value={progress} colorScheme='green'/>
-                    }
                 </CardInformation>
                 <TagList>
                     <TagContainer>
-                        {progress === 100 &&
-                            <IoIosCloudDone size={22}/>
+                        {
+                            progress !== 100 ?
+                                <Spinner color='#48fdce'/> :
+                                <IoIosCloudDone size={22}/>
                         }
                         <Tag>{typeToLabel[type]}</Tag>
 
