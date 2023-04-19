@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 const Heading = styled.div`
   margin: 0px 5px;
-  color: #ffe135;
+  color: #48fdce;
   font-family: var(--font-b);
   font-weight: 700;
   font-size: 30px;

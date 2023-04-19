@@ -39,7 +39,7 @@ const TitleContainer = styled.h1`
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-  color: #ffe135;
+  color: #48fdce;
   justify-content: space-between;
 `
 
@@ -64,7 +64,7 @@ const ShareButton = styled.button`
   margin-left: 20px;
   padding: 5px;
   border-radius: 3px;
-  background-color: #FFDB58;
+  background-color: #48fdce;
   color: #1c2025;
   transition: box-shadow ease-in-out .1s;
 

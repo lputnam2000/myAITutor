@@ -19,7 +19,7 @@ const SearchInputContainer = styled.div`
 const SearchButton = styled.button`
   background-color: ${({isSearchDisabled, theme}) => isSearchDisabled ? 'gray' : theme.colors.secondary};
   cursor: ${({isSearchDisabled, theme}) => isSearchDisabled ? 'not-allowed' : 'pointer'};
-  color: #ffe135;
+  color: #48fdce;
   padding: 4px 8px;
   margin: 2px 0px 2px 5px;
   border-radius: 4px;
@@ -62,7 +62,7 @@ const SearchWithTags = styled.div`
 `
 
 const QuestionTypeTag = styled.button`
-  color: #FFE135;;
+  color: #48fdce;;
   background-color: black;
   font-family: var(--font-b);
   font-weight: 700;

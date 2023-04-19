@@ -19,7 +19,7 @@ const Container = styled.div`
   transition: box-shadow 0.1s ease-in-out;
 
   &:hover {
-    box-shadow: 5px 5px 0px #ffe135;
+    box-shadow: 5px 5px 0px #48fdce;
   }
 `
 
@@ -148,11 +148,11 @@ function Summary({}) {
 
                 <Tabs height={'100%'} variant='enclosed' isFitted>
                     <TabList height={'35px'} style={{borderBottom: '2px solid  #000'}}>
-                        <Tab style={{color: '#ffe135'}}
-                             _selected={{color: '#ffe135', bg: 'black'}}>AI
+                        <Tab style={{color: '#48fdce'}}
+                             _selected={{color: '#48fdce', bg: 'black'}}>AI
                             Assistant</Tab>
-                        <Tab style={{color: '#ffe135'}}
-                             _selected={{color: '#ffe135', bg: 'black'}}>Summaries</Tab>
+                        <Tab style={{color: '#48fdce'}}
+                             _selected={{color: '#48fdce', bg: 'black'}}>Summaries</Tab>
 
                     </TabList>
 
