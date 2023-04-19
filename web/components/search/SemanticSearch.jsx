@@ -91,16 +91,8 @@ function SemanticSearch({uploadId}) {
     const [searchLoading, setSearchLoading] = useState(false)
     const [questionTagSelected, setQuestionTagSelected] = useState('q&a');
     const [textAreaPlaceholder, setTextAreaPlaceholder] = useState('Ask a Question');
-    const updateSearches = (inputQuery, inputResults) => {
-        if (!inputResults || !inputQuery) {
-            return
-        }
-        let newValue = {
-            query: inputQuery,
-            answer: inputResults.answer,
-            contexts: inputResults.contexts
-        }
-        setAnswers(oldArray => [newValue, ...oldArray])
+    const updateSearches = (inputResults) => {
+        setAnswers(oldArray => [inputResults, ...oldArray])
     }
 
     const addAnswerToDb = useCallback(
@@ -134,7 +126,7 @@ function SemanticSearch({uploadId}) {
         if (tag === 'q&a') {
             setTextAreaPlaceholder('Ask a Question')
         } else if (tag === 'learn') {
-            setTextAreaPlaceholder('What do you want to learn today')
+            setTextAreaPlaceholder('What do you want to learn today?')
         }
     }
 
@@ -142,11 +134,11 @@ function SemanticSearch({uploadId}) {
         async (e) => {
             setSearchLoading(true);
             let result = await searchAnswer(e)
-            updateSearches(searchQuery, result);
+            updateSearches(result);
             setSearchLoading(false)
             await addAnswerToDb(result)
         },
-        [updateSearches, addAnswerToDb, searchAnswer, searchQuery],
+        [updateSearches, addAnswerToDb, searchAnswer],
     );
 
 

@@ -224,7 +224,6 @@ export default function AnswerBox({question, answer, contexts, answerElem}) {
         });
     }, [])
 
-
     return (
         <Wrapper>
             <Question>{tagToLabel[answerElem.questionTagSelected]}:&nbsp;{question}</Question>
