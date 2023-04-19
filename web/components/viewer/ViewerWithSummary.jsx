@@ -39,7 +39,7 @@ const TitleContainer = styled.h1`
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-  color: #48fdce;
+  color: #ffe135;
   justify-content: space-between;
 `
 
