@@ -71,7 +71,7 @@ function PdfViewer() {
             setProgress(res.data.documentDetails.progress)
             setProgressMessage(res.data.documentDetails.progressMessage)
             setLiveSummary(res.data.documentDetails.liveSummary)
-            setAnswers(res.data.documentDetails.answers)
+            setAnswers(res.data.documentDetails.answers || [])
 
         }).catch(err => {
             console.log(err)
