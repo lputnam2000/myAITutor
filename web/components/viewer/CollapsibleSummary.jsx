@@ -106,12 +106,12 @@ function LoadingSpinner() {
 
 const MarkdownWrapper = styled.div`
   position: relative;
-  color: #DADADA;
+  color: #F0EFEF;
   max-width: 100%;
   font-weight: 400;
   border-radius: 4px;
   font-size: 16px;
-  background-color: #29323C;
+  background-color: #000000;
   overflow-wrap: break-word;
   word-wrap: break-word;
 
@@ -120,13 +120,14 @@ const MarkdownWrapper = styled.div`
   }
 
   h1, h2, h3, h4, h5, h6 {
-    color: #C6A9F6;
+    color: #FF7F50;
+    font-weight: bold;
   }
 
   strong {
-    color: #ffdb58;
+    color: #FF7F50;
+    font-weight: bold;
     padding: 1px 4px;
-    font-weight: 500;
   }
 
   code {
@@ -181,7 +182,8 @@ const MarkdownWrapper = styled.div`
       font-size: 20px;
     }
   }
-`;
+`
+
 
 const renderers = {
     inlineMath: ({value}) => <InlineMath math={value}/>,
