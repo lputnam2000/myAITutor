@@ -37,7 +37,7 @@ const NewSummaryButton = styled.button`
   }
 
   align-items: center;
-  background-color: #ffe135;
+  background-color: #48fdce;
   color: #000;
 `
 

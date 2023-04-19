@@ -23,7 +23,7 @@ const Question = styled.div`
   border-radius: 5px;
   padding: 5px;
   font-weight: 600;
-  background-color: #FFE135;
+  background-color: #48fdce;
 `;
 
 const Answer = styled.div`
