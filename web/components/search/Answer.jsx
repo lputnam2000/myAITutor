@@ -105,9 +105,9 @@ const IndexTag = ({context, index}) => {
     const {goToContext, fileType} = useContext(ViewerContext);
 
     return <IndexTagContainer onClick={() => goToContext(context)}>
-        {(fileType === 'mp4' || fileType === 'youtube') ? formatSeconds(context.start_time)
-            : ((fileType === 'pdf') ? `[Page: ${context.start_page}]` : `[${index}]`)
-        }
+        {/*{(fileType === 'mp4' || fileType === 'youtube') ? formatSeconds(context.start_time)*/}
+        {/*    : ((fileType === 'pdf') ? `[Page: ${context.start_page}]` : `[${index}]`)*/}
+        {/*}*/}
     </IndexTagContainer>
 }
 
