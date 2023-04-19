@@ -44,7 +44,7 @@ const CloseBorderContainer = styled.div`
 const CloseBorder = styled.div`
   width: 3px;
   height: 100%;
-  background-color: #48fdce;
+  background-color: #969a96;
 
 `
 
@@ -112,6 +112,8 @@ const MarkdownWrapper = styled.div`
   border-radius: 4px;
   font-size: 16px;
   background-color: #29323C;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 
   h1, h2, h3 {
     font-size: 22px;
@@ -122,7 +124,7 @@ const MarkdownWrapper = styled.div`
   }
 
   strong {
-    color: #F7D592;
+    color: #ffdb58;
     padding: 1px 4px;
     font-weight: 500;
   }
@@ -171,11 +173,9 @@ const MarkdownWrapper = styled.div`
 
   @media (max-width: 900px) {
     padding: 10px;
-    height: 450px;
   }
   @media (max-width: 550px) {
     padding: 10px;
-    height: 300px;
     font-size: 14px;
     h1, h2, h3 {
       font-size: 20px;
