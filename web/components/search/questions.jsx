@@ -3,7 +3,8 @@ import {Textarea} from "@chakra-ui/react";
 import styled from 'styled-components'
 
 const Heading = styled.div`
-  color: white;
+  margin: 0px 5px;
+  color: #ffe135;
   font-family: var(--font-b);
   font-weight: 700;
   font-size: 30px;

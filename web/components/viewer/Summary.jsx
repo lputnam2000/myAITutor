@@ -19,7 +19,7 @@ const Container = styled.div`
   transition: box-shadow 0.1s ease-in-out;
 
   &:hover {
-    box-shadow: 5px 5px 0px #48fdce;
+    box-shadow: 5px 5px 0px #ffe135;
   }
 `
 
@@ -146,14 +146,20 @@ function Summary({}) {
                     <LoadingContainer/>
                 ) :
 
-                <Tabs height={'100%'} variant='enclosed'>
-                    <TabList height={'35px'}>
-                        <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
-                        <Tab style={{borderRadius: '0px', fontSize: '14px'}} _selected={{color: 'white', bg: 'black',}}>AI
+                <Tabs height={'100%'} variant='enclosed' isFitted>
+                    <TabList height={'35px'} style={{borderBottom: '2px solid  #000'}}>
+                        <Tab style={{color: '#ffe135'}}
+                             _selected={{color: '#ffe135', bg: 'black'}}>AI
                             Assistant</Tab>
+                        <Tab style={{color: '#ffe135'}}
+                             _selected={{color: '#ffe135', bg: 'black'}}>Summaries</Tab>
+
                     </TabList>
 
                     <TabPanels height={'calc(100%-35px)'}>
+                        <TabPanel style={{height: '100%', padding: '5px',}}>
+                            <SemanticSearch uploadId={pdfKey}/>
+                        </TabPanel>
                         <TabPanel style={{height: '100%', padding: '0px', marginRight: '10px'}}>
                             <SummaryContainer>
                                 <GenerateSummary/>
@@ -169,9 +175,6 @@ function Summary({}) {
                                 }
                                 {/*{SummaryPanel}*/}
                             </SummaryContainer>
-                        </TabPanel>
-                        <TabPanel style={{height: '100%'}}>
-                            <SemanticSearch uploadId={pdfKey}/>
                         </TabPanel>
                     </TabPanels>
                 </Tabs>

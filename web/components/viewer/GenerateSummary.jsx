@@ -37,8 +37,8 @@ const NewSummaryButton = styled.button`
   }
 
   align-items: center;
-  background-color: ${props => props.theme.colors.pink};
-  color: white;
+  background-color: #ffe135;
+  color: #000;
 `
 
 const OptionsBox = styled.div`
