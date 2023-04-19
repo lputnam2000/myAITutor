@@ -23,6 +23,7 @@ from nltk import tokenize
 from ..socket_helper import send_update
 import multiprocessing
 from functools import partial
+import time
 
 
 """
@@ -119,7 +120,7 @@ def srt_to_array(arrays_of_srt_text):
 
 def batch_transcribe_file(model_id, path):
     # Split audio file into chunks
-    print(path)
+    print("Using Whisper")
     audio = AudioSegment.from_file(path)
     segments = []
     for i in range(0, len(audio), CHUNKS_SIZE):
@@ -135,7 +136,8 @@ def batch_transcribe_file(model_id, path):
 
 def transcribe_file(model_id, segment_info):
     i, segment, path = segment_info
-    segment_path = f"{path}_{i}.mp3" #TODO: change to uuid
+    # segment_path = f"{path}_{i}.mp3" #TODO: change to uuid
+    segment_path = f"{uuid.uuid4().__str__()}.mp3"
     with open(segment_path, 'wb') as f:
         segment.export(f, format="mp3", tags={"timecode": str(i*CHUNKS_SIZE)})
 
@@ -161,25 +163,32 @@ def transcribe_file(model_id, segment_info):
 
 
 def download_video(vidLink):
-    try:
-        vidObj = YouTube(vidLink)
-        vidObj.check_availability()
-    except Exception as e:
-        print(e)
-        return "vid not available"
-    
-    if (vidObj.length / 3600) > 1:
-        return "too long"
+    retry_count = 0
+    while retry_count < 10:
+        try:
+            vidObj = YouTube(vidLink)
+            vidObj.check_availability()
 
-    vidStreams = vidObj.streams.filter(only_audio=True)[0]
-    if not vidStreams:
-        return "no streams availables"   
-    file_name = uuid.uuid4().__str__()
-    outFile = vidStreams.download(output_path='audio')
-    base, ext = os.path.splitext(outFile)
-    newFile = file_name + '.mp3'
-    os.rename(outFile, newFile)
-    return newFile
+            video_length = vidObj.length
+            if (video_length / 3600) > 1:
+                return "too long"
+
+            vidStreams = vidObj.streams.filter(only_audio=True)[0]
+            if not vidStreams:
+                return "no streams availables"   
+
+            file_name = uuid.uuid4().__str__()
+            outFile = vidStreams.download(output_path='audio')
+            base, ext = os.path.splitext(outFile)
+            newFile = file_name + '.mp3'
+            os.rename(outFile, newFile)
+            return newFile
+        except Exception as e:
+            print(e)
+            retry_count += 1
+            print(f"Failed to download video, retrying in 0.01 seconds (attempt {retry_count})")
+            time.sleep(0.01)
+    return "Failed to download video after 10 attempts"
 
 def use_youtube_captions(url):
     print("Using Youtube Captions")
@@ -203,11 +212,11 @@ def get_video_transcript(url, isMP4, send_progress_update):
     print('#Downloading Video')
     videoFile = ''
     if isMP4:
-        print(url)
+        print("MP4 Video Already Downloaded")
         send_progress_update(0, 'Watching the Video! ▶️🦍🍌')
 
         # convert to s3
-        videoFileMP3 = f'{url}.mp3'
+        videoFileMP3 = f'{uuid.uuid4().__str__()}.mp3'
         video = VideoFileClip(url)
         audio = video.audio
         if audio == None:

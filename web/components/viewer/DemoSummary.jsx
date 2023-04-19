@@ -1,6 +1,6 @@
 import React from 'react';
 import {Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
-import SemanticSearch from "./SemanticSearch";
+import SemanticSearch from "../search/SemanticSearch";
 import CollapsibleSummary from "./CollapsibleSummary";
 import styled, {keyframes, css} from "styled-components";
 
@@ -36,7 +36,7 @@ function Summary({pdfKey, summary}) {
                 </TabList>
                 <TabPanels height={'calc(100%-35px)'}>
                     <TabPanel style={{height: '100%', padding: '0px', marginRight: '10px'}}>
-                    <SummaryContainer>
+                        <SummaryContainer>
                             {
                                 summary.map((s, idx) => <CollapsibleSummary isOpen={idx === 0} key={idx}
                                                                             summaryJson={s}/>)

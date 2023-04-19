@@ -44,7 +44,7 @@ const CloseBorderContainer = styled.div`
 const CloseBorder = styled.div`
   width: 3px;
   height: 100%;
-  background-color: #48fdce;
+  background-color: #969a96;
 
 `
 
@@ -106,25 +106,28 @@ function LoadingSpinner() {
 
 const MarkdownWrapper = styled.div`
   position: relative;
-  color: #DADADA;
+  color: #F0EFEF;
   max-width: 100%;
   font-weight: 400;
   border-radius: 4px;
   font-size: 16px;
-  background-color: #29323C;
+  background-color: #000000;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 
   h1, h2, h3 {
     font-size: 22px;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    color: #C6A9F6;
+    color: #FF7F50;
+    font-weight: bold;
   }
 
   strong {
-    color: #F7D592;
+    color: #FF7F50;
+    font-weight: bold;
     padding: 1px 4px;
-    font-weight: 500;
   }
 
   code {
@@ -171,17 +174,16 @@ const MarkdownWrapper = styled.div`
 
   @media (max-width: 900px) {
     padding: 10px;
-    height: 450px;
   }
   @media (max-width: 550px) {
     padding: 10px;
-    height: 300px;
     font-size: 14px;
     h1, h2, h3 {
       font-size: 20px;
     }
   }
-`;
+`
+
 
 const renderers = {
     inlineMath: ({value}) => <InlineMath math={value}/>,

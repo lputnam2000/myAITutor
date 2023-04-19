@@ -1,6 +1,6 @@
 import React, {useContext, useState, useCallback, useMemo} from 'react';
 import styled from 'styled-components';
-import {ViewerContext} from "./context";
+import {ViewerContext} from "../viewer/context";
 import {ChevronUpIcon, ChevronDownIcon} from "@chakra-ui/icons";
 import Image from 'next/image'
 
@@ -17,19 +17,20 @@ const Wrapper = styled.div`
 `;
 
 const Question = styled.div`
-  font-size: 16px;
+  font-size: 14px;
+  letter-spacing: .3px;
   color: #000;
   border-radius: 5px;
   padding: 5px;
-  font-weight: 500;
-  background-color: #9aa9f3;
+  font-weight: 600;
+  background-color: #48fdce;
 `;
 
 const Answer = styled.div`
   border-radius: 5px;
-  color: #000;
-  background-color: #b69dfa;
-  padding: 5px;
+  color: #fff;
+  background-color: #1c2025;
+  padding: 10px;
 
 `;
 
@@ -56,9 +57,9 @@ const ExpandButton = styled.button`
 `;
 
 const ContextHeading = styled.h3`
-  color: #ffdb58;
-  font-weight: 400;
-  font-size: 18px;
+  color: #48fdce;
+  font-weight: bold;
+  font-size: 16px;
   @media (max-width: 600px) {
     font-size: 16px;
   }
@@ -190,7 +191,12 @@ const stringToSeconds = (time) => {
     return seconds;
 };
 
-export default function AnswerBox({question, answer, contexts, fileType}) {
+const tagToLabel = {
+    'q&a': 'Q & A',
+    'learn': 'Explain',
+}
+
+export default function AnswerBox({question, answer, contexts, answerElem}) {
     const [showContexts, setShowContexts] = useState(false);
 
     const toggleContexts = () => {
@@ -218,10 +224,9 @@ export default function AnswerBox({question, answer, contexts, fileType}) {
         });
     }, [])
 
-
     return (
         <Wrapper>
-            <Question>{question}</Question>
+            <Question>{tagToLabel[answerElem.questionTagSelected]}:&nbsp;{question}</Question>
             <Answer><MonkeyProfileImage src={'/monkeyProfile.png'} height={40}
                                         width={40}/>
                 {renderedAnswer(answer, contexts)}

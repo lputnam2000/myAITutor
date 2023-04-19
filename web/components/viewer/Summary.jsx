@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import styled, {keyframes, css} from "styled-components";
 import {Progress, Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
-import SemanticSearch from "./SemanticSearch";
+import SemanticSearch from "../search/SemanticSearch";
 import CollapsibleSummary from "./CollapsibleSummary";
 import GenerateSummary from "./GenerateSummary";
 import {ViewerContext} from "./context";
@@ -146,15 +146,20 @@ function Summary({}) {
                     <LoadingContainer/>
                 ) :
 
-                <Tabs height={'100%'} variant='enclosed'>
-                    <TabList height={'35px'}>
-                        <Tab style={{borderRadius: '0px'}} _selected={{color: 'white', bg: 'black'}}>Summary Hub</Tab>
-                        <Tab style={{borderRadius: '0px', fontSize: '14px'}} _selected={{color: 'white', bg: 'black',}}>Professor
+                <Tabs height={'100%'} variant='enclosed' isFitted>
+                    <TabList height={'35px'} style={{borderBottom: '2px solid  #000'}}>
+                        <Tab style={{color: '#48fdce'}}
+                             _selected={{color: '#48fdce', bg: 'black'}}>AI
+                            Assistant</Tab>
+                        <Tab style={{color: '#48fdce'}}
+                             _selected={{color: '#48fdce', bg: 'black'}}>Summaries</Tab>
 
-                            Bananabrains</Tab>
                     </TabList>
 
                     <TabPanels height={'calc(100%-35px)'}>
+                        <TabPanel style={{height: '100%', padding: '5px',}}>
+                            <SemanticSearch uploadId={pdfKey}/>
+                        </TabPanel>
                         <TabPanel style={{height: '100%', padding: '0px', marginRight: '10px'}}>
                             <SummaryContainer>
                                 <GenerateSummary/>
@@ -170,9 +175,6 @@ function Summary({}) {
                                 }
                                 {/*{SummaryPanel}*/}
                             </SummaryContainer>
-                        </TabPanel>
-                        <TabPanel style={{height: '100%'}}>
-                            <SemanticSearch uploadId={pdfKey}/>
                         </TabPanel>
                     </TabPanels>
                 </Tabs>
