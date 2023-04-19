@@ -57,9 +57,9 @@ const ExpandButton = styled.button`
 `;
 
 const ContextHeading = styled.h3`
-  color: #ffdb58;
-  font-weight: 400;
-  font-size: 18px;
+  color: #48fdce;
+  font-weight: bold;
+  font-size: 16px;
   @media (max-width: 600px) {
     font-size: 16px;
   }
