@@ -23,6 +23,7 @@ from nltk import tokenize
 from ..socket_helper import send_update
 import multiprocessing
 from functools import partial
+import time
 
 
 """
@@ -162,30 +163,32 @@ def transcribe_file(model_id, segment_info):
 
 
 def download_video(vidLink):
-    try:
-        vidObj = YouTube(vidLink)
-        vidObj.check_availability()
-    except Exception as e:
-        print(e)
-        return "vid not available"
+    retry_count = 0
+    while retry_count < 10:
+        try:
+            vidObj = YouTube(vidLink)
+            vidObj.check_availability()
 
-    try:
-        video_length = vidObj.length
-        if (video_length / 3600) > 1:
-            return "too long"
-    except Exception as e:
-        print ("Pytube Failed getting Video Length")
-        return "too long"
+            video_length = vidObj.length
+            if (video_length / 3600) > 1:
+                return "too long"
 
-    vidStreams = vidObj.streams.filter(only_audio=True)[0]
-    if not vidStreams:
-        return "no streams availables"   
-    file_name = uuid.uuid4().__str__()
-    outFile = vidStreams.download(output_path='audio')
-    base, ext = os.path.splitext(outFile)
-    newFile = file_name + '.mp3'
-    os.rename(outFile, newFile)
-    return newFile
+            vidStreams = vidObj.streams.filter(only_audio=True)[0]
+            if not vidStreams:
+                return "no streams availables"   
+
+            file_name = uuid.uuid4().__str__()
+            outFile = vidStreams.download(output_path='audio')
+            base, ext = os.path.splitext(outFile)
+            newFile = file_name + '.mp3'
+            os.rename(outFile, newFile)
+            return newFile
+        except Exception as e:
+            print(e)
+            retry_count += 1
+            print(f"Failed to download video, retrying in 0.01 seconds (attempt {retry_count})")
+            time.sleep(0.01)
+    return "Failed to download video after 10 attempts"
 
 def use_youtube_captions(url):
     print("Using Youtube Captions")
