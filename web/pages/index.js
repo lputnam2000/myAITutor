@@ -84,7 +84,7 @@ export default function Home({}) {
                 <Container>
                     <InvisibleH1>ChIPBase</InvisibleH1>
                     <HowItWorks/>
-                    <TryNowButton href={'https://www.chimpbase.com/home'}>No cost. No risk. Try it now.</TryNowButton>
+                    <TryNowButton href={'/home'}>No cost. No risk. Try it now.</TryNowButton>
                 </Container>
                 <Footer/>
             </Main>

@@ -97,8 +97,8 @@ function Navbar(props) {
             <div>
             </div>
             <LogoFlexRow><Logo
-                href={'https://www.chimpbase.com/'}>chimpbase</Logo><BetaText><span>Beta</span></BetaText></LogoFlexRow>
-            <LoginButton href={'https://www.chimpbase.com/home'}>Join Now!&#x1F412;</LoginButton>
+                href={'/'}>chimpbase</Logo><BetaText><span>Beta</span></BetaText></LogoFlexRow>
+            <LoginButton href={'/home'}>Join Now!&#x1F412;</LoginButton>
         </Container>
     );
 }
