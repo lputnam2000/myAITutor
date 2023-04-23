@@ -4,6 +4,7 @@ import HomeNavbar from "/components/HomeNavbar";
 import HowItWorks from "/components/index/HowItWorks";
 import Footer from '/components/UIComponents/Footer';
 import HeadLine from "/components/index/HeadLine";
+import Testimonials from "/components/index/Testimonials";
 
 
 const Container = styled.div`
@@ -17,7 +18,6 @@ const Container = styled.div`
   radial-gradient(circle at right 10% bottom 10%, rgba(116, 66, 200, 0.3) 10%, transparent 50%);
   radial-gradient(circle at right 50% bottom 50%, rgba(116, 66, 200, 0.3) 10%, transparent 50%);
 
-  //justify-content: center;
 `
 
 
@@ -86,6 +86,7 @@ export default function Home({}) {
                 <Container>
                     <InvisibleH1>ChIPBase</InvisibleH1>
                     <HeadLine/>
+                    <Testimonials/>
                     {/*<HowItWorks/>*/}
                     {/*<TryNowButton href={'/home'}>No cost. No risk. Try it now.</TryNowButton>*/}
                 </Container>
